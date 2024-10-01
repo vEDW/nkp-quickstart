@@ -1,0 +1,30 @@
+#cloud-config
+fqdn: nkp-quickstart
+ssh_pwauth: true
+chpasswd:
+  expire: false
+  users:
+  - name: nutanix
+    password: nutanix/4u # Recommended to change the password or update the script to use SSH keys
+    type: text
+bootcmd:
+- mkdir -p /etc/docker
+write_files:
+- content: |
+    {
+        "insecure-registries": ["registry.nutanixdemo.com"]
+    }
+  path: /etc/docker/daemon.json
+runcmd:
+- mv /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled
+- dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+- dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin tmux
+- systemctl --now enable docker
+- usermod -aG docker nutanix
+- 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
+- chmod +x ./kubectl
+- mv ./kubectl /usr/local/bin/kubectl
+- '\curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
+- eject
+- 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
+final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: $ curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash"

@@ -7,9 +7,15 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
 1. Add NKP Rocky Linux image from the Nutanix Support Portal to Prism Central
 
 1. Create a jump host with 2 vCPUs, 4 GB memory, use the Rocky image (update disk to 128 GiB), and the following Cloud-init custom script
+    <details open>
+        @@include[cloud-init](./scripts/cloud-init)
+    </details>
+
+
 
     ```yaml
     #cloud-config
+    fqdn: nkp-quickstart
     ssh_pwauth: true
     chpasswd:
       expire: false
@@ -28,7 +34,7 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
     runcmd:
     - mv /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled
     - dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    - dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    - dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin tmux
     - systemctl --now enable docker
     - usermod -aG docker nutanix
     - 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
@@ -99,6 +105,7 @@ For NKP CLI:
 
         ```yaml
         #cloud-config
+        fqdn: nkp-quickstart
         ssh_pwauth: true
         chpasswd:
           expire: false
@@ -117,13 +124,14 @@ For NKP CLI:
         runcmd:
         - mv /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled
         - dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-        - dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+        - dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin tmux
         - systemctl --now enable docker
         - usermod -aG docker nutanix
         - 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
         - chmod +x ./kubectl
         - mv ./kubectl /usr/local/bin/kubectl
         - '\curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
+        - git clone https://github.com/vEDW/nkp-quickstart.git
         - eject
         - 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
         final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: $ curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash"
@@ -170,7 +178,10 @@ For NKP CLI:
 
 This installation method gives less control on the cluster configuration. For example, the NKP cluster will be created with three control plane nodes and four worker nodes.
 
+We recommend starting a tmux session in case your ssh connection is at risk of disconnection (like laptop going into sleep mode) as the process can take some time based on several paramters (like download speed).
+
 ```shell
+tmux
 nkp create cluster nutanix
 ```
 
