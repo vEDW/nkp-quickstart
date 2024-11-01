@@ -18,52 +18,48 @@
 
 #------------------------------------------------------------------------------
 
-# Maintainer:   Jose Gomez (jose.gomez@nutanix.com)
+# Maintainer:   Eric De Witte (eric.dewitte@nutanix.com)
 # Contributors: 
 
 #------------------------------------------------------------------------------
 
-# To run:
-# curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
-
-#------------------------------------------------------------------------------
-
-# Prompt the user for the download link
-read -p "Enter 'NKP for Linux' download link: " url < /dev/tty
-
-# Check if URL is empty
-if [ -z "$url" ]; then
-    echo "No URL provided. Exiting."
+K9SRELEASE=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r .tag_name)
+if [[ ${K9SRELEASE} == "null" ]]; then
+    echo "github api rate limiting blocked request"
+    echo "get latest version failed. Exiting."
     exit 1
 fi
 
+echo "Downloading k9s ${K9SRELEASE}"
+url="https://github.com/derailed/k9s/releases/download/${K9SRELEASE}/k9s_Linux_amd64.tar.gz"
+
 # Download the file with wget and check for errors
-wget -O nkp.tar.gz "$url"
+wget -O k9s_Linux_amd64.tar.gz "$url"
 if [ $? -ne 0 ]; then
     echo "Download failed. Exiting."
     exit 1
 fi
 
 # Extract the downloaded file and check for errors
-tar xzf nkp.tar.gz
+tar xzf k9s_Linux_amd64.tar.gz 
 if [ $? -ne 0 ]; then
     echo "Extraction failed. Exiting."
     exit 1
 fi
 
 # Make the file executable and move it to /usr/local/bin
-chmod +x ./nkp
+chmod +x ./k9s
 if [ $? -eq 0 ]; then
-    sudo mv ./nkp /usr/local/bin
+    sudo mv ./k9s /usr/local/bin
 else
-    echo "Failed to make nkp executable. Exiting."
+    echo "Failed to make k9s executable. Exiting."
     exit 1
 fi
 
 # Clean up downloaded files
-rm -f nkp.tar.gz NOTICES
+rm -f k9s_Linux_amd64.tar.gz LICENSE README.md
 
 # Success message
-echo "NKP CLI installed successfully!"
+echo "k9s CLI installed successfully!"
 echo "checking version"
-nkp version
+k9s version

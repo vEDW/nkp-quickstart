@@ -25,7 +25,7 @@ runcmd:
 - chmod +x ./kubectl
 - mv ./kubectl /usr/local/bin/kubectl
 - '\curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
-- git clone https://github.com/vEDW/nkp-quickstart.git
+- git clone https://github.com/vEDW/nkp-quickstart.git /home/nutanix
 - eject
 - 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
-final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: $ curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash"
+final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: $ /home/nutanix/nkp-quickstart/scripts/get-nkp-cli.sh 
