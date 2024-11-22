@@ -1,0 +1,14 @@
+export NKP_VERSION=2.12.1                                       # NKP version to install
+export CLUSTER_NAME=wl-dev-01                                         # NKP cluster name. When using NKP Pro/Ultimate, this name is used to generate the license key
+export DATACENTER_NAME=
+export DATASTORE_NAME=
+export FOLDER_NAME=
+export VCENTER_API_SERVER_URL=
+export SSH_PUBLIC_KEY_FILE
+export RESOURE_POOL_NAME
+export ip_interface_name=
+export TEMPLATE_NAME=
+export REGISTRY_MIRROR_URL=registry-1.docker.io                 # Required on Nutanix HPOC
+export REGISTRY_MIRROR_USERNAME=                                # Required for docker.io
+export REGISTRY_MIRROR_PASSWORD=                                # Required on Nutanix HPOC
+
