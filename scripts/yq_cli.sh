@@ -50,7 +50,7 @@ fi
 mv yq_linux_amd64 yq
 chmod +x ./yq
 if [ $? -eq 0 ]; then
-    sudo mv ./yq_linux_amd64 /usr/local/bin
+    sudo mv ./yq /usr/local/bin
 else
     echo "Failed to make yq executable. Exiting."
     exit 1
