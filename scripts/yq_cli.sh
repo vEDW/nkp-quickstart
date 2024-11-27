@@ -47,6 +47,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Make the file executable and move it to /usr/local/bin
+mv yq_linux_amd64 yq
 chmod +x ./yq
 if [ $? -eq 0 ]; then
     sudo mv ./yq_linux_amd64 /usr/local/bin
