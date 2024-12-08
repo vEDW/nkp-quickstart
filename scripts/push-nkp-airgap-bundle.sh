@@ -80,9 +80,9 @@ fi
 APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
 
 echo "nkp push bundle --bundle $APPBUNDLE \
-  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="'"${AIRGAP_REGISTRY_MIRROR_USERNAME}"'"  \
+  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username=${AIRGAP_REGISTRY_MIRROR_USERNAME}  \
   --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem"
 
 nkp push bundle --bundle $APPBUNDLE \
-  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="'"${AIRGAP_REGISTRY_MIRROR_USERNAME}"'"  \
+  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
   --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
