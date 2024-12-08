@@ -1,4 +1,4 @@
-# Nutanix Kubernetes Platform - Quickstart Guide
+# Nutanix Kubernetes Platform - Quickstart Guide - AIRGAP mode
 
 ## TL;DR
 
@@ -13,6 +13,15 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
 1. Install the NKP CLI with the command: [get-nkp-cli](./scripts/get-nkp-cli)
 
     When prompted, you must use the download link as-is, which is available in the Nutanix portal.
+
+1. doanload the NKP airgap bundle with the command: [get-nkp-airgap-bundle](./scripts/get-nkp-airgap-bundle)
+
+    When prompted, you must use the download link as-is, which is available in the Nutanix portal.
+
+1. Push NKP airgap bundle to your internal registry with the command: [push-nkp-airgap-bundle](./scripts/get-nkp-cli)
+
+    When prompted, you must use the download link as-is, which is available in the Nutanix portal.
+
 
 ## Table of Contents
 
@@ -42,7 +51,7 @@ For NKP CLI:
     <IMG src="./images/add_nkp_rocky_os_image.png" atl="Add NKP Rocky OS image" />
     </details>
 
-(Optional) For NKP cluster creation:
+For NKP cluster creation:
 
 - Static IP address for the control plane VIP
 - One or more IP addresses for the NKP dashboard and load balancing service
