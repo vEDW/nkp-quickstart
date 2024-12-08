@@ -63,7 +63,26 @@ if [[ "$AIRGAP_REGISTRY_MIRROR_PASSWORD" == "" ]]; then
     exit 1
 fi
 
+docker login 
+
+BOOTSTRAP=$(ls $bundlepath/konvoy-bootstrap*)
+
+docker load -i $BOOTSTRAP
+docker tag mesosphere/konvoy-bootstrap:v2.12.1 registry.nutanixdemo.com/nkpairgap/mesosphere/konvoy-bootstrap:v2.12.1
+docker push registry.nutanixdemo.com/nkpairgap/mesosphere/konvoy-bootstrap:v2.12.1
+
+KOMIMG=$(ls $bundlepath/container-images/kommander-image-bundle*)
+
+docker load -i $KOMIMG
+
+
+
 APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
+
+echo "nkp push bundle --bundle $APPBUNDLE \
+  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
+  --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem"
+  
 nkp push bundle --bundle $APPBUNDLE \
-  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username=${AIRGAP_REGISTRY_MIRROR_USERNAME}  \
-  --to-registry-password=${AIRGAP_REGISTRY_MIRROR_PASSWORD} --to-registry-ca-cert-file=registry-ca_cert.pem
+  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
+  --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
