@@ -53,13 +53,13 @@ if [ $? -ne 0 ]; then
 fi
 
 
-if [[ "$REGISTRY_MIRROR_USERNAME" == "" ]]; then
-    echo "REGISTRY_MIRROR_USERNAME = empty. Exiting."
+if [[ "$AIRGAP_REGISTRY_MIRROR_USERNAME" == "" ]]; then
+    echo "AIRGAP_REGISTRY_MIRROR_USERNAME = empty. Exiting."
     exit 1
 fi
 
-if [[ "$REGISTRY_MIRROR_PASSWORD" == "" ]]; then
-    echo "REGISTRY_MIRROR_PASSWORD = empty. Exiting."
+if [[ "$AIRGAP_REGISTRY_MIRROR_PASSWORD" == "" ]]; then
+    echo "AIRGAP_REGISTRY_MIRROR_PASSWORD = empty. Exiting."
     exit 1
 fi
 
