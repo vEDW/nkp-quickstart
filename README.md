@@ -100,7 +100,6 @@ This installation method gives less control on the cluster configuration. For ex
 We recommend starting a tmux session in case your ssh connection is at risk of disconnection (like laptop going into sleep mode) as the process can take some time based on several paramters (like download speed).
 
 ```shell
-tmux
 nkp create cluster nutanix
 ```
 
