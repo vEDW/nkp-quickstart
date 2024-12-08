@@ -14,5 +14,5 @@ export REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap                 # 
 export REGISTRY_MIRROR_USERNAME=                                # Required on internet connected deployments to avoid docker rate limiting
 export REGISTRY_MIRROR_PASSWORD=                                # Required on internet connected deployments to avoid docker rate limiting
 export AIRGAP_REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap              # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
-export AIRGAP_REGISTRY_MIRROR_USERNAME='robot$nkpairgap+airgaprobot'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
-export AIRGAP_REGISTRY_MIRROR_PASSWORD=                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+export AIRGAP_REGISTRY_MIRROR_USERNAME='real harbor user'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+export AIRGAP_REGISTRY_MIRROR_PASSWORD='dont use robot'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting

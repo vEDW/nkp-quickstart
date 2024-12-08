@@ -1,7 +1,7 @@
 source ./nkp-env
 
 nkp create cluster nutanix -c $CLUSTER_NAME \
-    --kind-cluster-image $REGISTRY_MIRROR_URL/mesosphere/konvoy-bootstrap:v$NKP_VERSION \
+    --kind-cluster-image mesosphere/konvoy-bootstrap:v$NKP_VERSION \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
     --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \
