@@ -64,6 +64,6 @@ if [[ "$AIRGAP_REGISTRY_MIRROR_PASSWORD" == "" ]]; then
 fi
 
 APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
-nkp push bundle --bundle $bundlepath/container-images/nkp-catalog-applications-image-bundle-v2.12.0.tar \
+nkp push bundle --bundle $APPBUNDLE \
   --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username=${AIRGAP_REGISTRY_MIRROR_USERNAME}  \
   --to-registry-password=${AIRGAP_REGISTRY_MIRROR_PASSWORD} --to-registry-ca-cert-file=registry-ca_cert.pem
