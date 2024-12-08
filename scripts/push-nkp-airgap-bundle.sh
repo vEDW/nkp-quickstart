@@ -65,5 +65,5 @@ fi
 
 APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
 nkp push bundle --bundle $bundlepath/container-images/nkp-catalog-applications-image-bundle-v2.12.0.tar \
-  --to-registry=${REGISTRY_MIRROR_URL} --to-registry-username=${REGISTRY_MIRROR_USERNAME}  \
-  --to-registry-password=${REGISTRY_MIRROR_PASSWORD} --to-registry-ca-cert-file=registry-ca_cert.pem
+  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username=${AIRGAP_REGISTRY_MIRROR_USERNAME}  \
+  --to-registry-password=${AIRGAP_REGISTRY_MIRROR_PASSWORD} --to-registry-ca-cert-file=registry-ca_cert.pem
