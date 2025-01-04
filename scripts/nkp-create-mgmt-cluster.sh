@@ -1,6 +1,6 @@
 source ./nkp-env
 
-$NKP_VERSION=$(nkp version -o=json |jq -r '.nkp.gitVersion')
+NKP_VERSION=$(nkp version -o=json |jq -r '.nkp.gitVersion')
 
 nkp create cluster nutanix -c $CLUSTER_NAME \
     --kind-cluster-image $REGISTRY_MIRROR_URL/mesosphere/konvoy-bootstrap:$NKP_VERSION \
