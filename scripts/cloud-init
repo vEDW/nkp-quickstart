@@ -28,4 +28,4 @@ runcmd:
 - git clone https://github.com/vEDW/nkp-quickstart.git /home/nutanix
 - eject
 - 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
-final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: $ /home/nutanix/nkp-quickstart/scripts/get-nkp-cli.sh 
+final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: /home/nutanix/nkp-quickstart/scripts/get-nkp-cli.sh"
