@@ -24,7 +24,7 @@ runcmd:
 - 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
 - chmod +x ./kubectl
 - mv ./kubectl /usr/local/bin/kubectl
-- '\curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
+- 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
 - git clone https://github.com/vEDW/nkp-quickstart.git /home/nutanix
 - eject
 - 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
