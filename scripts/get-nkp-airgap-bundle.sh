@@ -23,11 +23,6 @@
 
 #------------------------------------------------------------------------------
 
-# To run:
-# curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
-
-#------------------------------------------------------------------------------
-
 # Prompt the user for the download link
 echo 'open browser to site : https://portal.nutanix.com/page/downloads?product=nkp and find "NKP Airgapped Bundle" '
 read -p "Enter 'NKP airgap bundle' download link: " url < /dev/tty
