@@ -2,7 +2,7 @@
 
 addrc(){
     content=$1
-    if [ $(cat ~/.bashrc | grep "$content") == "" ];
+    if [ $(cat ~/.bashrc | grep "$content") == "" ]; then
         echo "$content" >> ~/.bashrc
     fi
 }
