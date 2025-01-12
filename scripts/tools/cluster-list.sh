@@ -1,5 +1,21 @@
 #!/bin/bash
 
+CONTEXTS=$(kubectl config get-contexts  --no-headers=true |rev | awk '{print $4}' |rev)
+echo
+echo "Select management cluster to list clusters or CTRL-C to quit"
+select CONTEXT in $CONTEXTS; do 
+    echo "you selected cluster context : ${CONTEXT}"
+    echo 
+    CLUSTERCTX="${CONTEXT}"
+    break
+done
+
+kubectl config use-context $CLUSTERCTX
+if [ $? -ne 0 ]; then
+    echo "kubectl context error. Exiting."
+    exit 1
+fi
+
 CLUSTERSJSON=$(kubectl get cluster -A -ojson |jq -r '.items[]|select (.metadata.labels."konvoy.d2iq.io/provider" == "nutanix") |.')
 echo $CLUSTERSJSON | jq . > clusters.json
 CLUSTERLIST=$(echo "${CLUSTERSJSON}"| jq -r '.metadata.name')
