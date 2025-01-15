@@ -29,7 +29,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #clusters
-CLUSTER=$(yq e '.clusters[]' $CLUSTERKUBEYAML )
+CLUSTER=$(yq e '.clusters[]' "$CLUSTERKUBEYAML" )
 if [ $? -ne 0 ]; then
     echo "getting clusters failed failed. Exiting."
     exit 1
@@ -41,7 +41,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #users
-USERS=$(yq e '.users[]' $CLUSTERKUBEYAML  )
+USERS=$(yq e '.users[]' "$CLUSTERKUBEYAML"  )
 if [ $? -ne 0 ]; then
     echo "getting users failed. Exiting."
     exit 1
@@ -53,7 +53,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #contexts
-CONTEXTS=$(yq e '.contexts[]' $CLUSTERKUBEYAML  )
+CONTEXTS=$(yq e '.contexts[]' "$CLUSTERKUBEYAML"  )
 if [ $? -ne 0 ]; then
     echo "getting contexts failed. Exiting."
     exit 1
