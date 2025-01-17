@@ -28,11 +28,11 @@ read -p "Enter new nodepool name: " NODEPOOL_NAME < /dev/tty
 
 #NUTANIX_PRISM_ELEMENT_CLUSTER_NAME=dh1
 echo
-read -p "Enter new nodepool name: " NUTANIX_PRISM_ELEMENT_CLUSTER_NAME < /dev/tty
+read -p "Enter nodepool PE Cluster name name: " NUTANIX_PRISM_ELEMENT_CLUSTER_NAME < /dev/tty
 
 #NUTANIX_SUBNET_NAME=User.dh1
 echo
-read -p "Enter new nodepool name: " NUTANIX_SUBNET_NAME < /dev/tty
+read -p "Enter nodepool subnet name: " NUTANIX_SUBNET_NAME < /dev/tty
 
 
 nkp create nodepool nutanix $NODEPOOL_NAME -c $CLUSTER -n $CLUSTERNS \
@@ -42,6 +42,6 @@ nkp create nodepool nutanix $NODEPOOL_NAME -c $CLUSTER -n $CLUSTERNS \
     --vm-image $NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME \
     --dry-run -o yaml > $CLUSTER_NAME-$NODEPOOL_NAME.yaml
 
-echo "nodepool definition created:  $CLUSTER_NAME-$NODEPOOL_NAME.yaml"
+echo "nodepool definition added to cluster definition:  $CLUSTER_NAME-$NODEPOOL_NAME.yaml"
 echo
 echo "to execute, run : kubectl apply -f $CLUSTER_NAME-$NODEPOOL_NAME.yaml"
