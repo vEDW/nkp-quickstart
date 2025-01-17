@@ -20,3 +20,6 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     --registry-mirror-username="$REGISTRY_MIRROR_PASSWORD" \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
+echo "Cluster definition created:  $CLUSTER_NAME.yaml"
+echo
+echo "to execute, run : kubectl apply -f $CLUSTER_NAME.yaml"
