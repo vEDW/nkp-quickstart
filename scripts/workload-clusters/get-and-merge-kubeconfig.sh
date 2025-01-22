@@ -1,32 +1,39 @@
 #!/bin/bash
 
-CONTEXTS=$(kubectl config get-contexts --output=name)
-echo
-echo "Select management cluster or CTRL-C to quit"
-select CONTEXT in $CONTEXTS; do 
-    echo "you selected cluster context : ${CONTEXT}"
-    echo 
-    CLUSTERCTX="${CONTEXT}"
-    break
-done
+if [ "$1" == "" ] ; then
 
-kubectl config use-context $CLUSTERCTX
+    CONTEXTS=$(kubectl config get-contexts --output=name)
+    echo
+    echo "Select management cluster or CTRL-C to quit"
+    select CONTEXT in $CONTEXTS; do 
+        echo "you selected cluster context : ${CONTEXT}"
+        echo 
+        CLUSTERCTX="${CONTEXT}"
+        break
+    done
 
-CLUSTERS=$(kubectl get cluster --no-headers -A |awk '{print $2}')
-echo
-echo "Select workload cluster to get kubeconfig or CTRL-C to quit"
-select CLUSTER in $CLUSTERS; do 
-    CLUSTERNS=$(kubectl get cluster --no-headers -A |grep ${CLUSTER} | awk '{print $1}')
-    echo "you selected cluster  : ${CLUSTER} in namespace : ${CLUSTERNS}"
-    echo 
-    break
-done
+    kubectl config use-context $CLUSTERCTX
 
-CLUSTERKUBEYAML=$(nkp get kubeconfig -c ${CLUSTER} -n ${CLUSTERNS})
-if [ $? -ne 0 ]; then
-    echo "get kubeconfig failed. Exiting."
-    exit 1
+    CLUSTERS=$(kubectl get cluster --no-headers -A |awk '{print $2}')
+    echo
+    echo "Select workload cluster to get kubeconfig or CTRL-C to quit"
+    select CLUSTER in $CLUSTERS; do 
+        CLUSTERNS=$(kubectl get cluster --no-headers -A |grep ${CLUSTER} | awk '{print $1}')
+        echo "you selected cluster  : ${CLUSTER} in namespace : ${CLUSTERNS}"
+        echo 
+        break
+    done
+
+    CLUSTERKUBEYAML=$(nkp get kubeconfig -c ${CLUSTER} -n ${CLUSTERNS})
+    if [ $? -ne 0 ]; then
+        echo "get kubeconfig failed. Exiting."
+        exit 1
+    fi
+
+else
+    CLUSTERKUBEYAML=$(cat $1)
 fi
+
 
 #clusters
 CLUSTER=$(echo "$CLUSTERKUBEYAML" |yq e '.clusters[]')
