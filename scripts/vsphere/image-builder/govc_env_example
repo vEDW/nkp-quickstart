@@ -24,3 +24,23 @@ select DATASTORE in $DATASTORES; do
     GOVC_DATASTORE="${DATASTORE}"
     break
 done
+
+NETWORKS=$(govc find / -type Network)
+echo
+echo "Select network to set as default"
+select NETWORK in $NETWORKS; do 
+    echo "you selected network : ${NETWORK}"
+    echo 
+    GOVC_NETWORK="${NETWORK}"
+    break
+done
+
+RESOURCEPOOLS=$(govc find / -type ResourcePool)
+echo
+echo "Select Resource Pool to set as default"
+select RESOURCEPOOL in $RESOURCEPOOLS; do 
+    echo "you selected Resource Pool : ${RESOURCEPOOL}"
+    echo 
+    GOVC_RESOURCE_POOL="${RESOURCEPOOL}"
+    break
+done
