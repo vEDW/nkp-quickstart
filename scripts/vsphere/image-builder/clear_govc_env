@@ -1,0 +1,7 @@
+#clearing values
+export GOVC_USERNAME=""
+export VCENTERHOST=""
+export GOVC_PASSWORD=""
+export GOVC_URL=""
+export GOVC_DATACENTER=""
+export GOVC_DATASTORE=""

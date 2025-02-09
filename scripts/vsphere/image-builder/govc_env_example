@@ -1,0 +1,26 @@
+#copy this file to govc_env and edit values as needed.
+export GOVC_USERNAME=<username>
+export VCENTERHOST=<vcenter ip or fqdn>
+read -sp "vcenter password: " GOVC_PASSWORD < /dev/tty
+export GOVC_URL=https://${GOVC_USERNAME}:${GOVC_PASSWORD}@${VCENTERHOST}/sdk
+export GOVC_INSECURE=1
+
+DATACENTERS=$(govc find / -type Datacenter)
+echo
+echo "Select datacenter to set as default DC"
+select DATACENTER in $DATACENTERS; do 
+    echo "you selected datacenter : ${DATACENTER}"
+    echo 
+    GOVC_DATACENTER="${DATACENTER}"
+    break
+done
+
+DATASTORES=$(govc find / -type Datastore)
+echo
+echo "Select datastore to set as default"
+select DATASTORE in $DATASTORES; do 
+    echo "you selected datastore : ${DATASTORE}"
+    echo 
+    GOVC_DATASTORE="${DATASTORE}"
+    break
+done

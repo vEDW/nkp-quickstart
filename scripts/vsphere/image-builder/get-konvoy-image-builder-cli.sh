@@ -24,6 +24,7 @@
 #------------------------------------------------------------------------------
 
 # Prompt the user for the download link
+echo 'open browser to site : https://portal.nutanix.com/page/downloads?product=nkp and find "Konvoy Image Builder for Linux" '
 read -p "Enter 'Konvoy Image Builder for Linux' download link: " url < /dev/tty
 
 # Check if URL is empty
@@ -52,4 +53,4 @@ rm -f kib.tar.gz
 # Success message
 echo "Konvoy Image Builder CLI installed successfully!"
 echo "checking version"
-konvoy-image --version
+./konvoy-image --version
