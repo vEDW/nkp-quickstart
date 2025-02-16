@@ -11,19 +11,22 @@ echo "Select datacenter to set as default DC"
 select DATACENTER in $DATACENTERS; do 
     echo "you selected datacenter : ${DATACENTER}"
     echo 
-    GOVC_DATACENTER="${DATACENTER}"
+    export GOVC_DATACENTER="${DATACENTER}"
     break
 done
 
-DATASTORES=$(govc find / -type Datastore)
+DATASTORES=$(govc find / -type Datastore |grep -i -v "local")
 echo
 echo "Select datastore to set as default"
-select DATASTORE in $DATASTORES; do 
+select DATASTORE in "$DATASTORES"; do 
     echo "you selected datastore : ${DATASTORE}"
     echo 
-    GOVC_DATASTORE="${DATASTORE}"
+    export GOVC_DATASTORE="${DATASTORE}"
     break
 done
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
 
 NETWORKS=$(govc find / -type Network)
 echo
@@ -31,9 +34,10 @@ echo "Select network to set as default"
 select NETWORK in $NETWORKS; do 
     echo "you selected network : ${NETWORK}"
     echo 
-    GOVC_NETWORK="${NETWORK}"
+    export GOVC_NETWORK="${NETWORK}"
     break
 done
+
 
 RESOURCEPOOLS=$(govc find / -type ResourcePool)
 echo
@@ -41,6 +45,7 @@ echo "Select Resource Pool to set as default"
 select RESOURCEPOOL in $RESOURCEPOOLS; do 
     echo "you selected Resource Pool : ${RESOURCEPOOL}"
     echo 
-    GOVC_RESOURCE_POOL="${RESOURCEPOOL}"
+    export GOVC_RESOURCE_POOL="${RESOURCEPOOL}"
     break
 done
+IFS=$SAVEIFS
