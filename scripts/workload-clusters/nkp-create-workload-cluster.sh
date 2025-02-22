@@ -14,7 +14,7 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     --worker-subnets $NUTANIX_SUBNET_NAME \
     --worker-replicas 4 \
     --csi-storage-container $NUTANIX_STORAGE_CONTAINER_NAME \
-    --csi-hypervisor-attached-volumes=false \
+    --csi-hypervisor-attached-volumes=true \
     --registry-mirror-url https://$REGISTRY_MIRROR_URL \
     --registry-mirror-password=$REGISTRY_MIRROR_USERNAME \
     --registry-mirror-username="$REGISTRY_MIRROR_PASSWORD" \
