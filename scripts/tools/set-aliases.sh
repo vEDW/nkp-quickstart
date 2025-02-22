@@ -8,7 +8,7 @@ addrc(){
 }
 
 addrc 'alias k=kubectl' 
-addrc 'alias tn="tmux new -s"' 
+addrc 'alias tn="tmux -2 new -s"' 
 addrc 'alias tl="tmux ls"'
 addrc 'alias ta="tmux a -t"'
 addrc 'alias kx=kubectx'
