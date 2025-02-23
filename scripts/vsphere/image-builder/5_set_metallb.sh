@@ -1,13 +1,15 @@
 #!/bin/bash
 
+echo "Select Management cluster kubeconfig file:"
+
 KUBECONFIGS=$(ls *.conf)
-select KUBECONFIG in $KUBECONFIGS; do
-    test=$(KUBECONFIG=$KUBECONFIG kubectl get nodes)
+select KUBECONFIGYAML in $KUBECONFIGS; do
+    test=$(KUBECONFIG=$KUBECONFIGYAML kubectl get nodes)
     if [ $? -ne 0 ]; then
-        echo "KUBECONFIG $KUBECONFIG is not valid. Exiting."
+        echo "KUBECONFIG $KUBECONFIGYAML is not valid. Exiting."
         exit 1
     fi
-    echo "you selected kubeconfig : ${KUBECONFIG}"
+    echo "you selected kubeconfig : ${KUBECONFIGYAML}"
     echo
     break
 done
@@ -34,10 +36,14 @@ spec:
   - default
 "
 echo "$METALYAML" > temp-metallb.yaml
-KUBECONFIG=$KUBECONFIG kubectl apply -f temp-metallb.yaml
+KUBECONFIG=$KUBECONFIGYAML kubectl apply -f temp-metallb.yaml
 
 if [ $? -ne 0 ]; then
     echo "problem applying MetalLB settings. Exiting."
     exit 1
 fi
 echo "MetalLB configured"
+echo 
+echo "Checking MetalLB status"
+KUBECONFIG=$KUBECONFIGYAML kubectl get IPAddressPool -A
+KUBECONFIG=$KUBECONFIGYAML kubectl get L2Advertisement -A
