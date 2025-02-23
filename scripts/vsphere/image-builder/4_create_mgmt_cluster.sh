@@ -8,27 +8,6 @@ if [[ "$NKPCLUSTER" == "" ]]; then
     exit 1
 fi
 
-#list VM templates to build nkp image from
-echo
-echo "Select VM template to build NKP cluster with:"
-SAVEIFS=$IFS
-IFS=$(echo -en "\n\b")
-VMSLIST=$(govc find -maxdepth=-1 / -type m|grep nkp)
-select template in $VMSLIST; do
-    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
-    echo "you selected template : ${template}"
-    echo
-    break
-done
-IFS=$SAVEIFS
-
-#verify template is actually a VM
-VMTEST=$(govc vm.info $GOVC_DATACENTER/vm/$template)
-if [ $? -ne 0 ]; then
-    echo "Template is not a VM. Exiting."
-    exit 1
-fi
-
 DATACENTERS=$(govc find / -type Datacenter)
 echo
 echo "Select datacenter :"
@@ -39,6 +18,30 @@ select DATACENTER in $DATACENTERS; do
     break
 done
 DATACENTER=$(echo "${GOVC_DATACENTER}" | rev | cut -d'/' -f1 | rev)
+
+#list VM templates to build nkp image from
+echo
+echo "Select VM template to build NKP cluster with:"
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+VMSLIST=$(govc vm.info -json $DATACENTER/vm/* |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
+
+select template in $VMSLIST; do
+    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
+    echo "you selected template : ${template}"
+    echo
+    break
+done
+IFS=$SAVEIFS
+
+
+#verify template is actually a VM
+VMTEST=$(govc vm.info $GOVC_DATACENTER/vm/$template)
+if [ $? -ne 0 ]; then
+    echo "Template is not a VM. Exiting."
+    exit 1
+fi
+
 
 echo "Select Cluster to deploy NKP"
 CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
