@@ -24,7 +24,7 @@ echo
 echo "Select VM template to build NKP cluster with:"
 #SAVEIFS=$IFS
 #IFS=$(echo -en "\n\b")
-VMSLIST=$(govc vm.info -json $DATACENTER/vm/* |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
+VMSLIST=$(govc vm.info -json $GOVC_DATACENTER/vm/* |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
 select template in $VMSLIST; do
 #    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
