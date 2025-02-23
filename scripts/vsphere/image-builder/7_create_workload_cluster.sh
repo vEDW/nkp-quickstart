@@ -1,5 +1,20 @@
 #!/bin/bash
 
+echo "Select Management Cluster : "
+
+KUBECONFIGS=$(ls *.conf)
+select KUBECONFIGYAML in $KUBECONFIGS; do
+    test=$(KUBECONFIG=$KUBECONFIGYAML kubectl get nodes)
+    if [ $? -ne 0 ]; then
+        echo "KUBECONFIG $KUBECONFIGYAML is not valid. Exiting."
+        exit 1
+    fi
+    echo "you selected kubeconfig : ${KUBECONFIGYAML}"
+    echo
+    break
+done
+
+
 echo "Enter name for NKP Workload Cluster : "
 read NKPCLUSTER
 
@@ -129,7 +144,7 @@ export vsphere_password=$VSPHERE_PASSWORD
 VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | cut -d "=" -f2)
 
 echo "command to run to deploy NKP:"
-echo "nkp create cluster vsphere \
+echo "KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
   --network ${NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
@@ -147,7 +162,7 @@ echo "nkp create cluster vsphere \
 echo "press enter to continue or ctrl+c to exit"
 read
 
-nkp create cluster vsphere \
+KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
   --network ${NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
