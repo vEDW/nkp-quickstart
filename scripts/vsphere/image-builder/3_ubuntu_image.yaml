@@ -15,7 +15,7 @@ packer:
   resource_pool: "<VSPHERE_RESOURCE_POOL>"
   template: "template"
   vsphere_guest_os_type: "other4xLinux64Guest"
-  guest_os_type: "ubuntu2004-64"
+  guest_os_type: "ubuntu2204-64"
   # goss params
   distribution: "ubuntu"
   distribution_version: "22.04"
