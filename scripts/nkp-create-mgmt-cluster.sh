@@ -1,7 +1,9 @@
 source ./nkp-env
 
+NKP_VERSION=$(nkp version -o=json |jq -r '.nkp.gitVersion')
+
 nkp create cluster nutanix -c $CLUSTER_NAME \
-    --kind-cluster-image mesosphere/konvoy-bootstrap:v$NKP_VERSION \
+    --kind-cluster-image mesosphere/konvoy-bootstrap:$NKP_VERSION \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
     --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \
@@ -16,7 +18,7 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     --worker-replicas 4 \
     --csi-storage-container $NUTANIX_STORAGE_CONTAINER_NAME \
     --csi-hypervisor-attached-volumes=true \
-    --registry-mirror-url http://$REGISTRY_MIRROR_URL \
+    --registry-mirror-url https://$REGISTRY_MIRROR_URL \
     --registry-mirror-password=$REGISTRY_MIRROR_USERNAME \
     --registry-mirror-username="$REGISTRY_MIRROR_PASSWORD" \
     --self-managed --airgapped
