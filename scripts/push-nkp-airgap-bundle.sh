@@ -46,7 +46,7 @@ echo $bundlepath
 
 #get registry ca-cert
 ROOT_REGISTRY_URL=$(echo $AIRGAP_REGISTRY_MIRROR_URL | cut -d "/" -f1)
-openssl s_client -connect $ROOT_REGISTRY_URL:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > registry-ca_cert.pem
+openssl s_client -connect $ROOT_REGISTRY_URL -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > registry-ca_cert.pem
 if [ $? -ne 0 ]; then
     echo "issue getting registry ca-cert."
     exit 1
