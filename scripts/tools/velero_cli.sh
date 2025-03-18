@@ -51,13 +51,12 @@ VELEROPATH=$( ls -d */velero*)
 sudo mv $VELEROPATH /usr/local/bin
 
 if [ $? -eq 0 ]; then
-else
     echo "Failed to move velero. Exiting."
     exit 1
 fi
 
 # Clean up downloaded files
-rm -f velero*
+rm -rf velero_linux_amd64.tar.gz velero-v*
 
 # Success message
 echo "velero CLI installed successfully!"
