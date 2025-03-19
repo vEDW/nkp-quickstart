@@ -27,5 +27,5 @@ addrc 'alias kns=kubens'
 
 source ~/.bashrc
 
-addtmux 'set-option default-terminal "screen-256color"'
-addtmux 'set-option mouse on'
+addtmux 'set-option -g default-terminal "screen-256color"'
+addtmux 'set-option -g mouse on'
