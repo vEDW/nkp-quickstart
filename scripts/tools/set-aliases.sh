@@ -9,6 +9,10 @@ addrc(){
 
 addtmux(){
     content=$1
+    #check if .tmux.conf exists
+    if [ ! -f ~/.tmux.conf ]; then
+        touch ~/.tmux.conf
+    fi
     if [ "$(cat ~/.tmux.conf | grep "$content")" == "" ]; then
         echo "$content" >> ~/.tmux.conf
     fi
