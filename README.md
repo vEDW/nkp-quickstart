@@ -55,7 +55,7 @@ For NKP CLI:
 
     - Name: nkp-jump host
     - vCPUs: 2
-    - Memory: 4
+    - Memory: 16
     - Disk: Clone from Image (select the Rocky Linux you previously uploaded)
     - Disk Capacity: 128 (default is 20)
     - Guest Customization: Cloud-init (Linux)
@@ -69,6 +69,12 @@ For NKP CLI:
 
     ```shell
     ssh nutanix@<jump host_IP>
+    ```
+
+1. git clone this repo
+
+    ```shell
+    git clone https://github.com/vEDW/nkp-quickstart.git
     ```
 
 1. Install the NKP CLI with the command: [get-nkp-cli](./scripts/get-nkp-cli)
