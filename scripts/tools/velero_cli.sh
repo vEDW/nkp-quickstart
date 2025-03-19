@@ -47,18 +47,18 @@ if [ $? -ne 0 ]; then
 fi
 
 # Make the file executable and move it to /usr/local/bin
-VELEROPATH=$( ls -d */velero*)
+VELEROPATH="velero-${VELERORELEASE}-linux-amd64/velero"
 sudo mv $VELEROPATH /usr/local/bin
-
 if [ $? -ne 0 ]; then
     echo "Failed to move velero. Exiting."
     exit 1
 fi
 
 # Clean up downloaded files
-rm -rf velero_linux_amd64.tar.gz velero-v*
+rm -rf velero_linux_amd64.tar.gz velero-${VELERORELEASE}-linux-amd64/
 
 # Success message
 echo "velero CLI installed successfully!"
 echo "checking version"
+velero client config set namespace=kommander
 velero version
