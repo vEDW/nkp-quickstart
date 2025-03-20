@@ -80,7 +80,8 @@ For NKP CLI:
 1. Install the NKP CLI with the command: [get-nkp-cli](./scripts/get-nkp-cli)
 
     ```shell
-    curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
+    cd nkp-quickstart/scripts
+    ./get-nkp-cli
     ```
 
     When prompted, you must use the download link as-is, which is available in the Nutanix portal.
