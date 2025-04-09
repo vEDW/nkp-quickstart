@@ -16,8 +16,8 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     --csi-storage-container $NUTANIX_STORAGE_CONTAINER_NAME \
     --csi-hypervisor-attached-volumes=true \
     --registry-mirror-url http://$REGISTRY_MIRROR_URL \
-    --registry-mirror-password=$REGISTRY_MIRROR_USERNAME \
-    --registry-mirror-username="$REGISTRY_MIRROR_PASSWORD" \
+    --registry-mirror-username=$REGISTRY_MIRROR_USERNAME \
+    --registry-mirror-password="$REGISTRY_MIRROR_PASSWORD" \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
 echo "Cluster yaml created. to deploy cluster run : kubectl apply -f $CLUSTER_NAME.yaml"
