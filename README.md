@@ -17,14 +17,6 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
       - name: nutanix
         password: nutanix/4u # Recommended to change the password or update the script to use SSH keys
         type: text
-    bootcmd:
-    - mkdir -p /etc/docker
-    write_files:
-    - content: |
-        {
-            "insecure-registries": ["registry.nutanixdemo.com"]
-        }
-      path: /etc/docker/daemon.json
     runcmd:
     - '[ ! -f "/etc/yum.repos.d/nutanix_rocky9.repo" ] || mv -f /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled'
     - dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
@@ -105,14 +97,6 @@ For NKP CLI:
           - name: nutanix
             password: nutanix/4u # Recommended to change the password or update the script to use SSH keys
             type: text
-        bootcmd:
-        - mkdir -p /etc/docker
-        write_files:
-        - content: |
-            {
-                "insecure-registries": ["registry.nutanixdemo.com"]
-            }
-          path: /etc/docker/daemon.json
         runcmd:
         - '[ ! -f "/etc/yum.repos.d/nutanix_rocky9.repo" ] || mv -f /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled'
         - dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
