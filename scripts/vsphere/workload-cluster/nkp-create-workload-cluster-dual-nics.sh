@@ -195,4 +195,7 @@ nkp create cluster vsphere \
   --tls-thumb-print "${VCENTERTP}" \
   --registry-mirror-url "${REGISTRY_MIRROR_URL}" \
   --registry-mirror-username "${REGISTRY_MIRROR_USERNAME}" \
-  --registry-mirror-password "${REGISTRY_MIRROR_PASSWORD}"
+  --registry-mirror-password "${REGISTRY_MIRROR_PASSWORD}" \
+  --dry-run -o yaml > ${NKPCLUSTER}.yaml
+
+yq e ${NKPCLUSTER}.yaml
