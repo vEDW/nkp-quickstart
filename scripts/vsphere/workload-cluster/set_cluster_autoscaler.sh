@@ -61,12 +61,12 @@ if [[ "$MAX_NODES" -lt 0 ]]; then
     echo "MAX nodes cannot be less than 0. Exiting."
     exit 1
 fi
-kubectl annotate md ${NODEPOOL} -n ${CLUSTERNS} "cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size"="$MIN_NODES"  
+kubectl annotate --overwrite md ${NODEPOOL} -n ${CLUSTERNS} "cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size"="$MIN_NODES"  
 if [ $? -ne 0 ]; then
     echo "problem applying cluster autoscaler min settings. Exiting."
     exit 1
 fi
-echo "Cluster autoscaler configured"kubectl annotate md ${NODEPOOL} -n ${CLUSTERNS} "cluster.x-k8s.io/cluster-api-autoscaler-node-group-max-size"="$MAX_NODES"
+kubectl annotate --overwrite md ${NODEPOOL} -n ${CLUSTERNS} "cluster.x-k8s.io/cluster-api-autoscaler-node-group-max-size"="$MAX_NODES"
 if [ $? -ne 0 ]; then
     echo "problem applying cluster autoscaler max settings. Exiting."
     exit 1
