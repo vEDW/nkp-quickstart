@@ -159,8 +159,8 @@ VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | o
 echo "command to run to deploy NKP:"
 echo "nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
   --network ${SECOND_NETWORK} \
+  --network ${NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
   --data-center ${DATACENTER} \
   --data-store ${DATASTORE} \
@@ -181,8 +181,8 @@ read
 
 nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
   --network ${SECOND_NETWORK} \
+  --network ${NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
   --data-center ${DATACENTER} \
   --data-store ${DATASTORE} \
