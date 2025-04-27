@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#start timer
+START=$( date +%s ) 
+
 echo "Enter name for NKP Management Cluster : "
 read NKPCLUSTER
 
@@ -163,3 +166,12 @@ nkp create cluster vsphere \
   --tls-thumb-print "${VCENTERTP}" \
   --registry-mirror-url https://registry.nutanixdemo.com/docker.io \
   --self-managed
+
+END=$( date +%s )
+TIME=$( expr ${END} - ${START} )
+TIME=$(date -d@$TIME -u +%Hh%Mm%Ss)
+echo
+echo "=============================="
+echo "===  NKP cluster installed ==="
+echo "=== In ${TIME} ==="
+echo "=============================="
