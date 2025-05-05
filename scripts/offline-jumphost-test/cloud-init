@@ -1,0 +1,16 @@
+#cloud-config
+fqdn: nkp-quickstart-offline
+ssh_pwauth: true
+chpasswd:
+  expire: false
+  users:
+  - name: nutanix
+    password: nutanix/4u # Recommended to change the password or update the script to use SSH keys
+    type: text
+bootcmd:
+- mkdir -p /etc/docker
+runcmd:
+- systemctl disable kubelet.service
+- eject
+- 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
+final_message: "The machine is ready after $UPTIME seconds."
