@@ -38,6 +38,10 @@ fi
 echo "Enter name for new vm : "
 read VMNAME
 
+# get password for vm
+echo "Enter password for new vm : "
+read PASSWORD
+
 echo "select public ssh key: "
 sshkeys=$(ls ~/.ssh/*.pub)
 select sshkey in $sshkeys; do 
