@@ -91,15 +91,22 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
+#check if nkp-catalog-applications bundle is present
+if [ ! -f $bundlepath/container-images/nkp-catalog-applications* ]; then
+    echo 
+    echo " !! nkp-catalog-applications bundle not found. - skipping push of catalog applications bundle !!"
+    echo 
+else
+    APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
 
-nkp push bundle --bundle $APPBUNDLE \
-  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
-  --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
+    nkp push bundle --bundle $APPBUNDLE \
+    --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
+    --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
 
-if [ $? -ne 0 ]; then
-    echo "issue pushing $APPBUNDLE."
-    exit 1
+    if [ $? -ne 0 ]; then
+        echo "issue pushing $APPBUNDLE."
+        exit 1
+    fi
 fi
 
 docker load -i $bundlepath/nkp-image-builder-image-*
