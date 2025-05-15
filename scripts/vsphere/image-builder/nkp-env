@@ -1,0 +1,4 @@
+export AIRGAP_REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap              # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+export AIRGAP_REGISTRY_MIRROR_USERNAME='harbor user'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+export AIRGAP_REGISTRY_MIRROR_PASSWORD='harbor password'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+export AIRGAP_REGISTRY_MIRROR_CA_CERT_FILE=./registry-ca_cert.pem

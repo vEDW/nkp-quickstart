@@ -3,6 +3,8 @@
 #start timer
 START=$( date +%s ) 
 
+source ./nkp-env
+
 echo "Enter name for NKP Management Cluster : "
 read NKPCLUSTER
 
@@ -145,7 +147,8 @@ echo "nkp create cluster vsphere \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url https://registry.nutanixdemo.com/docker.io \
+  --registry-mirror-url $AIRGAP_REGISTRY_MIRROR_URL \
+  --registry-mirror-cacert $AIRGAP_REGISTRY_MIRROR_CA_CERT_FILE \
   --self-managed"
 
 echo "press enter to continue or ctrl+c to exit"
@@ -164,7 +167,8 @@ nkp create cluster vsphere \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url https://registry.nutanixdemo.com/docker.io \
+  --registry-mirror-url $AIRGAP_REGISTRY_MIRROR_URL \
+  --registry-mirror-cacert $AIRGAP_REGISTRY_MIRROR_CA_CERT_FILE \
   --self-managed
 
 END=$( date +%s )
