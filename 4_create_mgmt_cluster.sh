@@ -175,7 +175,7 @@ END=$( date +%s )
 TIME=$( expr ${END} - ${START} )
 TIME=$(date -d@$TIME -u +%Hh%Mm%Ss)
 echo
-echo "=============================="
-echo "===  NKP cluster installed ==="
+echo "==========================="
+echo "=== NKP cluster created ==="
 echo "=== In ${TIME} ==="
-echo "=============================="
+echo "==========================="

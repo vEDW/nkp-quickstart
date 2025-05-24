@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#start timer
+START=$( date +%s ) 
+
 #check if yq is installed
 if ! command -v yq &> /dev/null; then
     echo "yq could not be found, please install it first."
@@ -115,10 +118,24 @@ yq e $template.yaml
 echo "press enter to continue"
 read
 
+CURRENTDIR=$(pwd)
 #copy files to kib folder
 cp $LOCALKEY $bundlepath/kib/
 cp $template.yaml $bundlepath/kib/
 #build nkp image
 cd $bundlepath/kib
 ./konvoy-image build $template.yaml
+if [ $? -ne 0 ]; then
+    echo "Failed to build nkp image. Exiting."
+    exit 1
+fi
+cd $CURRENTDIR
 
+END=$( date +%s )
+TIME=$( expr ${END} - ${START} )
+TIME=$(date -d@$TIME -u +%Hh%Mm%Ss)
+echo
+echo "=========================="
+echo "===  NKP image created ==="
+echo "=== In ${TIME} ==="
+echo "=========================="
