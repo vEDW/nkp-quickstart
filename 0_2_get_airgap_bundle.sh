@@ -55,6 +55,7 @@ if [ $? -ne 0 ]; then
     echo "Extraction failed. Exiting."
     exit 1
 fi
+rm -f nkp-airgap.tar.gz
 
 version=$(echo $url | cut -d "?" -f1 | rev | cut -d "/" -f1 | rev |cut -d "_" -f2)
 cpwd=$(pwd)

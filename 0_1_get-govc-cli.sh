@@ -17,6 +17,7 @@ sudo chmod ugo+x ./govctar/govc
 sudo mv ./govctar/govc  /usr/local/bin/govc
 govc version
 rm -rf ./govctar
+rm -f govc_Linux_x86_64.tar.gz
 
 #configure govc environment variables
 echo "setting up govc environment variables"
