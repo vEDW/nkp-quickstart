@@ -57,6 +57,8 @@ select CLUSTER in $CLUSTERS; do
     break
 done
 
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
 #CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
 FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm)
 select FOLDER in $FOLDERS; do
@@ -64,6 +66,7 @@ select FOLDER in $FOLDERS; do
     echo
     break
 done
+IFS=$SAVEIFS
 
 if [ "${GOVC_DATACENTER}" == "" ]; then
     echo "No datacenter specified, please set GOVC_DATACENTER environment variable"
