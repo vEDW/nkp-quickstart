@@ -49,9 +49,18 @@ if [ $? -ne 0 ]; then
 fi
 echo "creating nkp image from $template"
 
-CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
+#CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
+CLUSTERS=$(govc find  ${GOVC_DATACENTER} -type ClusterComputeResource)
 select CLUSTER in $CLUSTERS; do
     echo "you selected cluster : ${CLUSTER}"
+    echo
+    break
+done
+
+#CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
+FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm)
+select FOLDER in $FOLDERS; do
+    echo "you selected cluster : ${FOLDER}"
     echo
     break
 done
