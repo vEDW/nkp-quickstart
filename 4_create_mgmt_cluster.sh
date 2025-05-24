@@ -46,7 +46,7 @@ done
 # fi
 
 echo "Select Cluster to deploy NKP"
-CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
+CLUSTERS=$(govc find "${GOVC_DATACENTER}" -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
 select CLUSTER in $CLUSTERS; do
     echo "you selected cluster : ${CLUSTER}"
     echo
@@ -58,7 +58,7 @@ echo "Select Network to deploy NKP"
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-NETWORKS=$(govc find / -type Network)
+NETWORKS=$(govc find "${GOVC_DATACENTER}" -type Network)
 echo
 echo "Select network to set as default"
 select NETWORK in $NETWORKS; do 
@@ -69,7 +69,8 @@ select NETWORK in $NETWORKS; do
 done
 IFS=$SAVEIFS
 
-NETWORK=$(echo "${GOVC_NETWORK}" | rev | cut -d'/' -f1 | rev)
+#NETWORK=$(echo "${GOVC_NETWORK}" | rev | cut -d'/' -f1 | rev)
+NETWORK="${GOVC_NETWORK}" 
 
 echo "Enter control plane VIP for NKP Management Cluster : "
 read NKPCLUSTERVIP
@@ -81,7 +82,7 @@ fi
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-DATASTORES=$(govc find / -type Datastore |grep -i -v "local")
+DATASTORES=$(govc find "${GOVC_DATACENTER}" -type Datastore |grep -i -v "local")
 echo
 echo "Select datastore :"
 select DATASTORE in $DATASTORES; do 
@@ -90,9 +91,10 @@ select DATASTORE in $DATASTORES; do
     export GOVC_DATASTORE="${DATASTORE}"
     break
 done
-DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
+#DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
+DATASTORE="${GOVC_DATASTORE}"
 
-FOLDERS=$(govc find / -type Folder)
+FOLDERS=$(govc find "${GOVC_DATACENTER}" -type Folder |grep vm)
 echo
 echo "Select Folder :"
 select FOLDER in $FOLDERS; do 
@@ -101,9 +103,10 @@ select FOLDER in $FOLDERS; do
     export GOVC_FOLDER="${FOLDER}"
     break
 done
-FOLDER=$(echo "${GOVC_FOLDER}" | rev | cut -d'/' -f1 | rev)
+#FOLDER=$(echo "${GOVC_FOLDER}" | rev | cut -d'/' -f1 | rev)
+FOLDER="${GOVC_FOLDER}"
 
-RESOURCEPOOLS=$(govc find / -type ResourcePool)
+RESOURCEPOOLS=$(govc find "${GOVC_DATACENTER}" -type ResourcePool)
 echo
 echo "Select Resource Pool to set as default"
 select RESOURCEPOOL in $RESOURCEPOOLS; do 
@@ -112,7 +115,8 @@ select RESOURCEPOOL in $RESOURCEPOOLS; do
     export GOVC_RESOURCE_POOL="${RESOURCEPOOL}"
     break
 done
-RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
+#RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
+RESOURCE_POOL="${GOVC_RESOURCE_POOL}" 
 IFS=$SAVEIFS
 
 echo "select public ssh key: "
