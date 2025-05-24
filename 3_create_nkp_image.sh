@@ -26,10 +26,10 @@ fi
 echo $bundlepath
 
 #list VM templates to build nkp image from
-echo "Select VM template to build NKP image from"
+echo "Select base VM to build NKP image from"
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-VMSLIST=$(govc ls vm)
+VMSLIST=$(govc find / -type m |grep -v CVM)
 select template in $VMSLIST; do
     template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
@@ -79,6 +79,10 @@ RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
 
 echo "select public ssh key: "
 LOCALKEYS=$(ls *_localkey)
+if [ -z "$LOCALKEYS" ]; then
+    echo "No local keys found. Please create a key first."
+    exit 1
+fi
 select LOCALKEY in $LOCALKEYS; do
     echo "you selected key : ${LOCALKEY}"
     echo

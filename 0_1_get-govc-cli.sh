@@ -30,10 +30,14 @@ sed -i "s|<username>|${GOVC_USERNAME}|g" govc_env
 sed -i "s|<vcenter ip or fqdn>|${VCENTERHOST}|g" govc_env
 
 #test govc settings
+echo 
+echo "testing govc_env configuration"
+echo
 source ./govc_env
 govc about
 if [ $? -ne 0 ]; then
     echo "govc configuration failed, please check your govc_env file"
     exit 1
 fi
+echo 
 echo "govc configuration successful"
