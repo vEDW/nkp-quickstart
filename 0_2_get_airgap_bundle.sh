@@ -33,7 +33,7 @@ fi
 REQUIRED_SPACE=30000000 # 30GB in KB
 AVAILABLE_SPACE=$(df -k . | awk 'NR==2 {print $4}')
 if [ $AVAILABLE_SPACE -lt $REQUIRED_SPACE ]; then
-    echo "Not enough disk space available. Required: 20GB, Available: $(($AVAILABLE_SPACE / 1024))MB"
+    echo "Not enough disk space available. Required: 30GB, Available: $(($AVAILABLE_SPACE / 1024))MB"
     exit 1
 fi
 

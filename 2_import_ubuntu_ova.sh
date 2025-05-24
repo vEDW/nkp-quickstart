@@ -44,6 +44,17 @@ read PASSWORD
 
 echo "select public ssh key: "
 sshkeys=$(ls ~/.ssh/*.pub)
+if [ -z "$sshkeys" ]; then
+    echo "No public ssh keys found in ~/.ssh/. creating a ssh key."
+    ssh-keygen -t rsa -b 4096 -f ~/.ssh/nkp_ssh_key -N ""
+    #check if error
+    if [ $? -ne 0 ]; then
+        echo "Failed to create ssh key. Exiting."
+        exit 1
+    fi
+    echo "SSH key created."
+    sshkeys=$(ls ~/.ssh/*.pub)
+fi
 select sshkey in $sshkeys; do 
     echo "you selected public ssh : ${sshkey}"
     privatekey=$(echo $sshkey | sed 's/.pub//')
