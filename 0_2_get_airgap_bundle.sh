@@ -29,24 +29,14 @@ if ! command -v wget &> /dev/null; then
     exit 1
 fi
 
-#verify if enough free space is available
-free_space=$(df -h . | awk 'NR==2 {print $4}')
-if [[ $free_space == *G ]]; then
-    free_space_value=$(echo $free_space | sed 's/G//')
-    if (( $(echo "$free_space_value < 30" | bc -l) )); then
-        echo "Not enough free space available. At least 30GB is required."
-        exit 1
-    fi
-elif [[ $free_space == *M ]]; then
-    free_space_value=$(echo $free_space | sed 's/M//')
-    if (( $free_space_value < 30.720 )); then
-        echo "Not enough free space available. At least 30GB is required."
-        exit 1
-    fi
-else
-    echo "Unable to determine free space. Exiting."
+#check if enough disk space is available
+REQUIRED_SPACE=30000000 # 30GB in KB
+AVAILABLE_SPACE=$(df -k . | awk 'NR==2 {print $4}')
+if [ $AVAILABLE_SPACE -lt $REQUIRED_SPACE ]; then
+    echo "Not enough disk space available. Required: 20GB, Available: $(($AVAILABLE_SPACE / 1024))MB"
     exit 1
 fi
+
 # Prompt the user for the download link
 echo 'open browser to site : https://portal.nutanix.com/page/downloads?product=nkp and find "NKP Airgapped Bundle" '
 read -p "Enter 'NKP airgap bundle' download link: " url < /dev/tty
