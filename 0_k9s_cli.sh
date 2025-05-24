@@ -23,37 +23,43 @@
 
 #------------------------------------------------------------------------------
 
-# Prompt the user for the download link
-echo 'open browser to site : https://portal.nutanix.com/page/downloads?product=nkp and find "NKP Airgapped Bundle" '
-read -p "Enter 'NKP airgap bundle' download link: " url < /dev/tty
-
-# Check if URL is empty
-if [ -z "$url" ]; then
-    echo "No URL provided. Exiting."
+K9SRELEASE=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r .tag_name)
+if [[ ${K9SRELEASE} == "null" ]]; then
+    echo "github api rate limiting blocked request"
+    echo "get latest version failed. Exiting."
     exit 1
 fi
 
+echo "Downloading k9s ${K9SRELEASE}"
+url="https://github.com/derailed/k9s/releases/download/${K9SRELEASE}/k9s_Linux_amd64.tar.gz"
+
 # Download the file with wget and check for errors
-wget -O nkp-airgap.tar.gz "$url"
+wget -O k9s_Linux_amd64.tar.gz "$url"
 if [ $? -ne 0 ]; then
     echo "Download failed. Exiting."
     exit 1
 fi
 
 # Extract the downloaded file and check for errors
-echo
-echo "Extracting bundle - this can take some time"
-
-tar xzf nkp-airgap.tar.gz
+tar xzf k9s_Linux_amd64.tar.gz 
 if [ $? -ne 0 ]; then
     echo "Extraction failed. Exiting."
     exit 1
 fi
 
-version=$(echo $url | cut -d "?" -f1 | rev | cut -d "/" -f1 | rev |cut -d "_" -f2)
-cpwd=$(pwd)
-bundle="$cpwd/nkp-$version"
-echo $bundle > bundle-path
+# Make the file executable and move it to /usr/local/bin
+chmod +x ./k9s
+if [ $? -eq 0 ]; then
+    sudo mv ./k9s /usr/local/bin
+else
+    echo "Failed to make k9s executable. Exiting."
+    exit 1
+fi
+
+# Clean up downloaded files
+rm -f k9s_Linux_amd64.tar.gz LICENSE README.md
 
 # Success message
-echo "NKP airgap bundle extracted to : $bundle"
+echo "k9s CLI installed successfully!"
+echo "checking version"
+k9s version

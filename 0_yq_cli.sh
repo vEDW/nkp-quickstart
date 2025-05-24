@@ -23,34 +23,43 @@
 
 #------------------------------------------------------------------------------
 
-# Prompt the user for the download link
-echo 'open browser to site : https://portal.nutanix.com/page/downloads?product=nkp and find "Konvoy Image Builder for Linux" '
-read -p "Enter 'Konvoy Image Builder for Linux' download link: " url < /dev/tty
-
-# Check if URL is empty
-if [ -z "$url" ]; then
-    echo "No URL provided. Exiting."
+YQRELEASE=$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest | jq -r .tag_name)
+if [[ ${YQRELEASE} == "null" ]]; then
+    echo "github api rate limiting blocked request"
+    echo "get latest version failed. Exiting."
     exit 1
 fi
 
+echo "Downloading YQ ${YQRELEASE}"
+url="https://github.com/mikefarah/yq/releases/download/${YQRELEASE}/yq_linux_amd64.tar.gz"
 # Download the file with wget and check for errors
-wget -O kib.tar.gz "$url"
+wget -O yq_linux_amd64.tar.gz "$url"
 if [ $? -ne 0 ]; then
     echo "Download failed. Exiting."
     exit 1
 fi
 
 # Extract the downloaded file and check for errors
-tar xzf kib.tar.gz
+tar xzf yq_linux_amd64.tar.gz
 if [ $? -ne 0 ]; then
     echo "Extraction failed. Exiting."
     exit 1
 fi
 
+# Make the file executable and move it to /usr/local/bin
+mv yq_linux_amd64 yq
+chmod +x ./yq
+if [ $? -eq 0 ]; then
+    sudo mv ./yq /usr/local/bin
+else
+    echo "Failed to make yq executable. Exiting."
+    exit 1
+fi
+
 # Clean up downloaded files
-rm -f kib.tar.gz 
+rm -f yq_linux_amd64.tar.gz yq.1 install-man-page.sh
 
 # Success message
-echo "Konvoy Image Builder CLI installed successfully!"
+echo "yq CLI installed successfully!"
 echo "checking version"
-./konvoy-image --version
+yq -V

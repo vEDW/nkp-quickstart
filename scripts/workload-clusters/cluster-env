@@ -1,3 +1,0 @@
-export REGISTRY_MIRROR_URL=registry-1.docker.io                 # Required on Nutanix HPOC
-export REGISTRY_MIRROR_USERNAME=                                # Required for docker.io
-export REGISTRY_MIRROR_PASSWORD=                                # Required on Nutanix HPOC

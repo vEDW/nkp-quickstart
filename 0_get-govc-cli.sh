@@ -17,3 +17,23 @@ sudo chmod ugo+x ./govctar/govc
 sudo mv ./govctar/govc  /usr/local/bin/govc
 govc version
 rm -rf ./govctar
+
+#configure govc environment variables
+echo "setting up govc environment variables"
+cp govc_env_example govc_env
+echo
+echo "Please enter vcenter fqdn or ip address:"
+read VCENTERHOST < /dev/tty
+echo "Please enter vcenter username:"
+read GOVC_USERNAME < /dev/tty
+sed -i "s|<username>|${GOVC_USERNAME}|g" govc_env
+sed -i "s|<vcenter ip or fqdn>|${VCENTERHOST}|g" govc_env
+
+#test govc settings
+source ./govc_env
+govc about
+if [ $? -ne 0 ]; then
+    echo "govc configuration failed, please check your govc_env file"
+    exit 1
+fi
+echo "govc configuration successful"

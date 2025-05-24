@@ -1,5 +1,30 @@
 #!/bin/bash
 
+#check if yq is installed
+if ! command -v yq &> /dev/null; then
+    echo "yq could not be found, please install it first."
+    exit 1
+fi
+#check if govc is installed
+if ! command -v govc &> /dev/null; then
+    echo "govc could not be found, please install it first."
+    exit 1
+fi
+#check if bundle-path is present
+bundlepath=$(cat bundle-path)
+if [ $? -ne 0 ]; then
+    echo "no bundle-path file present. please run 0_get_airgap_bundle.sh first"
+    exit 1
+fi
+
+# Check if directory is empty
+if [ -z "$bundlepath" ]; then
+    echo "No content in dir $bundlepath. Exiting."
+    exit 1
+fi
+
+echo $bundlepath
+
 #list VM templates to build nkp image from
 echo "Select VM template to build NKP image from"
 SAVEIFS=$IFS
@@ -60,7 +85,7 @@ select LOCALKEY in $LOCALKEYS; do
     break
 done
 
-UBUNTUYAML=$(cat ./3_ubuntu_image.yaml)
+UBUNTUYAML=$(cat ./ubuntu_image.yaml)
 UBUNTUYAML=$(echo "$UBUNTUYAML" |CLUSTER="$CLUSTER" yq e '.packer.cluster =env(CLUSTER)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |DATACENTER="$DATACENTER" yq e '.packer.datacenter =env(DATACENTER)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |NETWORK="$NETWORK" yq e '.packer.network =env(NETWORK)')
@@ -81,5 +106,11 @@ yq e $template.yaml
 
 echo "press enter to continue"
 read
+
+#copy files to kib folder
+cp $LOCALKEY $bundlepath/kib/
+cp $template.yaml $bundlepath/kib/
+#build nkp image
+cd $bundlepath/kib
 ./konvoy-image build $template.yaml
 
