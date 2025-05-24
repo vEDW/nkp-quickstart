@@ -57,25 +57,29 @@ if [ "${GOVC_DATACENTER}" == "" ]; then
     echo "No datacenter specified, please set GOVC_DATACENTER environment variable"
     exit 1
 fi
-DATACENTER=$(echo "${GOVC_DATACENTER}" | rev | cut -d'/' -f1 | rev)
+#DATACENTER=$(echo "${GOVC_DATACENTER}" | rev | cut -d'/' -f1 | rev)
+DATACENTER="${GOVC_DATACENTER}"
 
 if [ "${GOVC_NETWORK}" == "" ]; then
     echo "No network specified, please set GOVC_NETWORK environment variable"
     exit 1
 fi
-NETWORK=$(echo "${GOVC_NETWORK}" | rev | cut -d'/' -f1 | rev)
+#NETWORK=$(echo "${GOVC_NETWORK}" | rev | cut -d'/' -f1 | rev)
+NETWORK="${GOVC_NETWORK}"
 
 if [ "${GOVC_DATASTORE}" == "" ]; then
     echo "No network specified, please set GOVC_NETWORK environment variable"
     exit 1
 fi
-DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
+#DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
+DATASTORE="${GOVC_DATASTORE}"
 
 if [ "${GOVC_RESOURCE_POOL}" == "" ]; then
     echo "No network specified, please set GOVC_NETWORK environment variable"
     exit 1
 fi
-RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
+#RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
+RESOURCE_POOL="${GOVC_RESOURCE_POOL}"
 
 echo "select public ssh key: "
 LOCALKEYS=$(ls *_localkey)
@@ -94,9 +98,9 @@ UBUNTUYAML=$(echo "$UBUNTUYAML" |CLUSTER="$CLUSTER" yq e '.packer.cluster =env(C
 UBUNTUYAML=$(echo "$UBUNTUYAML" |DATACENTER="$DATACENTER" yq e '.packer.datacenter =env(DATACENTER)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |NETWORK="$NETWORK" yq e '.packer.network =env(NETWORK)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |DATASTORE="$DATASTORE" yq e '.packer.datastore =env(DATASTORE)')
+UBUNTUYAML=$(echo "$UBUNTUYAML" |RESOURCE_POOL="$RESOURCE_POOL" yq e '.packer.resource_pool =env(RESOURCE_POOL)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |template="$template" yq e '.packer.template =env(template)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |locakey="$LOCALKEY" yq e '.packer.ssh_private_key_file =env(locakey)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" | yq e '.packer.resource_pool ="/"')
 UBUNTUYAML=$(echo "$UBUNTUYAML" | yq e '.packer.folder ="/"')
 
 #need to add folder and RP
