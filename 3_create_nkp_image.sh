@@ -114,9 +114,9 @@ UBUNTUYAML=$(echo "$UBUNTUYAML" |DATACENTER="$DATACENTER" yq e '.packer.datacent
 UBUNTUYAML=$(echo "$UBUNTUYAML" |NETWORK="$NETWORK" yq e '.packer.network =env(NETWORK)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |DATASTORE="$DATASTORE" yq e '.packer.datastore =env(DATASTORE)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |RESOURCE_POOL="$RESOURCE_POOL" yq e '.packer.resource_pool =env(RESOURCE_POOL)')
+UBUNTUYAML=$(echo "$UBUNTUYAML" |FOLDER="$FOLDER" yq e '.packer.folder =env(FOLDER)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |template="$template" yq e '.packer.template =env(template)')
 UBUNTUYAML=$(echo "$UBUNTUYAML" |locakey="$LOCALKEY" yq e '.packer.ssh_private_key_file =env(locakey)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" | yq e '.packer.folder ="/"')
 
 #need to add folder and RP
 echo "$UBUNTUYAML" > $template.yaml
