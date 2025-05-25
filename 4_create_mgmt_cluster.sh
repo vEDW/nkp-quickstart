@@ -29,7 +29,12 @@ echo
 echo "Select VM template to build NKP cluster with:"
 #SAVEIFS=$IFS
 #IFS=$(echo -en "\n\b")
-VMSLIST=$(govc vm.info -json $GOVC_DATACENTER/vm/* |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
+VMSLIST=$(govc find $GOVC_DATACENTER -type m |xargs govc vm.info -json  |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
+#check if there are any templates available
+if [[ -z "$VMSLIST" ]]; then
+    echo "No VM templates found in datacenter ${DATACENTER}. Exiting."
+    exit 1
+fi
 select template in $VMSLIST; do
 #    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
