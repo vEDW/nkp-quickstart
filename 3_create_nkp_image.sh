@@ -8,11 +8,13 @@ if ! command -v yq &> /dev/null; then
     echo "yq could not be found, please install it first."
     exit 1
 fi
+
 #check if govc is installed
 if ! command -v govc &> /dev/null; then
     echo "govc could not be found, please install it first."
     exit 1
 fi
+
 #check if bundle-path is present
 bundlepath=$(cat bundle-path)
 if [ $? -ne 0 ]; then
@@ -27,45 +29,6 @@ if [ -z "$bundlepath" ]; then
 fi
 
 echo $bundlepath
-
-#list VM templates to build nkp image from
-echo "Select base VM to build NKP image from"
-SAVEIFS=$IFS
-IFS=$(echo -en "\n\b")
-VMSLIST=$(govc find / -type m |grep -v CVM)
-select template in $VMSLIST; do
-    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
-    echo "you selected template : ${template}"
-    echo
-    break
-done
-IFS=$SAVEIFS
-
-#verify template is actually a VM
-VMTEST=$(govc vm.info $GOVC_DATACENTER/vm/$template)
-if [ $? -ne 0 ]; then
-    echo "Template is not a VM. Exiting."
-    exit 1
-fi
-echo "creating nkp image from $template"
-
-#CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
-CLUSTERS=$(govc find  ${GOVC_DATACENTER} -type ClusterComputeResource)
-select CLUSTER in $CLUSTERS; do
-    echo "you selected cluster : ${CLUSTER}"
-    echo
-    break
-done
-
-SAVEIFS=$IFS
-IFS=$(echo -en "\n\b")
-FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
-select FOLDER in $FOLDERS; do
-    echo "you selected cluster : ${FOLDER}"
-    echo
-    break
-done
-IFS=$SAVEIFS
 
 if [ "${GOVC_DATACENTER}" == "" ]; then
     echo "No datacenter specified, please set GOVC_DATACENTER environment variable"
@@ -94,6 +57,48 @@ if [ "${GOVC_RESOURCE_POOL}" == "" ]; then
 fi
 #RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
 RESOURCE_POOL="${GOVC_RESOURCE_POOL}"
+
+#list VM templates to build nkp image from
+echo "Select base VM to build NKP image from"
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+VMSLIST=$(govc find / -type m |grep -v CVM)
+select template in $VMSLIST; do
+    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
+    echo "you selected template : ${template}"
+    echo
+    break
+done
+IFS=$SAVEIFS
+
+#verify template is actually a VM
+VMTEST=$(govc vm.info $GOVC_DATACENTER/vm/$template)
+if [ $? -ne 0 ]; then
+    echo "Template is not a VM. Exiting."
+    exit 1
+fi
+echo "creating nkp image from $template"
+echo
+echo "Select Cluster to deploy NKP image to"
+
+#CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
+CLUSTERS=$(govc find  ${GOVC_DATACENTER} -type ClusterComputeResource)
+select CLUSTER in $CLUSTERS; do
+    echo "you selected cluster : ${CLUSTER}"
+    echo
+    break
+done
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+echo "Select Folder to deploy NKP image to"
+FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
+select FOLDER in $FOLDERS; do
+    echo "you selected cluster : ${FOLDER}"
+    echo
+    break
+done
+IFS=$SAVEIFS
 
 echo "select public ssh key: "
 LOCALKEYS=$(ls *_localkey)
