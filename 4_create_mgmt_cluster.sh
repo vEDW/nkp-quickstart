@@ -142,8 +142,26 @@ export vsphere_password=$VSPHERE_PASSWORD
 #get vcenter thumbprint
 VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | cut -d "=" -f2)
 
+#check if bundle-path is present
+bundlepath=$(cat bundle-path)
+if [ $? -ne 0 ]; then
+    echo "no bundle-path file present. please run 0_get_airgap_bundle.sh first"
+    exit 1
+fi
+
+# Check if directory is empty
+if [ -z "$bundlepath" ]; then
+    echo "No content in dir $bundlepath. Exiting."
+    exit 1
+fi
+echo
+echo "using airgap bundle : $bundlepath"
+echo
+
+
+
 echo "command to run to deploy NKP:"
-echo "nkp create cluster vsphere \
+echo "$bundlepath/cli/nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
   --network ${NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
@@ -166,7 +184,7 @@ echo "nkp create cluster vsphere \
 echo "press enter to continue or ctrl+c to exit"
 read
 
-nkp create cluster vsphere \
+$bundlepath/cli/nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
   --network ${NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
