@@ -151,8 +151,11 @@ echo "nkp create cluster vsphere \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url $AIRGAP_REGISTRY_MIRROR_URL \
-  --registry-mirror-cacert $AIRGAP_REGISTRY_MIRROR_CA_CERT_FILE \
+  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
+  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
+  ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
   --self-managed"
 
 echo "press enter to continue or ctrl+c to exit"
@@ -171,8 +174,11 @@ nkp create cluster vsphere \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url $AIRGAP_REGISTRY_MIRROR_URL \
-  --registry-mirror-cacert $AIRGAP_REGISTRY_MIRROR_CA_CERT_FILE \
+  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
+  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
+  ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
   --self-managed
 
 END=$( date +%s )

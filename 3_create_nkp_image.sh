@@ -79,8 +79,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo
-echo "creating nkp image from $template"
-echo
 echo "Select Cluster to deploy NKP image to"
 
 #CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
