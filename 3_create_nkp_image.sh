@@ -27,8 +27,9 @@ if [ -z "$bundlepath" ]; then
     echo "No content in dir $bundlepath. Exiting."
     exit 1
 fi
-
-echo $bundlepath
+echo
+echo "using airgap bundle : $bundlepath"
+echo
 
 if [ "${GOVC_DATACENTER}" == "" ]; then
     echo "No datacenter specified, please set GOVC_DATACENTER environment variable"
@@ -77,6 +78,7 @@ if [ $? -ne 0 ]; then
     echo "Template is not a VM. Exiting."
     exit 1
 fi
+echo
 echo "creating nkp image from $template"
 echo
 echo "Select Cluster to deploy NKP image to"
@@ -85,12 +87,12 @@ echo "Select Cluster to deploy NKP image to"
 CLUSTERS=$(govc find  ${GOVC_DATACENTER} -type ClusterComputeResource)
 select CLUSTER in $CLUSTERS; do
     echo "you selected cluster : ${CLUSTER}"
-    echo
     break
 done
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
+echo
 echo "Select Folder to deploy NKP image to"
 FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
 select FOLDER in $FOLDERS; do
@@ -99,7 +101,7 @@ select FOLDER in $FOLDERS; do
     break
 done
 IFS=$SAVEIFS
-
+echo
 echo "select public ssh key: "
 LOCALKEYS=$(ls *_localkey)
 if [ -z "$LOCALKEYS" ]; then
@@ -123,6 +125,7 @@ UBUNTUYAML=$(echo "$UBUNTUYAML" |template="$template" yq e '.packer.template =en
 UBUNTUYAML=$(echo "$UBUNTUYAML" |locakey="$LOCALKEY" yq e '.packer.ssh_private_key_file =env(locakey)')
 
 #need to add folder and RP
+echo
 echo "$UBUNTUYAML" > $template.yaml
 echo "nkp image $template.yaml created"
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
