@@ -59,8 +59,7 @@ done
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-#CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
-FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm)
+FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
 select FOLDER in $FOLDERS; do
     echo "you selected cluster : ${FOLDER}"
     echo
