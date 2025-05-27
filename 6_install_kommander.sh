@@ -3,6 +3,13 @@
 #start timer
 START=$( date +%s ) 
 
+#check if bundle-path is present
+bundlepath=$(cat bundle-path)
+if [ $? -ne 0 ]; then
+    echo "no bundle-path file present. please run 0_get_airgap_bundle.sh first"
+    exit 1
+fi
+
 # Check if directory is empty
 if [ -z "$bundlepath" ]; then
     echo "No content in dir $bundlepath. Exiting."
