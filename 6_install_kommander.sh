@@ -3,6 +3,16 @@
 #start timer
 START=$( date +%s ) 
 
+# Check if directory is empty
+if [ -z "$bundlepath" ]; then
+    echo "No content in dir $bundlepath. Exiting."
+    exit 1
+fi
+echo
+echo "using airgap bundle : $bundlepath"
+echo
+
+
 KUBECONFIGS=$(ls *.conf)
 select KUBECONFIGYAML in $KUBECONFIGS; do
     test=$(KUBECONFIG=$KUBECONFIGYAML kubectl get nodes)
@@ -17,7 +27,7 @@ done
 
 echo "press enter to continue"
 read
-KUBECONFIG=$KUBECONFIGYAML nkp install kommander
+KUBECONFIG=$KUBECONFIGYAML $bundlepath/cli/nkp install kommander
 if [ $? -ne 0 ]; then
     echo "problem installing kommander using $KUBECONFIGYAML . Exiting."
     exit 1
