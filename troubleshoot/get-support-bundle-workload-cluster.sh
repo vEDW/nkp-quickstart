@@ -8,7 +8,12 @@ then
     echo "nkp not found - please install nkp cli - see nkp-quickstart/scripts/get-nkp-cli"
     exit
 fi
-
+#check if jq is installed
+if ! command -v jq &> /dev/null
+then
+    echo "jq not found - please install jq"
+    exit
+fi
 
 CONTEXTS=$(kubectl config get-contexts --output=name)
 #check if at least one context is available
@@ -32,7 +37,9 @@ kubectl config use-context $CLUSTERCTX
 
 KOMANDERCRD=$(kubectl  api-resources |grep cluster.x-k8s.io)
 if [[ -z "$KOMANDERCRD" ]]; then
+    echo
     echo "This is not a NKP Management Cluster. Please select a valid management cluster."
+    echo
     exit 1
 fi
 
@@ -76,9 +83,12 @@ else
         echo "nkp diagnose failed. Exiting."
         exit 1
     fi
-    echo "nkp diagnose completed successfully"
     #remove kubeconfig file
     rm -f $KUBECONFIG_FILE
+    echo
     echo "Kubeconfig file $KUBECONFIG_FILE deleted"
+    echo
+    echo "nkp diagnose completed successfully"
+
 fi
 
