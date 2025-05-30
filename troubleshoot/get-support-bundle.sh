@@ -7,11 +7,23 @@ then
     exit
 fi
 
-#ask to select existing kubeconfig context or kubeconfig file
+#provide useage info
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    echo "Usage: $0 [kubeconfig_file]"
+    echo "If kubeconfig_file is not provided, the script will prompt you to select a context from your existing kubeconfig."
+    echo "If kubeconfig_file is provided, it will be used directly."
+    exit 0
+fi
 
 if [ "$1" == "" ] ; then
 
     CONTEXTS=$(kubectl config get-contexts --output=name)
+    #check if at least one context is available
+    if [ -z "$CONTEXTS" ]; then
+        echo "No kubernetes contexts found. Exiting."
+        exit 1
+    fi
+
     echo
     echo "Select kubernetes cluster or CTRL-C to quit"
     select CONTEXT in $CONTEXTS; do 
