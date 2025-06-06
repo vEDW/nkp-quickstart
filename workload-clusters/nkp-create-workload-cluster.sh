@@ -22,4 +22,4 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
 
 echo "Cluster definition created:  $CLUSTER_NAME.yaml"
 echo
-echo "to execute, run : kubectl apply -f $CLUSTER_NAME.yaml"
+echo "to execute, run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"
