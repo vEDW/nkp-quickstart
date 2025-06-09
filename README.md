@@ -9,6 +9,13 @@
 * run scripts in numerical order
 
 
+## Network Diagram
+
+Below an example of NKP on vsphere deployment diagram.
+Ip ranges are provided as example.
+
+![NKP vSphere diagram](images/nkp-vsphere-diagram-example.png)
+
 
 ## Support and Disclaimer
 
