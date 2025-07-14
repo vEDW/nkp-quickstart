@@ -5,7 +5,7 @@
 
 CONTEXTS=$(kubectl config get-contexts --output=name)
 echo
-echo "Select management cluster or CTRL-C to quit"
+echo "Select cluster to create service account into or CTRL-C to quit"
 select CONTEXT in $CONTEXTS; do 
     echo "you selected cluster context : ${CONTEXT}"
     echo 
@@ -35,7 +35,7 @@ metadata:
   name: $SERVICE_ACCOUNT_NAME-sa-token
   annotations:
     kubernetes.io/service-account.name: $SERVICE_ACCOUNT_NAME
-  type: kubernetes.io/service-account-token
+type: kubernetes.io/service-account-token
 "
 
 YAMLFILE=$SERVICE_ACCOUNT_NAME-sa-token.yaml
