@@ -76,7 +76,7 @@ if [ $? -ne 0 ]; then
 fi
 # Create kubeconfig file for the service account
 KUBECONFIG_FILE="kubeconfig-${SERVICE_ACCOUNT_NAME}.yaml"
-export USER_TOKEN_VALUE=$(kubectl -n kube-system get secret/kommander-cluster-admin-sa-token -o=go-template='{{.data.token}}' | base64 --decode)
+export USER_TOKEN_VALUE=$(kubectl -n kube-system get secret/$SERVICE_ACCOUNT_NAME-sa-token -o=go-template='{{.data.token}}' | base64 --decode)
 export CURRENT_CONTEXT=$(kubectl config current-context)
 export CURRENT_CLUSTER=$(kubectl config view --raw -o=go-template='{{range .contexts}}{{if eq .name "'''${CURRENT_CONTEXT}'''"}}{{ index .context "cluster" }}{{end}}{{end}}')
 export CLUSTER_CA=$(kubectl config view --raw -o=go-template='{{range .clusters}}{{if eq .name "'''${CURRENT_CLUSTER}'''"}}"{{with index .cluster "certificate-authority-data" }}{{.}}{{end}}"{{ end }}{{ end }}')
@@ -88,7 +88,7 @@ contexts:
 - name: ${CURRENT_CONTEXT}
   context:
     cluster: ${CURRENT_CONTEXT}
-    user: kommander-cluster-admin
+    user: $SERVICE_ACCOUNT_NAME
     namespace: kube-system
 clusters:
 - name: ${CURRENT_CONTEXT}
