@@ -96,7 +96,7 @@ clusters:
     certificate-authority-data: ${CLUSTER_CA}
     server: ${CLUSTER_SERVER}
 users:
-- name: kommander-cluster-admin
+- name: $SERVICE_ACCOUNT_NAME
   user:
     token: ${USER_TOKEN_VALUE}
 "
