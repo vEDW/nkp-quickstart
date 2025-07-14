@@ -103,6 +103,10 @@ users:
 echo "$KUBECONFIG" > $KUBECONFIG_FILE
 
 #test if kubeconfig file works
+echo
+echo "Testing kubeconfig file with 'kubectl get nodes'"
+echo
+
 if kubectl --kubeconfig=$KUBECONFIG_FILE get nodes; then
     echo "Kubeconfig file created successfully: $KUBECONFIG_FILE"
 else
