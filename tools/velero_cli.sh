@@ -22,6 +22,11 @@
 # Contributors: 
 
 #------------------------------------------------------------------------------
+#check if jq is installed
+if ! command -v jq &> /dev/null; then
+    echo "jq is not installed. Please install jq to run this script."
+    exit 1
+fi  
 
 VELERORELEASE=$(curl -s https://api.github.com/repos/vmware-tanzu/velero/releases/latest | jq -r .tag_name)
 if [[ ${VELERORELEASE} == "null" ]]; then

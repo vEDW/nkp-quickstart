@@ -23,6 +23,12 @@
 
 #------------------------------------------------------------------------------
 
+#check if jq is installed
+if ! command -v jq &> /dev/null; then
+    echo "jq is not installed. Please install jq to run this script."
+    exit 1
+fi  
+
 K9SRELEASE=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r .tag_name)
 if [[ ${K9SRELEASE} == "null" ]]; then
     echo "github api rate limiting blocked request"

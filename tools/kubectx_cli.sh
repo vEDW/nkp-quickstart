@@ -23,6 +23,12 @@
 
 #------------------------------------------------------------------------------
 
+#check if jq is installed
+if ! command -v jq &> /dev/null; then
+    echo "jq is not installed. Please install jq to run this script."
+    exit 1
+fi  
+
 RELEASE=$(curl -s https://api.github.com/repos/ahmetb/kubectx/releases/latest | jq -r .tag_name)
 if [[ ${RELEASE} == "null" ]]; then
     echo "github api rate limiting blocked request"
