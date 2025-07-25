@@ -1,6 +1,5 @@
-export NKP_VERSION=2.12.0                                       # NKP version to install
 export CLUSTER_NAME=nkp-starter                                         # NKP cluster name. When using NKP Pro/Ultimate, this name is used to generate the license key
-export NUTANIX_USER=admin                                       # Prism Central username
+export NUTANIX_USER=nkp-admin                                       # Prism Central username
 export NUTANIX_PASSWORD='supersecretpassword'                                      # Keep the password enclosed between single quotes - Ex: 'password'
 export NUTANIX_ENDPOINT=                                        # Prism Central IP address
 export NUTANIX_PORT=9440                                        # Prism Central port (default: 9440)

@@ -1,12 +1,12 @@
 #cloud-config
 fqdn: nkp-quickstart-offline
 ssh_pwauth: true
-chpasswd:
-  expire: false
-  users:
-  - name: nutanix
-    password: nutanix/4u # Recommended to change the password or update the script to use SSH keys
-    type: text
+users:
+- name: nutanix
+  primary_group: nutanix
+  groups: nutanix, docker
+  lock_passwd: false
+  plain_text_passwd: nutanix/4u
 bootcmd:
 - mkdir -p /etc/docker
 runcmd:

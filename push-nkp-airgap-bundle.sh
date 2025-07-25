@@ -72,7 +72,7 @@ fi
 
 APPBUNDLE=$(ls $bundlepath/container-images/konvoy-image-bundle*)
 
-nkp push bundle --bundle $APPBUNDLE \
+$bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
   --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
   --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
 
@@ -83,7 +83,7 @@ fi
 
 APPBUNDLE=$(ls $bundlepath/container-images/kommander-image-bundle*)
 
-nkp push bundle --bundle $APPBUNDLE \
+$bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
   --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
   --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
 
@@ -101,7 +101,7 @@ if [ ! -f $bundlepath/container-images/nkp-catalog-applications* ]; then
 else
     APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
 
-    nkp push bundle --bundle $APPBUNDLE \
+    $bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
     --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
     --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
 
