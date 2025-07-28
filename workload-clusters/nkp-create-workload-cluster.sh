@@ -31,6 +31,11 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${REGISTRY_PASSWORD:+--registry-password "$REGISTRY_PASSWORD"} \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
-echo "Cluster definition created:  $CLUSTER_NAME.yaml"
-echo
-echo "to execute, run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"
+if [ $? -ne 0 ]; then
+    echo "Cluster creation failed. Please check the parameters in cluster-env."
+    exit 1
+else
+    echo "Cluster definition created:  $CLUSTER_NAME.yaml"
+    echo
+    echo "to execute, run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"
+fi
