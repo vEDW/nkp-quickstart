@@ -30,6 +30,13 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
 
 The NKP CLI is a command-line interface for managing NKP-based workflows. This guide provides a quick and easy way to install the required CLIs (nkp, kubectl and helm) using the Rocky Linux image provided by Nutanix in the [Nutanix Support Portal](https://portal.nutanix.com/page/downloads?product=nkp).
 
+## NKP on Nutanix High level design
+
+Below an example of NKP on Nutanix deployment diagram.
+Ip ranges are provided as example.
+
+![NKP HLD](images/nkp-network-diagram.png)
+
 ## Prerequisites Checklist
 
 For NKP CLI:

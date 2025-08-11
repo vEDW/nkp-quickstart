@@ -25,7 +25,7 @@ addrc 'alias ta="tmux a -t"'
 addrc 'alias kx=kubectx'
 addrc 'alias kns=kubens'
 
-source ~/.bashrc
-
 addtmux 'set-option -g default-terminal "screen-256color"'
 addtmux 'set-option -g mouse on'
+
+source ~/.bashrc
