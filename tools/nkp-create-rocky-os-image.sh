@@ -20,6 +20,7 @@ OSVERSION=$($bundlepath/cli/nkp create image nutanix -h |grep "Create Nutanix Ma
 $bundlepath/cli/nkp create image nutanix $OSVERSION \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
+    --cluster $NUTANIX_PRISM_ELEMENT_CLUSTER_NAME \
     --subnet $NUTANIX_SUBNET_NAME
 if [ $? -ne 0 ]; then
     echo "issue creating rocky os image."
