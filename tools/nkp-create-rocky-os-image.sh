@@ -25,7 +25,7 @@ echo "rocky os version: $OSVERSION"
 echo 
 echo "creating rocky os image..."
 $bundlepath/cli/nkp create image nutanix $OSVERSION \
-    --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
+    --endpoint https://$NUTANIX_ENDPOINT \
     --insecure \
     --cluster $NUTANIX_PRISM_ELEMENT_CLUSTER_NAME \
     --subnet $NUTANIX_SUBNET_NAME
