@@ -13,10 +13,17 @@ if [ -z "$bundlepath" ]; then
 fi
 
 echo "using airgap bundle: $bundlepath"
-
+echo 
 source ../nkp-env
 
 OSVERSION=$($bundlepath/cli/nkp create image nutanix -h |grep "Create Nutanix Machine Image for one of" | grep -oP 'rocky-[0-9.]+')
+if [ $? -ne 0 ]; then
+    echo "issue getting rocky os version."
+    exit 1
+fi
+echo "rocky os version: $OSVERSION"
+echo 
+echo "creating rocky os image..."
 $bundlepath/cli/nkp create image nutanix $OSVERSION \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
