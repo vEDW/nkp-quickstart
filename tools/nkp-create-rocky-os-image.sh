@@ -16,6 +16,7 @@ echo "using airgap bundle: $bundlepath"
 echo 
 source ../nkp-env
 
+echo "extracting rocky os info from nkp cli"
 OSVERSION=$($bundlepath/cli/nkp create image nutanix -h |grep "Create Nutanix Machine Image for one of" | grep -oP 'rocky-[0-9.]+')
 if [ $? -ne 0 ]; then
     echo "issue getting rocky os version."
