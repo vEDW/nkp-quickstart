@@ -57,6 +57,6 @@ fi
 $bundlepath/cli/nkp create image nutanix $OSCHOSEN \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
-    --subnets $NUTANIX_SUBNET_NAME \
+    --subnet $NUTANIX_SUBNET_NAME \
     --cluster $NUTANIX_PRISM_ELEMENT_CLUSTER_NAME \
     ${KONVOYIMAGES:+--bundle "$KONVOYIMAGES"} \
