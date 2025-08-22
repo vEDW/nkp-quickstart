@@ -37,13 +37,21 @@ select OSCHOSEN in $OSOPTIONS; do
     break
 done
 
-#check if bundle is present
 #check if cli has bundle option
 KONVOYIMAGES=""
 BUNDLECHECK=$($bundlepath/cli/nkp create image nutanix -h | grep "\--bundle")
-if [ "$BUNDLECHECK" != ""] ; then
+if [ -n "$BUNDLECHECK" ]; then
     echo "checking container images in bundle"
     KONVOYIMAGES=$(ls $bundlepath/container-images/konvoy-image-bundle*)
+    if [ -z "$KONVOYIMAGES" ]; then
+        echo "No konvoy image bundle found in $bundlepath/container-images. skipping."
+        KONVOYIMAGES=""
+    else
+        echo "konvoy image bundle found: $KONVOYIMAGES"
+    fi
+else
+    echo "bundle option is not available in nkp cli. skipping bundle check."
+    BUNDLECHECK=""
 fi
 
 $bundlepath/cli/nkp create image nutanix $OSCHOSEN \
