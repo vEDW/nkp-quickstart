@@ -55,7 +55,7 @@ else
 fi
 
 $bundlepath/cli/nkp create image nutanix $OSCHOSEN \
-    --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
+    --endpoint https://$NUTANIX_ENDPOINT \
     --insecure \
     --subnet $NUTANIX_SUBNET_NAME \
     --cluster $NUTANIX_PRISM_ELEMENT_CLUSTER_NAME \
