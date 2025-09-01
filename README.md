@@ -6,46 +6,11 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
 
 1. Add NKP Rocky Linux image from the Nutanix Support Portal to Prism Central
 
-<<<<<<< HEAD
 1. Create a jump host with 2 vCPUs, 8 GB memory, use the Rocky image (update disk to 128 GiB), and the following Cloud-init custom script : [cloud-init](./cloud-init)
 
 1. SSH to `nutanix@<jump host_IP>` (default password: nutanix/4u - unless you modified it in the cloud-init file)
 
 1. Install the NKP CLI with the command: [get-nkp-cli](./get-nkp-cli)
-=======
-1. Create a jump host with 4 vCPUs, 8 GB memory, use the Rocky image (update disk to 128 GiB), and the following Cloud-init custom script
-
-    ```yaml
-    #cloud-config
-    ssh_pwauth: true
-    chpasswd:
-      expire: false
-      users:
-      - name: nutanix
-        password: nutanix/4u # Recommended to change the password or update the script to use SSH keys
-        type: text
-    runcmd:
-    - '[ ! -f "/etc/yum.repos.d/nutanix_rocky9.repo" ] || mv -f /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled'
-    - dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-    - dnf -y install docker-ce docker-ce-cli containerd.io
-    - systemctl --now enable docker
-    - usermod -aG docker nutanix
-    - 'curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
-    - chmod +x /usr/local/bin/kubectl
-    - 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
-    - eject
-    - 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
-    final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: $ curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash"
-    ```
-
-1. SSH to `nutanix@<jump host_IP>` (default password: nutanix/4u)
-
-1. Install the NKP CLI with the command:
-
-    ```shell
-    curl -fsSL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
-    ```
->>>>>>> origin/main
 
     When prompted, you must use the download link as-is, which is available in the Nutanix portal.
 
@@ -101,35 +66,7 @@ For NKP CLI:
     - Disk: Clone from Image (select the Rocky Linux you previously uploaded)
     - Disk Capacity: 128 (default is 20)
     - Guest Customization: Cloud-init (Linux)
-    - Custom Script:
-
-        ```yaml
-        #cloud-config
-        ssh_pwauth: true
-        chpasswd:
-          expire: false
-          users:
-          - name: nutanix
-            password: nutanix/4u # Recommended to change the password or update the script to use SSH keys
-            type: text
-        runcmd:
-        - '[ ! -f "/etc/yum.repos.d/nutanix_rocky9.repo" ] || mv -f /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled'
-        - dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-        - dnf -y install docker-ce docker-ce-cli containerd.io
-        - systemctl --now enable docker
-        - usermod -aG docker nutanix
-        - 'curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
-        - chmod +x /usr/local/bin/kubectl
-        - 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
-        - eject
-        - 'wall "If you are seeing this message, please reconnect your SSH session. Otherwise, the NKP CLI installation process may fail."'
-        final_message: "The machine is ready after $UPTIME seconds. Go ahead and install the NKP CLI using: $ curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash"
-        ```
-
-    <details>
-    <summary>click to view example</summary>
-    <IMG src="./images/create_vm_summary.png" atl="Create VM summary" />
-    </details>
+    - Custom Script: [cloud-init](./cloud-init)
 
 1. Power on the virtual machine
 
@@ -144,7 +81,13 @@ For NKP CLI:
 1. git clone this repo
 
     ```shell
-    curl -fsSL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
+    git clone https://github.com/nutanixdev/nkp-quickstart.git
+    ```
+
+1. Install the NKP CLI with the command: [get-nkp-cli](./get-nkp-cli)
+
+    ```shell
+    ./get-nkp-cli
     ```
 
     When prompted, you must use the download link as-is, which is available in the Nutanix portal.
@@ -179,43 +122,7 @@ This installation method lets you fully customize your cluster configuration. Th
 
 1. Before running the following command in your jump host VM, update the values with your environment: [nkp-env](./nkp-env)
 
-    ```shell
-    export NKP_VERSION=2.12.0                                       # NKP version to install
-    export CLUSTER_NAME=nkp                                         # NKP cluster name. When using NKP Pro/Ultimate, this name is used to generate the license key
-    export NUTANIX_USER=admin                                       # Prism Central username
-    export NUTANIX_PASSWORD=''                                      # Keep the password enclosed between single quotes - Ex: 'password'
-    export NUTANIX_ENDPOINT=                                        # Prism Central IP address
-    export NUTANIX_PORT=9440                                        # Prism Central port (default: 9440)
-    export LB_IP_RANGE=                                             # Load balancer IP range - Ex: 10.42.236.204-10.42.236.204
-    export CONTROL_PLANE_ENDPOINT_IP=                               # Kubernetes VIP. Must be in the same subnet as the VMs - Ex: 10.42.236.203
-    export NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME=nkp-rocky-9.4-release-1.29.6-20240816215147.qcow2 # Update with the NKP Rocky image name
-    export NUTANIX_PRISM_ELEMENT_CLUSTER_NAME=                      # Prism Element cluster name - Ex: PHX-POC207
-    export NUTANIX_SUBNET_NAME=                                     # Ex: primary
-    export NUTANIX_STORAGE_CONTAINER_NAME=SelfServiceContainer      # Change to your preferred Prism storage container
-    export REGISTRY_MIRROR_URL=registry.nutanixdemo.com/docker.io   # Required on Nutanix HPOC
-    ```
-
-1. The next command will start the installation process of an NKP management cluster:
-
-    ```shell
-    nkp create cluster nutanix -c $CLUSTER_NAME \
-        --kind-cluster-image $REGISTRY_MIRROR_URL/mesosphere/konvoy-bootstrap:v$NKP_VERSION \
-        --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
-        --insecure \
-        --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \
-        --control-plane-endpoint-ip $CONTROL_PLANE_ENDPOINT_IP \
-        --control-plane-vm-image $NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME \
-        --control-plane-prism-element-cluster $NUTANIX_PRISM_ELEMENT_CLUSTER_NAME \
-        --control-plane-subnets $NUTANIX_SUBNET_NAME \
-        --control-plane-replicas 1 \
-        --worker-vm-image $NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME \
-        --worker-prism-element-cluster $NUTANIX_PRISM_ELEMENT_CLUSTER_NAME \
-        --worker-subnets $NUTANIX_SUBNET_NAME \
-        --worker-replicas 3 \
-        --csi-storage-container $NUTANIX_STORAGE_CONTAINER_NAME \
-        --registry-mirror-url http://$REGISTRY_MIRROR_URL \
-        --self-managed
-    ```
+1. The next command will start the installation process of an NKP management cluster: [nkp-create-cluster](./nkp-create-mgmt-cluster.sh)
 
 ## Support and Disclaimer
 
