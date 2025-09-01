@@ -81,13 +81,12 @@ For NKP CLI:
 1. git clone this repo
 
     ```shell
-    git clone https://github.com/vEDW/nkp-quickstart.git
+    git clone https://github.com/nutanixdev/nkp-quickstart.git
     ```
 
 1. Install the NKP CLI with the command: [get-nkp-cli](./get-nkp-cli)
 
     ```shell
-    cd nkp-quickstart/scripts
     ./get-nkp-cli
     ```
 
