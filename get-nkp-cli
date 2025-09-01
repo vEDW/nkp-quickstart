@@ -31,6 +31,7 @@ IFS=$'\n\t'
 #------------------------------------------------------------------------------
 
 # Prompt the user for the download link
+echo 'open browser to site : https://portal.nutanix.com/page/downloads?product=nkp and find "NKP for Linux" '
 read -p "Enter 'NKP for Linux' download link: " url < /dev/tty
 
 # Check if URL is empty
@@ -44,3 +45,5 @@ curl -fsSL "$url" | sudo tar xz -C /usr/local/bin -- nkp
 
 # Success message
 echo "NKP CLI installed successfully!"
+echo "checking version"
+nkp version

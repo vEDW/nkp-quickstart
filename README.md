@@ -6,6 +6,13 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
 
 1. Add NKP Rocky Linux image from the Nutanix Support Portal to Prism Central
 
+<<<<<<< HEAD
+1. Create a jump host with 2 vCPUs, 8 GB memory, use the Rocky image (update disk to 128 GiB), and the following Cloud-init custom script : [cloud-init](./cloud-init)
+
+1. SSH to `nutanix@<jump host_IP>` (default password: nutanix/4u - unless you modified it in the cloud-init file)
+
+1. Install the NKP CLI with the command: [get-nkp-cli](./get-nkp-cli)
+=======
 1. Create a jump host with 4 vCPUs, 8 GB memory, use the Rocky image (update disk to 128 GiB), and the following Cloud-init custom script
 
     ```yaml
@@ -38,6 +45,7 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
     ```shell
     curl -fsSL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
     ```
+>>>>>>> origin/main
 
     When prompted, you must use the download link as-is, which is available in the Nutanix portal.
 
@@ -56,6 +64,13 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
 ## Overview
 
 The NKP CLI is a command-line interface for managing NKP-based workflows. This guide provides a quick and easy way to install the required CLIs (nkp, kubectl and helm) using the Rocky Linux image provided by Nutanix in the [Nutanix Support Portal](https://portal.nutanix.com/page/downloads?product=nkp).
+
+## NKP on Nutanix High level design
+
+Below an example of NKP on Nutanix deployment diagram.
+Ip ranges are provided as example.
+
+![NKP HLD](images/nkp-network-diagram.png)
 
 ## Prerequisites Checklist
 
@@ -82,7 +97,7 @@ For NKP CLI:
 
     - Name: nkp-jump host
     - vCPUs: 2
-    - Memory: 4
+    - Memory: 8
     - Disk: Clone from Image (select the Rocky Linux you previously uploaded)
     - Disk Capacity: 128 (default is 20)
     - Guest Customization: Cloud-init (Linux)
@@ -126,7 +141,7 @@ For NKP CLI:
     ssh nutanix@<jump host_IP>
     ```
 
-1. Install the NKP CLI with the command:
+1. git clone this repo
 
     ```shell
     curl -fsSL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
@@ -152,6 +167,8 @@ For NKP CLI:
 
 This installation method gives less control on the cluster configuration. For example, the NKP cluster will be created with three control plane nodes and four worker nodes.
 
+We recommend starting a tmux session in case your ssh connection is at risk of disconnection (like laptop going into sleep mode) as the process can take some time based on several paramters (like download speed).
+
 ```shell
 nkp create cluster nutanix
 ```
@@ -160,7 +177,7 @@ nkp create cluster nutanix
 
 This installation method lets you fully customize your cluster configuration. The following commands create a cluster with one control plane node and three worker nodes.
 
-1. Before running the following command in your jump host VM, update the values with your environment:
+1. Before running the following command in your jump host VM, update the values with your environment: [nkp-env](./nkp-env)
 
     ```shell
     export NKP_VERSION=2.12.0                                       # NKP version to install
