@@ -19,3 +19,5 @@ export CSI_HYPERVISOR_ATTACHED=true                             # Optional, used
 export SSH_PUBLIC_KEY_FILE=~/.ssh/id_rsa.pub                   # Optional, used to add your public key to the cluster VMs for SSH access
 export CP_CATEGORIES=                # Optional, used to add categories to the control plane resources in Prism Central "key1=value1,key2=value2"
 export WORKER_CATEGORIES=             # Optional, used to add categories to the worker resources in Prism Central "key1=value1,key2=value2"
+export CONTROL_PLANE_REPLICAS=3                                  # Number of control plane VMs - Ex: 3
+export WORKER_NODES_REPLICAS=4                                   # Number of worker VMs - Ex: 4
