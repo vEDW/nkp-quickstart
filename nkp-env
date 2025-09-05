@@ -15,3 +15,7 @@ export REGISTRY_MIRROR_PASSWORD=                                # Required on in
 export AIRGAP_REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap              # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 export AIRGAP_REGISTRY_MIRROR_USERNAME='harbor user'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 export AIRGAP_REGISTRY_MIRROR_PASSWORD='harbor password'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+export CSI_HYPERVISOR_ATTACHED=true                             # Optional, used to enable hypervisor attached volumes for the cluster
+export SSH_PUBLIC_KEY_FILE=~/.ssh/id_rsa.pub                   # Optional, used to add your public key to the cluster VMs for SSH access
+export CP_CATEGORIES=                # Optional, used to add categories to the control plane resources in Prism Central "key1=value1,key2=value2"
+export WORKER_CATEGORIES=             # Optional, used to add categories to the worker resources in Prism Central "key1=value1,key2=value2"
