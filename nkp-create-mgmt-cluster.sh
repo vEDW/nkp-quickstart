@@ -22,6 +22,23 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+#check if cli has bundle option
+KONVOYIMAGES=""
+BUNDLECHECK=$($bundlepath/cli/nkp create image nutanix -h | grep "\--bundle")
+if [ -n "$BUNDLECHECK" ]; then
+    echo "checking container images in bundle"
+    KONVOYIMAGES=$(ls $bundlepath/container-images/konvoy-image-bundle*)
+    if [ -z "$KONVOYIMAGES" ]; then
+        echo "No konvoy image bundle found in $bundlepath/container-images. skipping."
+        KONVOYIMAGES=""
+    else
+        echo "konvoy image bundle found: $KONVOYIMAGES"
+    fi
+else
+    echo "bundle option is not available in nkp cli. skipping bundle check."
+    BUNDLECHECK=""
+fi
+
 $bundlepath/cli/nkp create cluster nutanix -c $CLUSTER_NAME \
     --kind-cluster-image mesosphere/konvoy-bootstrap:$NKP_VERSION \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
@@ -47,4 +64,5 @@ $bundlepath/cli/nkp create cluster nutanix -c $CLUSTER_NAME \
     ${REGISTRY_PASSWORD:+--registry-password "$REGISTRY_PASSWORD"} \
     ${CP_CATEGORIES:+--control-plane-pc-categories "$CP_CATEGORIES"} \
     ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
+    ${KONVOYIMAGES:+--bundle "$KONVOYIMAGES"} \
     --self-managed --airgapped
