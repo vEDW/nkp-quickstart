@@ -1,0 +1,12 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: NutanixFailureDomain
+metadata:
+  name: fd-1                # must be unique per namespace
+  namespace: cluster-ns     # same ns as the Cluster
+spec:
+  prismElementCluster:
+    type: name              # or uuid
+    name: ncn-dev-sandbox
+  subnets:
+    - type: name            # keep UUIDs out of examples for clarity
+      name: vlanxxx
