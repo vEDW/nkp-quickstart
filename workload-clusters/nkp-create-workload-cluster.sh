@@ -26,4 +26,4 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
-echo "Cluster yaml created. to deploy cluster run : kubectl create -f $CLUSTER_NAME.yaml --server-side=true"
+echo "Cluster yaml created. to deploy cluster run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"
