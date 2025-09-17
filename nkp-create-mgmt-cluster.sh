@@ -22,10 +22,37 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+#check if cli has kind option
+KINDCHECK=$($bundlepath/cli/nkp create cluster nutanix -h | grep "\--kind-cluster-image")
+if [ -z "$KINDCHECK" ]; then
+    echo "kind option is not available in nkp cli. checking bootstrap instead"
+     #check if cli has bootstrap option
+    BOOTSTRAPCHECK=$($bundlepath/cli/nkp create cluster nutanix -h | grep "\--bootstrap-cluster-image")
+    if [ -z "$BOOTSTRAPCHECK" ]; then
+        unset BOOTSTRAPCHECK
+        echo "bootstrap option is not available in nkp cli. can't delpoy without bootstrap or kind image"
+        exit 1
+    else
+        echo "bootstrap option is available in nkp cli. enabling it"
+        BOOTSTRAPCHECK="true"
+        BOOTSTRAPIMAGE=$(ls $bundlepath/konvoy-bootstrap-image-*.tar)
+        if [ -z "$BOOTSTRAPIMAGE" ]; then
+            echo "No bootstrap image found in $bundlepath. can't delpoy without bootstrap or kind image"
+            exit 1
+        else
+            echo "bootstrap image found: $BOOTSTRAPIMAGE"
+        fi
+    fi
+
+else
+    echo "kind option is available in nkp cli. enabling it"
+    KINDCHECK="true"
+fi
 #check if cli has bundle option
 KONVOYIMAGES=""
 BUNDLECHECK=$($bundlepath/cli/nkp create image nutanix -h | grep "\--bundle")
 if [ -n "$BUNDLECHECK" ]; then
+   
     echo "checking container images in bundle"
     KONVOYIMAGES=$(ls $bundlepath/container-images/konvoy-image-bundle*)
     KOMMANDERIMAGES=$(ls $bundlepath/container-images/kommander-image-bundle*)
@@ -47,7 +74,8 @@ else
 fi
 
 $bundlepath/cli/nkp create cluster nutanix -c $CLUSTER_NAME \
-    --kind-cluster-image mesosphere/konvoy-bootstrap:$NKP_VERSION \
+    ${KINDCHECK:+--kind-cluster-image mesosphere/konvoy-bootstrap:$NKP_VERSION} \
+    ${BOOTSTRAPCHECK:+--bootstrap-cluster-image $$BOOTSTRAPIMAGE} \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
     --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \

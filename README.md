@@ -14,7 +14,7 @@ Steps to install all the required CLIs (nkp, kubectl and helm) to create and man
 
     When prompted, you must use the download link as-is, which is available in the Nutanix portal.
 
-1. doanload the NKP airgap bundle with the command: [get-nkp-airgap-bundle](./get-nkp-airgap-bundle)
+1. Download the NKP airgap bundle with the command: [get-nkp-airgap-bundle](./get-nkp-airgap-bundle)
 
     When prompted, you must use the download link as-is, which is available in the Nutanix portal.
 
