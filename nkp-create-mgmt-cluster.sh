@@ -75,7 +75,7 @@ fi
 
 $bundlepath/cli/nkp create cluster nutanix -c $CLUSTER_NAME \
     ${KINDCHECK:+--kind-cluster-image mesosphere/konvoy-bootstrap:$NKP_VERSION} \
-    ${BOOTSTRAPCHECK:+--bootstrap-cluster-image $$BOOTSTRAPIMAGE} \
+    ${BOOTSTRAPCHECK:+--bootstrap-cluster-image $BOOTSTRAPIMAGE} \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
     --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \
