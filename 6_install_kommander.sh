@@ -34,7 +34,7 @@ done
 
 echo "press enter to continue"
 read
-KUBECONFIG=$KUBECONFIGYAML $bundlepath/cli/nkp install kommander
+KUBECONFIG=$KUBECONFIGYAML $bundlepath/cli/nkp install kommander --airgapped
 if [ $? -ne 0 ]; then
     echo "problem installing kommander using $KUBECONFIGYAML . Exiting."
     exit 1
