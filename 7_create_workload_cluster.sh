@@ -157,7 +157,11 @@ echo "KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url https://registry.nutanixdemo.com/docker.io"
+  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
+  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
+  ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
 
 echo "press enter to continue or ctrl+c to exit"
 read
@@ -175,4 +179,8 @@ KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url https://registry.nutanixdemo.com/docker.io
+  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
+  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
+  ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \

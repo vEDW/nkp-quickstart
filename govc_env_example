@@ -4,6 +4,8 @@ export VCENTERHOST=<vcenter ip or fqdn>
 read -sp "vcenter password: " GOVC_PASSWORD < /dev/tty
 export GOVC_URL=https://${GOVC_USERNAME}:${GOVC_PASSWORD}@${VCENTERHOST}/sdk
 export GOVC_INSECURE=1
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
 
 DATACENTERS=$(govc find / -type Datacenter)
 echo
