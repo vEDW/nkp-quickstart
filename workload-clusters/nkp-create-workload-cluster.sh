@@ -23,12 +23,15 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     --worker-replicas 4 \
     --csi-storage-container $NUTANIX_STORAGE_CONTAINER_NAME \
     --csi-hypervisor-attached-volumes=true \
+    ${SSH_PUBLIC_KEY_FILE:+--ssh-public-key-file "$SSH_PUBLIC_KEY_FILE"} \
     ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
     ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
     ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
     ${REGISTRY_URL:+--registry-url https://"$REGISTRY_URL"} \
     ${REGISTRY_USERNAME:+--registry-username "$REGISTRY_USERNAME"} \
     ${REGISTRY_PASSWORD:+--registry-password "$REGISTRY_PASSWORD"} \
+    ${CP_CATEGORIES:+--control-plane-pc-categories "$CP_CATEGORIES"} \
+    ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
 if [ $? -ne 0 ]; then
