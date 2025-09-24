@@ -32,6 +32,7 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${REGISTRY_PASSWORD:+--registry-password "$REGISTRY_PASSWORD"} \
     ${CP_CATEGORIES:+--control-plane-pc-categories "$CP_CATEGORIES"} \
     ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
+    --skip-preflight-checks Registry \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
 if [ $? -ne 0 ]; then
