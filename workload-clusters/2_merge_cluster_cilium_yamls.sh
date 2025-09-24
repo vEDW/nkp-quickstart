@@ -52,7 +52,7 @@ if [ $? -ne 0 ]; then
 fi  
 
 #editing cni add-ons to reference configmap
-CONFIGMAP_NAME=$( yq e 'select(.kind == "ConfigMap")|.metadata.name' $CLUSTER_NAME-cilium-cni-helm-values-cm.yaml  )
+export CONFIGMAP_NAME=$( yq e 'select(.kind == "ConfigMap")|.metadata.name' $CLUSTER_NAME-cilium-cni-helm-values-cm.yaml  )
 if [ -z "$CONFIGMAP_NAME" ]; then
     echo "Failed to extract ConfigMap name. Exiting."
     exit 1
