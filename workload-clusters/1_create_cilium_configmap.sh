@@ -33,7 +33,16 @@ fi
 #load cluster-env
 source ./cluster-env
 
-kubectl create cm $CLUSTER_NAME-cilium-cni-helm-values-cm --from-file=values.yaml --dry-run=client -o yaml > $CLUSTER_NAME-cilium-cni-helm-values-cm.yaml
+# check if $CLUSTER_NAME.yaml is present.
+if [ ! -f ./$CLUSTER_NAME.yaml ]; then
+    echo "$CLUSTER_NAME.yaml file not found! Please run nkp-create-workload-cluster.sh first to create the cluster definition file."
+    exit 1
+fi
+
+#get cluster namespace
+NAMESPACE=$(yq '(select(.kind == "Cluster"))|.metadata.namespace' $CLUSTER_NAME.yaml)
+
+kubectl create cm $CLUSTER_NAME-cilium-cni-helm-values-cm -n $NAMESPACE --from-file=values.yaml --dry-run=client -o yaml > $CLUSTER_NAME-cilium-cni-helm-values-cm.yaml
 if [ $? -ne 0 ]; then
     echo "Failed to create ConfigMap. Exiting."
     exit 1
