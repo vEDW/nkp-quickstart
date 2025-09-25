@@ -24,6 +24,8 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${REGISTRY_PASSWORD:+--registry-password "$REGISTRY_PASSWORD"} \
     ${CP_CATEGORIES:+--control-plane-pc-categories "$CP_CATEGORIES"} \
     ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
+    ${NUTANIX_PC_PROJECT_NAME:+--control-plane-pc-project "$NUTANIX_PC_PROJECT_NAME"} \
+    ${NUTANIX_PC_PROJECT_NAME:+--worker-pc-project "$NUTANIX_PC_PROJECT_NAME"} \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
 echo "Cluster yaml created. to deploy cluster run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"

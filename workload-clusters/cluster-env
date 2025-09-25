@@ -26,4 +26,6 @@ export WORKER_NODES_REPLICAS=4                                   # Number of wor
 # export AIRGAP_REGISTRY_MIRROR_USERNAME='harbor user'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 # export AIRGAP_REGISTRY_MIRROR_PASSWORD='harbor password'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 
+# add PC Project details if using PC Projects
+# export NUTANIX_PC_PROJECT_NAME='tenant-emea-pc'                          # Optional, Prism Central Project
 
