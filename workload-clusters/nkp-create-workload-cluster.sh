@@ -34,7 +34,6 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${NUTANIX_PC_PROJECT_NAME:+--control-plane-pc-project "$NUTANIX_PC_PROJECT_NAME"} \
     ${NUTANIX_PC_PROJECT_NAME:+--worker-pc-project "$NUTANIX_PC_PROJECT_NAME"} \
     ${SKIP_PREFLIGHT_CHECKS:+--skip-preflight-checks "$SKIP_PREFLIGHT_CHECKS"} \
-    SKIP_PREFLIGHT_CHECKS
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
 #if NUTANIX_CCM_USER is set, edit CCM user.
