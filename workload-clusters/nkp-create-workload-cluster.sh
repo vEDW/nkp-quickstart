@@ -39,12 +39,14 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
 #if NUTANIX_CCM_USER is set, edit CCM user.
 if [ ! -z "$NUTANIX_CCM_USER" ]; then
     #get current user
-    export SECRETNAME="$CLUSTER_NAME-pc-credentials"
+    export CAPXSECRETNAME="$CLUSTER_NAME-pc-credentials"
+    export CCMSECRETNAME="$CLUSTER_NAME-ccm-credentials"
+
     #backup cluster yaml
     cp $CLUSTER_NAME.yaml $CLUSTER_NAME-backup.yaml
     #extract current secret
-    CAPX_K8S_SECRET=$(yq e '(select(.kind == "Secret" and .metadata.name == env(SECRETNAME)))|.' $CLUSTER_NAME.yaml)
-    CURRENT_CAPX_USER_JSON=$(yq e '(select(.kind == "Secret" and .metadata.name == env(SECRETNAME)))|.data.credentials' $CLUSTER_NAME.yaml  |base64 -d )
+    CAPX_K8S_SECRET=$(yq e '(select(.kind == "Secret" and .metadata.name == env(CAPXSECRETNAME)))|.' $CLUSTER_NAME.yaml)
+    CURRENT_CAPX_USER_JSON=$(yq e '(select(.kind == "Secret" and .metadata.name == env(CAPXSECRETNAME)))|.data.credentials' $CLUSTER_NAME.yaml  |base64 -d )
     #check if error or empty
     if [ -z "$CURRENT_CAPX_USER_JSON" ]; then
         echo "Error: Could not find current CCM user in the generated yaml"
@@ -57,17 +59,20 @@ if [ ! -z "$NUTANIX_CCM_USER" ]; then
     UPDATED_CCM_USER_JSON_BASE64=$(echo -n "$UPDATED_CCM_USER_JSON" | base64 -w 0 )
     CCM_K8S_SECRET=$(echo "$CAPX_K8S_SECRET" | yq e '.data.credentials="'$UPDATED_CCM_USER_JSON_BASE64'"')
     #change secret name for ccm
-    CCM_K8S_SECRET=$(echo "$CCM_K8S_SECRET" | yq e '.metadata.name="'$CLUSTER_NAME-ccm-pc-credentials'"')
+    CCM_K8S_SECRET=$(echo "$CCM_K8S_SECRET" | yq e '.metadata.name="'$CCMSECRETNAME'"')
     #insert updated secret back into cluster yaml but behind the namespace creation
     NAMESPACE_YAML=$(yq e '(select(.kind == "Namespace"))|.' $CLUSTER_NAME.yaml)
-    OTHER_YAML=$(yq e 'select(.kind != "Namespace" and .metadata.name != env(SECRETNAME))|.' $CLUSTER_NAME.yaml)    
+    OTHER_YAML=$(yq e 'select(.kind != "Namespace" and .metadata.name != env(CCMSECRETNAME))|.' $CLUSTER_NAME.yaml)    
     #edit OTHER_YAML to use new secret name for ccm
-    OTHER_YAML=$(echo "$OTHER_YAML" | yq e '(.spec.infrastructureRef.name="'$CLUSTER_NAME-ccm-pc-credentials'")')
-    #re
+
+    OTHER_YAML=$(echo "$OTHER_YAML" | yq e '(select(.kind == "Cluster").spec.topology.variables[] | select(.name == "clusterConfig").value.addons.ccm.credentials.secretRef.name) = env(CCMSECRETNAME)')
+    #recreate cluster yaml
     echo "$NAMESPACE_YAML" > $CLUSTER_NAME-ccm.yaml
     echo "---" >> $CLUSTER_NAME-ccm.yaml
     echo "$CCM_K8S_SECRET" >> $CLUSTER_NAME-ccm.yaml
     echo "---" >> $CLUSTER_NAME-ccm.yaml
+#    echo "$CAPX_K8S_SECRET" >> $CLUSTER_NAME-ccm.yaml
+#    echo "---" >> $CLUSTER_NAME-ccm.yaml
     echo "$OTHER_YAML" >> $CLUSTER_NAME-ccm.yaml
     mv $CLUSTER_NAME-ccm.yaml $CLUSTER_NAME.yaml
 
