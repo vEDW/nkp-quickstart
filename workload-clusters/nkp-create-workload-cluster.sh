@@ -46,7 +46,7 @@ if [ ! -z "$NUTANIX_CCM_USER" ]; then
     CAPX_K8S_SECRET=$(yq e '(select(.kind == "Secret" and .metadata.name == env(SECRETNAME)))|.' $CLUSTER_NAME.yaml)
     CURRENT_CAPX_USER_JSON=$(yq e '(select(.kind == "Secret" and .metadata.name == env(SECRETNAME)))|.data.credentials' $CLUSTER_NAME.yaml  |base64 -d )
     #check if error or empty
-    if [ -z "$CURRENT_CCM_USER" ]; then
+    if [ -z "$CURRENT_CAPX_USER_JSON" ]; then
         echo "Error: Could not find current CCM user in the generated yaml"
         exit 1
     fi
