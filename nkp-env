@@ -26,3 +26,5 @@ export WORKER_NODES_REPLICAS=4                                   # Number of wor
 # export AIRGAP_REGISTRY_MIRROR_USERNAME='harbor user'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 # export AIRGAP_REGISTRY_MIRROR_PASSWORD='harbor password'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 
+# skip preflight checks
+# export SKIP_PREFLIGHT_CHECKS=Registry        # Skip preflight checks. Provide "all" to skip all checks, or a comma-separated list of check names. (default [])
