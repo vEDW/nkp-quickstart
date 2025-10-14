@@ -76,8 +76,42 @@ if [ ! -z "$NUTANIX_CCM_USER" ]; then
     echo "$OTHER_YAML" >> $CLUSTER_NAME-ccm.yaml
     mv $CLUSTER_NAME-ccm.yaml $CLUSTER_NAME.yaml
 
-    echo "Updated CCM user in the cluster yaml" 
+    echo "Updated CCM user in $CLUSTER_NAME.yaml" 
 
 fi
+#if NUTANIX_CSI_USER is set, edit CSI user.
+if [ ! -z "$NUTANIX_CSI_USER" ]; then
+    #get current user
+    export CSISECRETNAME="$CLUSTER_NAME-pc-credentials-for-csi"
+
+    #backup cluster yaml
+    cp $CLUSTER_NAME.yaml $CLUSTER_NAME-csi-backup.yaml
+    #extract current secret
+    CSI_K8S_SECRET=$(yq e '(select(.kind == "Secret" and .metadata.name == env(CSISECRETNAME)))|.' $CLUSTER_NAME.yaml)
+    CURRENT_CSI_USER_KEY=$(yq e '(select(.kind == "Secret" and .metadata.name == env(CSISECRETNAME)))|.data.key' $CLUSTER_NAME.yaml  |base64 -d )
+    #check if error or empty
+    if [ -z "$CURRENT_CSI_USER_JSON" ]; then
+        echo "Error: Could not find current CSI user in the generated yaml"
+        exit 1
+    fi
+    #replace user in credentials
+    CURRENTPCENDPOINT=$(echo "$CURRENT_CSI_USER_KEY" | cut -d ":" -f1)
+    CURRENTPCPORT=$(echo "$CURRENT_CSI_USER_KEY" | cut -d ":" -f2)
+
+    UPDATED_CSI_USER_KEY="$CURRENTPCENDPOINT:$CURRENTPCPORT:$NUTANIX_CSI_USER:$NUTANIX_CSI_PASSWORD"
+    #encode to base64
+    export UPDATED_CCM_USER_KEY_BASE64=$(echo -n "$UPDATED_CSI_USER_KEY" | base64 -w 0 )
+
+    # replace csi secret value in cluster yaml 
+
+    UPDATEDYAML=$(yq -i '(select(.kind == "Secret" and .metadata.name == env(CSISECRETNAME)).data.key = env(UPDATED_CCM_USER_KEY_BASE64))' $CLUSTER_NAME.yaml)
+    if [ $? -ne 0 ]; then
+        echo "Error: Could not update CSI user in the generated yaml"
+        exit 1
+    fi    
+    echo "Updated CSI user in the cluster yaml" 
+
+fi
+
 
 echo "Cluster yaml created. to deploy cluster run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"
