@@ -90,7 +90,7 @@ if [ ! -z "$NUTANIX_CSI_USER" ]; then
     CSI_K8S_SECRET=$(yq e '(select(.kind == "Secret" and .metadata.name == env(CSISECRETNAME)))|.' $CLUSTER_NAME.yaml)
     CURRENT_CSI_USER_KEY=$(yq e '(select(.kind == "Secret" and .metadata.name == env(CSISECRETNAME)))|.data.key' $CLUSTER_NAME.yaml  |base64 -d )
     #check if error or empty
-    if [ -z "$CURRENT_CSI_USER_JSON" ]; then
+    if [ -z "$CURRENT_CSI_USER_KEY" ]; then
         echo "Error: Could not find current CSI user in the generated yaml"
         exit 1
     fi
