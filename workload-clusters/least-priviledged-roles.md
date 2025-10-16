@@ -80,7 +80,24 @@ in PC Project assign ccm user with role 'Virtual Machine Viewer'
 Create authorization policy with role 'csi-role' and restrict as needed
 * set cluster
 * set storage container
-* !! leave "Domain Manager" to "All Domain Manager"
+* "Domain Manager" to "All Domain Manager"
 * AHV VM to "In project : project name"
 * Category - leave on "All Category"
 * Cluster - Leave on "All Cluster" (in order to see PC)
+* Do not include Volume Group entities
+
+make sure the checkbox is set for "Allow users access to entities created by them"
+
+see screenshot as example.
+
+![CSI Authorization policy](../images/authorization-policy.png)
+
+
+## Workload cluster creation with least priviledged users for CCM and CSI
+
+* clone the file [cluster-env](../workload-clusters/cluster-env.example) to "cluster-env"
+* uncomment and edit the values for "NUTANIX_CCM_*" and "NUTANIX_CSI_*" variables
+* run the script [create nkp wrokload cluster](../workload-clusters/nkp-create-workload-cluster.sh)
+this generates a cluster.yaml file that you can apply on the management cluster to actually create it.
+
+
