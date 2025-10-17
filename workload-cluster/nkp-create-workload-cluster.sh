@@ -1,5 +1,15 @@
 #!/bin/bash
+
+#source govc env
+source ../nkp-env
+
+#check if cluster-env file exists
+if [ ! -f ./cluster-env ]; then
+    echo "cluster-env file not found. Please create it with the required variables by cloning cluster-env.example."
+    exit 1
+fi
 source ./cluster-env
+
 
 #select NKP Management Cluster kubeconfig context
 CONTEXTS=$(kubectl config get-contexts --output=name)
@@ -142,28 +152,6 @@ export vsphere_password=$VSPHERE_PASSWORD
 #get vcenter thumbprint
 VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | cut -d "=" -f2)
 
-echo "command to run to deploy NKP:"
-echo "nkp create cluster vsphere \
-  --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
-  --control-plane-endpoint-host ${NKPCLUSTERVIP} \
-  --data-center ${DATACENTER} \
-  --data-store ${DATASTORE} \
-  --folder ${FOLDER} \
-  --server ${VSPHERE_SERVER} \
-  --ssh-public-key-file ${LOCALKEY} \
-  --resource-pool ${RESOURCE_POOL} \
-  --vm-template ${template} \
-  --virtual-ip-interface "eth0" \
-  --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url "${REGISTRY_MIRROR_URL}" \
-  --registry-mirror-username "${REGISTRY_MIRROR_USERNAME}" \
-  --registry-mirror-password "${REGISTRY_MIRROR_PASSWORD}"
-  "
-
-echo "press enter to continue or ctrl+c to exit"
-read
-
 nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
   --network ${NETWORK} \
@@ -177,6 +165,11 @@ nkp create cluster vsphere \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
-  --registry-mirror-url "${REGISTRY_MIRROR_URL}" \
-  --registry-mirror-username "${REGISTRY_MIRROR_USERNAME}" \
-  --registry-mirror-password "${REGISTRY_MIRROR_PASSWORD}"
+  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
+  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
+  ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
+  --dry-run -o yaml > $NKPCLUSTER.yaml
+
+echo "Cluster yaml created. to deploy cluster run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"

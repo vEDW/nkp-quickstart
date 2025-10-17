@@ -20,7 +20,7 @@ done
 DATASTORES=$(govc find / -type Datastore |grep -i -v "local")
 echo
 echo "Select datastore to set as default"
-select DATASTORE in "$DATASTORES"; do 
+select DATASTORE in $DATASTORES; do 
     echo "you selected datastore : ${DATASTORE}"
     echo 
     export GOVC_DATASTORE="${DATASTORE}"

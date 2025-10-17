@@ -46,14 +46,6 @@ select template in $VMSLIST; do
     echo
     break
 done
-#IFS=$SAVEIFS
-
-#verify template is actually a VM
-# VMTEST=$(govc vm.info $GOVC_DATACENTER/vm/$template)
-# if [ $? -ne 0 ]; then
-#     echo "Template is not a VM. Exiting."
-#     exit 1
-# fi
 
 echo "Select Cluster to deploy NKP"
 CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
@@ -143,29 +135,6 @@ export vsphere_password=$VSPHERE_PASSWORD
 #get vcenter thumbprint
 VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | cut -d "=" -f2)
 
-echo "command to run to deploy NKP:"
-echo "KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
-  --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
-  --control-plane-endpoint-host ${NKPCLUSTERVIP} \
-  --data-center ${DATACENTER} \
-  --data-store ${DATASTORE} \
-  --folder ${FOLDER} \
-  --server ${VSPHERE_SERVER} \
-  --ssh-public-key-file ${LOCALKEY} \
-  --resource-pool ${RESOURCE_POOL} \
-  --vm-template ${template} \
-  --virtual-ip-interface "eth0" \
-  --tls-thumb-print "${VCENTERTP}" \
-  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
-  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
-  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
-  ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
-  ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
-
-echo "press enter to continue or ctrl+c to exit"
-read
-
 KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
   --network ${NETWORK} \
@@ -184,3 +153,6 @@ KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
   ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
   ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
+  --dry-run -o yaml > $NKPCLUSTER.yaml
+
+echo "Cluster yaml created. to deploy cluster run : KUBECONFIG=$KUBECONFIGYAML kubectl apply -f $NKPCLUSTER.yaml --server-side=true"
