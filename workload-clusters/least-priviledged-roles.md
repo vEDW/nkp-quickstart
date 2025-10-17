@@ -1,5 +1,12 @@
 # Least priviledged roles
 
+## Documentation references
+
+CCM : https://opendocs.nutanix.com/ccm/v0.5.x/requirements/#user-permissions 
+
+CSI : https://portal.nutanix.com/page/documents/details?targetId=CSI-Volume-Driver-v3_3:csi-csi-create-non-admin-t.html
+
+
 ## Roles definitions
 
 ![PC Project users and roles](../images/pc-project-users-and-role.png)
@@ -95,7 +102,7 @@ see screenshot as example.
 
 ## Workload cluster creation with least priviledged users for CCM and CSI
 
-* clone the file [cluster-env](../workload-clusters/cluster-env.example) to "cluster-env"
+* clone the file [cluster-env-example](../workload-clusters/cluster-env.example) to "cluster-env"
 * uncomment and edit the values for "NUTANIX_CCM_*" and "NUTANIX_CSI_*" variables
 * run the script [create nkp wrokload cluster](../workload-clusters/nkp-create-workload-cluster.sh)
 this generates a cluster.yaml file that you can apply on the management cluster to actually create it.
