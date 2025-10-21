@@ -29,3 +29,5 @@ export WORKER_CATEGORIES=             # Optional, used to add categories to the 
 
 # skip preflight checks
 # export SKIP_PREFLIGHT_CHECKS=Registry        # Skip preflight checks. Provide "all" to skip all checks, or a comma-separated list of check names. (default [])
+
+export WORKSPACE_NAMESPACE=emea-prod-w5pb8-fn9dg
