@@ -12,13 +12,25 @@ export NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME=nkp-rocky-9.5-release-cis-1.32.3-2025
 export NUTANIX_PRISM_ELEMENT_CLUSTER_NAME=PHX-POC207            # Prism Element cluster name - Ex: PHX-POC207
 export NUTANIX_SUBNET_NAME=secondary                            # Prism Element Subnet on which to deploy the kubernetes cluster
 export NUTANIX_STORAGE_CONTAINER_NAME=SelfServiceContainer      # Change to your preferred Prism storage container
-export REGISTRY_MIRROR_URL=registry-1.docker.io                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
-export REGISTRY_MIRROR_USERNAME=                                # Required on internet connected deployments to avoid docker rate limiting
-export REGISTRY_MIRROR_PASSWORD=                                # Required on internet connected deployments to avoid docker rate limiting
-#export REGISTRY_URL=registry-1.docker.io                        # Optional, used to pull images from a private registry
-#export REGISTRY_USERNAME=                                       # Optional, used to pull images from a private registry
-#export REGISTRY_PASSWORD=                                       # Optional, used to pull images from a private registry
 export CSI_HYPERVISOR_ATTACHED=true                             # Optional, used to enable hypervisor attached volumes for the cluster
 export SSH_PUBLIC_KEY_FILE=~/.ssh/id_rsa.pub                   # Optional, used to add your public key to the cluster VMs for SSH access
 export CP_CATEGORIES=                # Optional, used to add categories to the control plane resources in Prism Central "key1=value1,key2=value2"
 export WORKER_CATEGORIES=             # Optional, used to add categories to the worker resources in Prism Central "key1=value1,key2=value2"
+
+# uncomment to authenticate to a private registry
+#export REGISTRY_URL=registry-1.docker.io                        # Optional, used to pull images from a private registry
+#export REGISTRY_USERNAME=                                       # Optional, used to pull images from a private registry
+#export REGISTRY_PASSWORD=                                       # Optional, used to pull images from a private registry
+
+# uncomment the below parameters whif you want to use a registry mirror
+# if you're using 2.16 or later, leave these lines commented to use the built-in private reagistry
+
+# export REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+# export REGISTRY_MIRROR_USERNAME=                                # Required on internet connected deployments to avoid docker rate limiting
+# export REGISTRY_MIRROR_PASSWORD=                                # Required on internet connected deployments to avoid docker rate limiting
+# export AIRGAP_REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap              # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+# export AIRGAP_REGISTRY_MIRROR_USERNAME='harbor user'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+# export AIRGAP_REGISTRY_MIRROR_PASSWORD='harbor password'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+
+# skip preflight checks
+# export SKIP_PREFLIGHT_CHECKS=Registry        # Skip preflight checks. Provide "all" to skip all checks, or a comma-separated list of check names. (default [])
