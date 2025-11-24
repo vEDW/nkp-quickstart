@@ -82,7 +82,7 @@ Role details : 49 Operations in role
 
 in PC Project assign ccm user with role 'Virtual Machine Viewer'
 
-### CSI user
+### CSI user - Authorization policy
 
 Create authorization policy with role 'csi-role' and restrict as needed
 * set cluster
