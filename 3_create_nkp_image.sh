@@ -129,6 +129,7 @@ echo "nkp image $template.yaml created"
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
 export VSPHERE_USERNAME=$GOVC_USERNAME
 export VSPHERE_PASSWORD=$GOVC_PASSWORD
+export vsphere_password=$VSPHERE_PASSWORD
 
 yq e $template.yaml
 
