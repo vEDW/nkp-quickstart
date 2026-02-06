@@ -108,4 +108,5 @@ $bundlepath/cli/nkp create cluster nutanix -c $CLUSTER_NAME \
     ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
     ${BUNDLECHECK:+--bundle "$KONVOYIMAGES,$KOMMANDERIMAGES"} \
     ${SKIP_PREFLIGHT_CHECKS:+--skip-preflight-checks "$SKIP_PREFLIGHT_CHECKS"} \
+    ${NTPSERVERS:+--ntp-servers "$NTPSERVERS"} \
     --self-managed --airgapped

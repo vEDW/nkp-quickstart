@@ -96,7 +96,7 @@ fi
 #check if nkp-catalog-applications bundle is present
 if [ ! -f $bundlepath/container-images/nkp-catalog-applications* ]; then
     echo 
-    echo " !! nkp-catalog-applications bundle not found. - skipping push of catalog applications bundle !!"
+    echo "nkp-catalog-applications bundle not found. - skipping push of catalog applications bundle"
     echo 
 else
     APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
@@ -110,19 +110,3 @@ else
         exit 1
     fi
 fi
-
-docker load -i $bundlepath/nkp-image-builder-image-*
-
-if [ $? -ne 0 ]; then
-    echo "issue loding $bundlepath/nkp-image-builder-image-*."
-    exit 1
-fi
-
-docker load -i $bundlepath/konvoy-bootstrap-image-*
-
-if [ $? -ne 0 ]; then
-    echo "issue loading $bundlepath/nkp-image-builder-image-*."
-    exit 1
-fi
-
-docker images

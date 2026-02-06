@@ -4,12 +4,14 @@ ssh_pwauth: true
 users:
 - name: nutanix
   primary_group: nutanix
-  groups: nutanix, docker
+  groups: nutanix, docker, wheel
+  sudo: ['ALL=(ALL) NOPASSWD:ALL']
   lock_passwd: false
   plain_text_passwd: nutanix/4u
 bootcmd:
 - mkdir -p /etc/docker
 runcmd:
+- mv /etc/yum.repos.d/nutanix_rocky9.repo /etc/yum.repos.d/nutanix_rocky9.repo.disabled
 - dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 - dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin git tmux
 - systemctl --now enable docker

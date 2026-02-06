@@ -55,5 +55,27 @@ cpwd=$(pwd)
 bundle="$cpwd/nkp-$version"
 echo $bundle > bundle-path
 
+#load docker images for bootstrapping and image creation
+
+docker load -i $bundlepath/nkp-image-builder-image-*
+
+if [ $? -ne 0 ]; then
+    echo "issue loding $bundlepath/nkp-image-builder-image-*."
+    exit 1
+fi
+
+docker load -i $bundlepath/konvoy-bootstrap-image-*
+
+if [ $? -ne 0 ]; then
+    echo "issue loading $bundlepath/nkp-image-builder-image-*."
+    exit 1
+fi
+
+docker images
+
+
 # Success message
+echo
+echo
 echo "NKP airgap bundle extracted to : $bundle"
+echo

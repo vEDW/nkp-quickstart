@@ -1,3 +1,10 @@
+#!/bin/bash
+
+#check if cluster-env file exists
+if [ ! -f ./cluster-env ]; then
+    echo "cluster-env file not found. Please create it with the required variables by cloning cluster-env.example."
+    exit 1
+fi
 source ./cluster-env
 
 nkp create cluster nutanix -c $CLUSTER_NAME \
