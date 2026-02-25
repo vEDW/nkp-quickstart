@@ -44,62 +44,75 @@ fi
 
 echo $bundlepath
 
-#get registry ca-cert
-ROOT_REGISTRY_URL=$(echo $AIRGAP_REGISTRY_MIRROR_URL | cut -d "/" -f1)
-REGISTRYPORT=$(echo $ROOT_REGISTRY_URL | grep ":"  | cut -d ":" -f2)
-if [[ "$REGISTRYPORT" == "" ]]; then
-    REGISTRYPORT=443
-    openssl s_client -connect $ROOT_REGISTRY_URL:$REGISTRYPORT -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > registry-ca_cert.pem
+# check if AIRGAP_REGISTRY_MIRROR_URL is empty 
+if [[ "$AIRGAP_REGISTRY_MIRROR_URL" == "" ]]; then
+    echo "AIRGAP_REGISTRY_MIRROR_URL = empty. Loading images to internal registry if present."
+
+    BUNDLECHECK=$($bundlepath/cli/nkp create image nutanix -h | grep "\--bundle")
+    if [ -n "$BUNDLECHECK" ]; then
+    
+        echo "checking container images in bundle"
+        KONVOYIMAGES=$(ls $bundlepath/container-images/konvoy-image-bundle*)
+        KOMMANDERIMAGES=$(ls $bundlepath/container-images/kommander-image-bundle*) 
+        #check if both bundles are present
+        if [ -z "$KONVOYIMAGES" ] || [ -z "$KOMMANDERIMAGES" ]; then
+            echo "konvoy or kommander image bundle not found in $bundlepath/container-images/. can't load images without both bundles."
+            exit 1
+        else
+            echo "konvoy and kommander image bundles found. loading images to internal registry."
+            echo
+
+            CONTEXTS=$(kubectl config get-contexts --output=name)
+            echo
+            echo "Select management cluster or CTRL-C to quit"
+            select CONTEXT in $CONTEXTS; do 
+                echo "you selected cluster context : ${CONTEXT}"
+                echo 
+                CLUSTERCTX="${CONTEXT}"
+                break
+            done
+
+            kubectl config use-context $CLUSTERCTX
+
+            $bundlepath/cli/nkp push bundle --bundle $KONVOYIMAGES,$KOMMANDERIMAGES --to-internal-registry-mirror 
+            if [ $? -ne 0 ]; then
+                echo "issue pushing $KONVOYIMAGES or $KOMMANDERIMAGES to internal registry."
+                exit 1
+            fi
+        fi
+    else
+        echo 
+        echo "bundle option is not available in nkp cli."
+        echo "exiting."
+        exit 1
+    fi
 else
-    openssl s_client -connect $ROOT_REGISTRY_URL -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > registry-ca_cert.pem
-fi
+    #get registry ca-cert
+    ROOT_REGISTRY_URL=$(echo $AIRGAP_REGISTRY_MIRROR_URL | cut -d "/" -f1)
+    REGISTRYPORT=$(echo $ROOT_REGISTRY_URL | grep ":"  | cut -d ":" -f2)
+    if [[ "$REGISTRYPORT" == "" ]]; then
+        REGISTRYPORT=443
+        openssl s_client -connect $ROOT_REGISTRY_URL:$REGISTRYPORT -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > registry-ca_cert.pem
+    else
+        openssl s_client -connect $ROOT_REGISTRY_URL -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > registry-ca_cert.pem
+    fi
 
+    if [ $? -ne 0 ]; then
+        echo "issue getting registry ca-cert."
+        exit 1
+    fi
 
-if [ $? -ne 0 ]; then
-    echo "issue getting registry ca-cert."
-    exit 1
-fi
+    if [[ "$AIRGAP_REGISTRY_MIRROR_USERNAME" == "" ]]; then
+        echo "AIRGAP_REGISTRY_MIRROR_USERNAME = empty. Exiting."
+        exit 1
+    fi
 
-if [[ "$AIRGAP_REGISTRY_MIRROR_USERNAME" == "" ]]; then
-    echo "AIRGAP_REGISTRY_MIRROR_USERNAME = empty. Exiting."
-    exit 1
-fi
+    if [[ "$AIRGAP_REGISTRY_MIRROR_PASSWORD" == "" ]]; then
+        echo "AIRGAP_REGISTRY_MIRROR_PASSWORD = empty. Exiting."
+        exit 1
+    fi
 
-if [[ "$AIRGAP_REGISTRY_MIRROR_PASSWORD" == "" ]]; then
-    echo "AIRGAP_REGISTRY_MIRROR_PASSWORD = empty. Exiting."
-    exit 1
-fi
-
-APPBUNDLE=$(ls $bundlepath/container-images/konvoy-image-bundle*)
-
-$bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
-  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
-  --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
-
-if [ $? -ne 0 ]; then
-    echo "issue pushing $APPBUNDLE."
-    exit 1
-fi
-
-APPBUNDLE=$(ls $bundlepath/container-images/kommander-image-bundle*)
-
-$bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
-  --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
-  --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
-
-
-if [ $? -ne 0 ]; then
-    echo "issue pushing $APPBUNDLE."
-    exit 1
-fi
-
-#check if nkp-catalog-applications bundle is present
-if [ ! -f $bundlepath/container-images/nkp-catalog-applications* ]; then
-    echo 
-    echo "nkp-catalog-applications bundle not found. - skipping push of catalog applications bundle"
-    echo 
-else
-    APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
+    APPBUNDLE=$(ls $bundlepath/container-images/konvoy-image-bundle*)
 
     $bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
     --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
@@ -109,4 +122,34 @@ else
         echo "issue pushing $APPBUNDLE."
         exit 1
     fi
+
+    APPBUNDLE=$(ls $bundlepath/container-images/kommander-image-bundle*)
+
+    $bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
+    --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
+    --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
+
+    if [ $? -ne 0 ]; then
+        echo "issue pushing $APPBUNDLE."
+        exit 1
+    fi
+
+    #check if nkp-catalog-applications bundle is present
+    if [ ! -f $bundlepath/container-images/nkp-catalog-applications* ]; then
+        echo 
+        echo "nkp-catalog-applications bundle not found. - skipping push of catalog applications bundle"
+        echo 
+    else
+        APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
+
+        $bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
+        --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
+        --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
+
+        if [ $? -ne 0 ]; then
+            echo "issue pushing $APPBUNDLE."
+            exit 1
+        fi
+    fi
+
 fi
