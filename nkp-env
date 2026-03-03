@@ -17,6 +17,9 @@ export CONTROL_PLANE_REPLICAS=3                                  # Number of con
 export WORKER_NODES_REPLICAS=4                                   # Number of worker VMs - Ex: 4
 export NTPSERVERS=""      # A comma-separated list of NTP servers to configure on all nodes. Each entry must be a fully qualified domain name (FQDN) or an IP address (IPv4 or IPv6). This list overrides any default NTP settings preconfigured in the machine image. (default [])
 
+export POD_CIDR=192.168.0.0/16
+export SERVICE_CIDR=10.96.0.0/12
+
 # uncomment the below parameters whif you want to use a registry mirror
 # if you're using 2.16 or later, leave these lines commented to use the built-in private reagistry
 
