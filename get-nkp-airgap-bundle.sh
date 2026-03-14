@@ -54,6 +54,7 @@ version=$(echo $url | cut -d "?" -f1 | rev | cut -d "/" -f1 | rev |cut -d "_" -f
 cpwd=$(pwd)
 bundle="$cpwd/nkp-$version"
 echo $bundle > bundle-path
+bundlepath=$(cat bundle-path)
 
 #load docker images for bootstrapping and image creation
 
@@ -67,12 +68,11 @@ fi
 docker load -i $bundlepath/konvoy-bootstrap-image-*
 
 if [ $? -ne 0 ]; then
-    echo "issue loading $bundlepath/nkp-image-builder-image-*."
+    echo "issue loading $bundlepath/konvoy-bootstrap-image-*."
     exit 1
 fi
 
 docker images
-
 
 # Success message
 echo
