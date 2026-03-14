@@ -44,7 +44,7 @@ fi
 echo
 echo "Extracting bundle - this can take some time"
 
-tar xzf nkp-airgap.tar.gz
+tar xvzf nkp-airgap.tar.gz
 if [ $? -ne 0 ]; then
     echo "Extraction failed. Exiting."
     exit 1
