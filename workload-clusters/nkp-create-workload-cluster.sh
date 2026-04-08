@@ -56,7 +56,7 @@ else
 fi
 
 # Remove CNI addon from the generated YAML
-yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' > $CLUSTER_NAME.yaml
+yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-flow-cni.yaml
 
 # create Flow-CNI hcp
 
@@ -97,6 +97,7 @@ spec:
 "
 
 # Append the Flow-CNI HelmChartProxy definition to the cluster YAML
-echo "$FLOWYAML" |yq e >> $CLUSTER_NAME.yaml
+echo "$FLOWYAML" |yq e >> $CLUSTER_NAME-with-flow-cni.yaml
 
-echo "to execute, run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"
+echo "to execute, run : kubectl apply -f $CLUSTER_NAME-with-flow-cni.yaml --server-side=true"
+    
