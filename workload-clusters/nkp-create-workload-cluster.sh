@@ -13,7 +13,6 @@ if [ -z "$DOCKER_FLOW_TOKEN" ]; then
     exit 1
 fi 
 
-
 nkp create cluster nutanix -c $CLUSTER_NAME \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
@@ -59,8 +58,8 @@ fi
 yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-flow-cni.yaml
 
 # create Flow-CNI hcp
+DOCKER_FLOW_TOKEN_BASE64=$(echo -n "svcpubflowcni:$DOCKER_FLOW_TOKEN" | base64 )
 
-DOCKERBASE64=$(echo -n "docker.io:$DOCKER_FLOW_TOKEN" | base64 -w 0)
 FLOWYAML="---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy
@@ -89,7 +88,7 @@ spec:
     global:
       dockerConfigSecret:
         registry: docker.io
-        auth: ${DOCKERBASE64}
+        auth: ${DOCKER_FLOW_TOKEN_BASE64}
         create: true
       imagePullSecretName: "flow-cni-secret"
     imagePullSecrets:
