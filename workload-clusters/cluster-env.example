@@ -10,6 +10,10 @@ export NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME=nkp-rocky-9.7-release-cis-1.34.3-2026
 export NUTANIX_PRISM_ELEMENT_CLUSTER_NAME=PHX-POC207            # Prism Element cluster name - Ex: PHX-POC207
 export NUTANIX_SUBNET_NAME=secondary                            # Prism Element Subnet on which to deploy the kubernetes cluster
 export NUTANIX_STORAGE_CONTAINER_NAME=SelfServiceContainer      # Change to your preferred Prism storage container
+export CSI_HYPERVISOR_ATTACHED=true                             # Optional, used to enable hypervisor attached volumes for the cluster
+export SSH_PUBLIC_KEY_FILE=~/.ssh/id_rsa.pub                   # Optional, used to add your public key to the cluster VMs for SSH access
+export CP_CATEGORIES=                # Optional, used to add categories to the control plane resources in Prism Central "key1=value1,key2=value2"
+export WORKER_CATEGORIES=             # Optional, used to add categories to the worker resources in Prism Central "key1=value1,key2=value2"
 export WORKSPACE_NAMESPACE=                                     # Optional for NKP starter/pro, mandatory for NKP Ultimate
 export NTPSERVERS=""                                            # A comma-separated list of NTP servers to configure on all nodes. Each entry must be a fully qualified domain name (FQDN) or an IP address (IPv4 or IPv6). This list overrides any default NTP settings preconfigured in the machine image. (default [])
 
