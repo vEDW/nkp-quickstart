@@ -33,6 +33,11 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
     ${NUTANIX_PC_PROJECT_NAME:+--control-plane-pc-project "$NUTANIX_PC_PROJECT_NAME"} \
     ${NUTANIX_PC_PROJECT_NAME:+--worker-pc-project "$NUTANIX_PC_PROJECT_NAME"} \
+    ${WORKSPACE_NAMESPACE:+-n "$WORKSPACE_NAMESPACE"} \
+    ${SKIP_PREFLIGHT_CHECKS:+--skip-preflight-checks "$SKIP_PREFLIGHT_CHECKS"} \
+    ${NTPSERVERS:+--ntp-servers "$NTPSERVERS"} \
+    --kubernetes-pod-network-cidr ${POD_CIDR} \
+    --kubernetes-service-cidr ${SERVICE_CIDR} \
     --dry-run -o yaml > $CLUSTER_NAME.yaml
 
 echo "Cluster yaml created. to deploy cluster run : kubectl apply -f $CLUSTER_NAME.yaml --server-side=true"
