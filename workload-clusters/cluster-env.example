@@ -16,6 +16,8 @@ export CP_CATEGORIES=                # Optional, used to add categories to the c
 export WORKER_CATEGORIES=             # Optional, used to add categories to the worker resources in Prism Central "key1=value1,key2=value2"
 export WORKSPACE_NAMESPACE=                                     # Optional for NKP starter/pro, mandatory for NKP Ultimate
 export NTPSERVERS=""                                            # A comma-separated list of NTP servers to configure on all nodes. Each entry must be a fully qualified domain name (FQDN) or an IP address (IPv4 or IPv6). This list overrides any default NTP settings preconfigured in the machine image. (default [])
+export POD_CIDR=192.168.0.0/16
+export SERVICE_CIDR=10.96.0.0/12
 
 export DOCKER_FLOW_TOKEN=""                                     # mandatory docker hub token from Nutanix flow download portal
 
