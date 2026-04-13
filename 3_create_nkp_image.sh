@@ -119,7 +119,7 @@ export vsphere_password=$VSPHERE_PASSWORD
 CURRENTDIR=$(pwd)
 #check nkp cli includes "nkp create image vsphere"
 TESTCLI=$(nkp create image -h |grep vsphere )
-if [ ${TESTCLI} = "" ]; then
+if [ "${TESTCLI}" == "" ]; then
     echo "nkp cli does not include vsphere image builder. Switching back to kib."   
 
     UBUNTUYAML=$(cat ./ubuntu_image.yaml)
