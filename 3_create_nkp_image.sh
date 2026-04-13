@@ -111,43 +111,61 @@ select LOCALKEY in $LOCALKEYS; do
     echo
     break
 done
-
-UBUNTUYAML=$(cat ./ubuntu_image.yaml)
-UBUNTUYAML=$(echo "$UBUNTUYAML" |CLUSTER="$CLUSTER" yq e '.packer.cluster =env(CLUSTER)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" |DATACENTER="$DATACENTER" yq e '.packer.datacenter =env(DATACENTER)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" |NETWORK="$NETWORK" yq e '.packer.network =env(NETWORK)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" |DATASTORE="$DATASTORE" yq e '.packer.datastore =env(DATASTORE)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" |RESOURCE_POOL="$RESOURCE_POOL" yq e '.packer.resource_pool =env(RESOURCE_POOL)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" |FOLDER="$FOLDER" yq e '.packer.folder =env(FOLDER)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" |template="$template" yq e '.packer.template =env(template)')
-UBUNTUYAML=$(echo "$UBUNTUYAML" |locakey="$LOCALKEY" yq e '.packer.ssh_private_key_file =env(locakey)')
-
-#need to add folder and RP
-echo
-echo "$UBUNTUYAML" > $template.yaml
-echo "nkp image $template.yaml created"
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
 export VSPHERE_USERNAME=$GOVC_USERNAME
 export VSPHERE_PASSWORD=$GOVC_PASSWORD
 export vsphere_password=$VSPHERE_PASSWORD
 
-yq e $template.yaml
-
-echo "press enter to continue"
-read
-
 CURRENTDIR=$(pwd)
-#copy files to kib folder
-cp $LOCALKEY $bundlepath/kib/
-cp $template.yaml $bundlepath/kib/
-#build nkp image
-cd $bundlepath/kib
-./konvoy-image build $template.yaml
-if [ $? -ne 0 ]; then
-    echo "Failed to build nkp image. Exiting."
-    exit 1
+#check nkp cli includes "nkp create image vsphere"
+TESTCLI=$(nkp create image -h |grep vsphere )
+if [ ${TESTCLI} = "" ]; then
+    echo "nkp cli does not include vsphere image builder. Switching back to kib."   
+
+    UBUNTUYAML=$(cat ./ubuntu_image.yaml)
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |CLUSTER="$CLUSTER" yq e '.packer.cluster =env(CLUSTER)')
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |DATACENTER="$DATACENTER" yq e '.packer.datacenter =env(DATACENTER)')
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |NETWORK="$NETWORK" yq e '.packer.network =env(NETWORK)')
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |DATASTORE="$DATASTORE" yq e '.packer.datastore =env(DATASTORE)')
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |RESOURCE_POOL="$RESOURCE_POOL" yq e '.packer.resource_pool =env(RESOURCE_POOL)')
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |FOLDER="$FOLDER" yq e '.packer.folder =env(FOLDER)')
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |template="$template" yq e '.packer.template =env(template)')
+    UBUNTUYAML=$(echo "$UBUNTUYAML" |locakey="$LOCALKEY" yq e '.packer.ssh_private_key_file =env(locakey)')
+
+    #need to add folder and RP
+    echo
+    echo "$UBUNTUYAML" > $template.yaml
+    echo "nkp image $template.yaml created"
+
+    yq e $template.yaml
+
+    echo "press enter to continue"
+    read
+
+    #copy files to kib folder
+    cp $LOCALKEY $bundlepath/kib/
+    cp $template.yaml $bundlepath/kib/
+    #build nkp image
+    cd $bundlepath/kib
+    ./konvoy-image build $template.yaml
+    if [ $? -ne 0 ]; then
+        echo "Failed to build nkp image. Exiting."
+        exit 1
+    fi
+    cd $CURRENTDIR
+else
+    echo "nkp cli includes vsphere image builder. Building image with nkp cli"
+    $bundlepath/cli/nkp create image vsphere ubuntu-22.04 \
+        --cluster $CLUSTER \
+        --data-center $DATACENTER \
+        --data-store $DATASTORE \
+        --folder $FOLDER \
+        --network $NETWORK \
+        --server $VSPHERE_SERVER \
+        --resource-pool $RESOURCE_POOL \
+        --template $template \
+        --insecure
 fi
-cd $CURRENTDIR
 
 END=$( date +%s )
 TIME=$( expr ${END} - ${START} )
