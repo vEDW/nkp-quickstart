@@ -67,5 +67,6 @@ for CLUSTERNAME in ${CLUSTERLIST}; do
     echo "|    |___ Registry Mirror: $REGMIRROR"
     #check private registries
     PRIVATEREGISTRIES=$(get_nkp_clusterprivate_registries $CLUSTERNAME $CLUSTERNS)
+    echo "|    |"
     echo "|    |___ Private Registries: $PRIVATEREGISTRIES"
 done
