@@ -86,8 +86,13 @@ done
 
 #get new registry mirror info
 echo "Enter new registry mirror URL or CTRL-C to quit : "
-read REGISTRYMIRROR
+read -r REGISTRYMIRROR
 
+#test if REGISTRYMIRROR is empty
+if [[ -z "$REGISTRYMIRROR" ]]; then
+    echo "No registry mirror URL provided. Exiting."
+    exit 1
+fi
 #test provided URL
 if ! curl -f -s "$REGISTRYMIRROR" > /dev/null; then
     echo "Registry mirror URL is not accessible. Please check the URL and try again."
