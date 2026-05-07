@@ -87,7 +87,7 @@ done
 #get new registry mirror info
 echo "Enter new registry mirror URL or CTRL-C to quit : "
 read -r REGISTRYMIRROR
-
+echo "you entered registry mirror URL : ==$REGISTRYMIRROR=="
 #test if REGISTRYMIRROR is empty
 if [[ -z "$REGISTRYMIRROR" ]]; then
     echo "No registry mirror URL provided. Exiting."
