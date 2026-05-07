@@ -1,5 +1,5 @@
 export CLUSTER_NAME=nkp-wkl-01                                 # NKP cluster name. When using NKP Pro/Ultimate, this name is used to generate the license key
-export NUTANIX_USER=nkp-admin                                # Prism Central username for nkp clusterapi integration - avoid admin if possible
+export NUTANIX_USER=nkp-admin                                 # Prism Central username for nkp clusterapi integration - avoid admin if possible
 export NUTANIX_PASSWORD='supersecretpassword'                   # Keep the password enclosed between single quotes - Ex: 'password'
 export NUTANIX_ENDPOINT=10.38.207.7                             # Prism Central IP address or FQDN without https://
 export NUTANIX_PORT=9440                                        # Prism Central port (default: 9440)
@@ -15,6 +15,10 @@ export CP_CATEGORIES=                # Optional, used to add categories to the c
 export WORKER_CATEGORIES=             # Optional, used to add categories to the worker resources in Prism Central "key1=value1,key2=value2"
 export CONTROL_PLANE_REPLICAS=3                                  # Number of control plane VMs - Ex: 3
 export WORKER_NODES_REPLICAS=4                                   # Number of worker VMs - Ex: 4
+export WORKSPACE_NAMESPACE=                                     # Optional for NKP starter/pro, mandatory for NKP Ultimate
+export NTPSERVERS=""      # A comma-separated list of NTP servers to configure on all nodes. Each entry must be a fully qualified domain name (FQDN) or an IP address (IPv4 or IPv6). This list overrides any default NTP settings preconfigured in the machine image. (default [])
+export POD_CIDR=192.168.0.0/16
+export SERVICE_CIDR=10.96.0.0/12
 
 # uncomment the below parameters whif you want to use a registry mirror
 # if you're using 2.16 or later, leave these lines commented to use the built-in private reagistry
@@ -29,3 +33,5 @@ export WORKER_NODES_REPLICAS=4                                   # Number of wor
 # add PC Project details if using PC Projects
 # export NUTANIX_PC_PROJECT_NAME='tenant-emea-pc'                          # Optional, Prism Central Project
 
+# skip preflight checks
+# export SKIP_PREFLIGHT_CHECKS=Registry        # Skip preflight checks. Provide "all" to skip all checks, or a comma-separated list of check names. (default [])
