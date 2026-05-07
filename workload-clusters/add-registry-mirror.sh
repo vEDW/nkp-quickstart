@@ -86,15 +86,15 @@ done
 
 #get new registry mirror info
 echo "Enter new registry mirror URL or CTRL-C to quit : "
-read -r REGISTRYMIRROR
-echo "you entered registry mirror URL : ==$REGISTRYMIRROR=="
+read -r NEWREGISTRYMIRROR
+echo "you entered registry mirror URL : ==$NEWREGISTRYMIRROR=="
 #test if REGISTRYMIRROR is empty
-if [[ -z "$REGISTRYMIRROR" ]]; then
+if [[ -z "$NEWREGISTRYMIRROR" ]]; then
     echo "No registry mirror URL provided. Exiting."
     exit 1
 fi
 #test provided URL
-if ! curl -f -s "$REGISTRYMIRROR" > /dev/null; then
+if ! curl -f -s "$NEWREGISTRYMIRROR" > /dev/null; then
     echo "Registry mirror URL is not accessible. Please check the URL and try again."
     exit 1
 fi
@@ -128,9 +128,9 @@ fi
 #add new registry mirror
 echo
 echo "Adding new registry mirror to cluster configuration..."
-echo "New registry mirror URL: $REGISTRYMIRROR"
+echo "New registry mirror URL: $NEWREGISTRYMIRROR"
 echo
-CLUSTER_YAML=$(echo "$CLUSTER_YAML" | yq '.spec.topology.variables[].value += {"globalImageRegistryMirror": {"url": "'$REGISTRYMIRROR'"}}')
+CLUSTER_YAML=$(echo "$CLUSTER_YAML" | yq '.spec.topology.variables[].value += {"globalImageRegistryMirror": {"url": "'$NEWREGISTRYMIRROR'"}}')
 echo "$CLUSTER_YAML" > $CLUSTERNAME-updated.yaml
 echo "Updated cluster yaml with new registry mirror. to apply changes run :"
 echo
