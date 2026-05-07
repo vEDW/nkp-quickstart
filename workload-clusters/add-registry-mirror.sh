@@ -121,6 +121,10 @@ if [[ "$REMOVE_REGISTRY_MIRROR_CONFIRMED" == true ]]; then
     CLUSTER_YAML=$(echo "$CLUSTER_YAML" | yq 'del(.spec.topology.variables[] | select(.value.globalImageRegistryMirror.url != null))')
 fi
 #add new registry mirror
-CLUSTER_YAML=$(echo "$CLUSTER_YAML" | yq '.spec.topology.variables += {"name": "globalImageRegistryMirror", "value": {"url": "'$REGISTRYMIRROR'"}}')
+CLUSTER_YAML=$(echo "$CLUSTER_YAML" | value="$REGISTRYMIRROR" yq '.spec.topology.variables[].value += {"globalImageRegistryMirror", {"url": "env(test)"}}')
 echo "$CLUSTER_YAML" > $CLUSTERNAME-updated.yaml
-echo "Updated cluster yaml with new registry mirror. to apply changes run : kubectl apply -f $CLUSTERNAME-updated.yaml"
+echo "Updated cluster yaml with new registry mirror. to apply changes run :"
+echo
+echo "kubectl apply -f $CLUSTERNAME-updated.yaml"
+echo 
+echo "Note: this will trigger a rolling update of the cluster nodes to apply the new registry mirror configuration."
