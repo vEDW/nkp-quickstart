@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source ./nkp-env
+
+
 echo "Select Management Cluster : "
 
 KUBECONFIGS=$(ls *.conf)
