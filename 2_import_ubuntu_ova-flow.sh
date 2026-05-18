@@ -111,17 +111,6 @@ ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  
 #fix open-vmtools config
 echo "fixing open-vmtools config"
 
-# /etc/vmware-tools/tools.conf
-VMTOOLSCONFFILE="./vm-tools-conf"
-#check if file exists
-if [ ! -f "$VMTOOLSCONFFILE" ]; then
-    echo "tools.conf file not found. Exiting."
-    exit 1
-fi
-scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $VMTOOLSCONFFILE ubuntu@$IP:/home/ubuntu/tools.conf
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/tools.conf /etc/vmware-tools/tools.conf"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "rm /home/ubuntu/tools.conf"
-
 # netplan
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-br-ex.network.d"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ens192.network.d"

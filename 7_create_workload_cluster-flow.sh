@@ -165,10 +165,6 @@ yq e 'del(select(.metadata.name | test("calico|tigera")))' $NKPCLUSTER.yaml > $N
 
 yq e '(select(.kind == "Cluster") | del(.metadata.labels."konvoy.d2iq.io/cni")) // select(.kind != "Cluster")' $NKPCLUSTER-no-calico-labels.yaml > $NKPCLUSTER-flow-cni.yaml
 
-#wait for namespace deletion
-echo "Waiting for  namespace to be deleted..."
-kubectl --kubeconfig=$KUBECONFIGYAML  delete ns $WORKSPACE_NAMESPACE --wait=true
-
 WORKSPACE_NAMESPACE=$(yq e 'select(.kind == "Namespace")|.metadata.name' $NKPCLUSTER-flow-cni.yaml)
 POD_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.pods.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
 SERVICE_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.services.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
@@ -216,5 +212,9 @@ spec:
 "
 
 echo "$FLOWYAML" > $NKPCLUSTER-flow-hcp.yaml
+#wait for namespace deletion
+echo "Waiting for  namespace to be deleted..."
+kubectl --kubeconfig=$KUBECONFIGYAML  delete ns $WORKSPACE_NAMESPACE --wait=true
+
 
 echo "Cluster yaml created. to deploy cluster run : KUBECONFIG=$KUBECONFIGYAML kubectl apply -f $NKPCLUSTER-flow-cni.yaml --server-side=true"
