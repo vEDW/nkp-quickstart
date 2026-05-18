@@ -91,8 +91,8 @@ done
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 echo
-echo "Select Folder to deploy NKP image to"
-FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder)
+echo "Select Folder in ${GOVC_DATACENTER} to deploy NKP image to"
+FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
 select FOLDER in $FOLDERS; do
     echo "you selected cluster : ${FOLDER}"
     echo
