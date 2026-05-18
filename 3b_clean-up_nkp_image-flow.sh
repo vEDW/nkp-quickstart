@@ -126,28 +126,15 @@ echo
 
 # Proceed with cleanup
 echo "Proceeding with cleanup of VM $template"
-SAVEIFS=$IFS
-IFS=$(echo -en "\n\b")
 
-COMMANDLIST="sudo systemctl stop openvswitch-switch
-sudo rm -f /etc/openvswitch/conf.db /etc/openvswitch/system-id.conf
-sudo cloud-init clean --logs
-sudo truncate -s 0 /etc/machine-id
-sudo rm /var/lib/dbus/machine-id
-sudo ln -s /etc/machine-id /var/lib/dbus/machine-id
-sudo rm -f /etc/ssh/ssh_host_*
-sudo find /var/log -type f -exec truncate -s 0 {} \;
-history -c && history -w && sudo shutdown -h now"
+CLEANUPSCRIPT="cleanup-ovs.sh"
+if [ ! -f "$CLEANUPSCRIPT" ]; then
+    echo "cleanup script $CLEANUPSCRIPT not found. Exiting."
+    exit 1
+fi
 
-for cmd in "${COMMANDLIST[@]}"; do
-    echo "Running command: $cmd"
-    ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@$IP "$cmd"
-    if [ $? -ne 0 ]; then
-        echo "issue running command: $cmd"
-        exit 1
-    fi
-done
-IFS=$SAVEIFS
+scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $CLEANUPSCRIPT ubuntu@$IP:/home/ubuntu/$CLEANUPSCRIPT
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "./home/ubuntu/$CLEANUPSCRIPT"
 
 echo "waiting for VM to shutdown"
 while true; do
