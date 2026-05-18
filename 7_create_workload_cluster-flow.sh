@@ -1,11 +1,21 @@
 #!/bin/bash
 
-#start timer
-START=$( date +%s ) 
+echo "Select Management Cluster : "
 
-source ./nkp-env
+KUBECONFIGS=$(ls *.conf)
+select KUBECONFIGYAML in $KUBECONFIGS; do
+    test=$(KUBECONFIG=$KUBECONFIGYAML kubectl get nodes)
+    if [ $? -ne 0 ]; then
+        echo "KUBECONFIG $KUBECONFIGYAML is not valid. Exiting."
+        exit 1
+    fi
+    echo "you selected kubeconfig : ${KUBECONFIGYAML}"
+    echo
+    break
+done
 
-echo "Enter name for NKP Management Cluster : "
+
+echo "Enter name for NKP Workload Cluster : "
 read NKPCLUSTER
 
 if [[ "$NKPCLUSTER" == "" ]]; then
@@ -30,28 +40,15 @@ echo "Select VM template to build NKP cluster with:"
 #SAVEIFS=$IFS
 #IFS=$(echo -en "\n\b")
 VMSLIST=$(govc find $GOVC_DATACENTER -type m |xargs govc vm.info -json  |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
-#check if there are any templates available
-if [[ -z "$VMSLIST" ]]; then
-    echo "No VM templates found in datacenter ${DATACENTER}. Exiting."
-    exit 1
-fi
 select template in $VMSLIST; do
 #    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
     echo
     break
 done
-#IFS=$SAVEIFS
-
-#verify template is actually a VM
-# VMTEST=$(govc vm.info $GOVC_DATACENTER/vm/$template)
-# if [ $? -ne 0 ]; then
-#     echo "Template is not a VM. Exiting."
-#     exit 1
-# fi
 
 echo "Select Cluster to deploy NKP"
-CLUSTERS=$(govc find "${GOVC_DATACENTER}" -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
+CLUSTERS=$(govc find / -type ClusterComputeResource | rev | cut -d'/' -f1 | rev)
 select CLUSTER in $CLUSTERS; do
     echo "you selected cluster : ${CLUSTER}"
     echo
@@ -63,7 +60,7 @@ echo "Select Network to deploy NKP"
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-NETWORKS=$(govc find "${GOVC_DATACENTER}" -type Network)
+NETWORKS=$(govc find / -type Network)
 echo
 echo "Select network to set as default"
 select NETWORK in $NETWORKS; do 
@@ -74,8 +71,7 @@ select NETWORK in $NETWORKS; do
 done
 IFS=$SAVEIFS
 
-#NETWORK=$(echo "${GOVC_NETWORK}" | rev | cut -d'/' -f1 | rev)
-NETWORK="${GOVC_NETWORK}" 
+NETWORK=$(echo "${GOVC_NETWORK}" | rev | cut -d'/' -f1 | rev)
 
 echo "Enter control plane VIP for NKP Management Cluster : "
 read NKPCLUSTERVIP
@@ -87,7 +83,7 @@ fi
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-DATASTORES=$(govc find "${GOVC_DATACENTER}" -type Datastore |grep -i -v "local")
+DATASTORES=$(govc find / -type Datastore |grep -i -v "local")
 echo
 echo "Select datastore :"
 select DATASTORE in $DATASTORES; do 
@@ -96,10 +92,9 @@ select DATASTORE in $DATASTORES; do
     export GOVC_DATASTORE="${DATASTORE}"
     break
 done
-#DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
-DATASTORE="${GOVC_DATASTORE}"
+DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
 
-FOLDERS=$(govc find "${GOVC_DATACENTER}" -type Folder |grep vm)
+FOLDERS=$(govc find / -type Folder)
 echo
 echo "Select Folder :"
 select FOLDER in $FOLDERS; do 
@@ -108,10 +103,8 @@ select FOLDER in $FOLDERS; do
     export GOVC_FOLDER="${FOLDER}"
     break
 done
-#FOLDER=$(echo "${GOVC_FOLDER}" | rev | cut -d'/' -f1 | rev)
-FOLDER="${GOVC_FOLDER}"
 
-RESOURCEPOOLS=$(govc find "${GOVC_DATACENTER}" -type ResourcePool)
+RESOURCEPOOLS=$(govc find / -type ResourcePool)
 echo
 echo "Select Resource Pool to set as default"
 select RESOURCEPOOL in $RESOURCEPOOLS; do 
@@ -120,8 +113,7 @@ select RESOURCEPOOL in $RESOURCEPOOLS; do
     export GOVC_RESOURCE_POOL="${RESOURCEPOOL}"
     break
 done
-#RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
-RESOURCE_POOL="${GOVC_RESOURCE_POOL}" 
+RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" )
 IFS=$SAVEIFS
 
 echo "select public ssh key: "
@@ -142,58 +134,84 @@ export vsphere_password=$VSPHERE_PASSWORD
 #get vcenter thumbprint
 VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | cut -d "=" -f2)
 
-#check if bundle-path is present
-bundlepath=$(cat bundle-path)
-if [ $? -ne 0 ]; then
-    echo "no bundle-path file present. please run 0_get_airgap_bundle.sh first"
-    exit 1
-fi
-
-# Check if directory is empty
-if [ -z "$bundlepath" ]; then
-    echo "No content in dir $bundlepath. Exiting."
-    exit 1
-fi
-echo
-echo "using airgap bundle : $bundlepath"
-echo
-
-
-COMMAND="$bundlepath/cli/nkp create cluster vsphere \
+KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
+  --network ${GOVC_NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
-  --data-center ${DATACENTER} \
-  --data-store ${DATASTORE} \
-  --folder ${FOLDER} \
+  --data-center ${GOVC_DATACENTER} \
+  --data-store ${GOVC_DATASTORE} \
+  --folder ${GOVC_FOLDER} \
   --server ${VSPHERE_SERVER} \
   --ssh-public-key-file ${LOCALKEY} \
-  --resource-pool ${RESOURCE_POOL} \
+  --resource-pool ${GOVC_RESOURCE_POOL} \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --kubernetes-pod-network-cidr "${POD_CIDR}" \
   --tls-thumb-print "${VCENTERTP}" \
+  --control-plane-replicas 1 \
+  --worker-memory 16 \
+  --worker-replicas 2 \
   ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
   ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
   ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
   ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
   ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
-  --self-managed"
+  --dry-run -o yaml > $NKPCLUSTER.yaml
 
-echo "command to run to deploy NKP:"
+# Remove calico entries
 
-echo "${COMMAND}"
+yq e 'del(select(.metadata.name | test("calico|tigera")))' $NKPCLUSTER.yaml > $NKPCLUSTER-no-calico-labels.yaml
+#yq -i 'select((.metadata.name // "") | test("tigera|calico-cni-installation") | not)' "{{ env.cluster_name }}-config/deploy-{{ env.cluster_name }}.yaml"
 
-echo "press enter to continue or ctrl+c to exit"
-read
+yq e '(select(.kind == "Cluster") | del(.metadata.labels."konvoy.d2iq.io/cni")) // select(.kind != "Cluster")' $NKPCLUSTER-no-calico-labels.yaml > $NKPCLUSTER-flow-cni.yaml
 
-"${COMMAND}"
+AIRGAPHARBOR="harbor.dmz.geo6.net/nkpairgap"
+WORKSPACE_NAMESPACE=$(yq e 'select(.kind == "Namespace")|.metadata.name' $NKPCLUSTER-flow-cni.yaml)
+POD_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.pods.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
+SERVICE_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.services.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
+FLOWYAML="---
+apiVersion: addons.cluster.x-k8s.io/v1alpha1
+kind: HelmChartProxy
+metadata:
+  name: flow-cni
+  namespace: ${WORKSPACE_NAMESPACE}
+spec:
+  clusterSelector:
+    matchLabels:
+      konvoy.d2iq.io/cluster-name: ${NKPCLUSTER}
+  repoURL: oci://${REGISTRY_MIRROR_URL}
+  chartName: nutanix-flow-cni
+  version: ${FLOW_CHART_VERSION}
+  namespace: flow-cni-system
+  options:
+    waitForJobs: true
+    wait: true
+    timeout: 30m
+    install:
+      createNamespace: true
+  valuesTemplate: |
+    nutanix-core-flow-ovn-kubernetes:
+      k8sAPIServer: "https://${NKPCLUSTERVIP}:6443" 
+      podNetwork: \"${POD_CIDR}/24\" 
+      serviceNetwork: \"${SERVICE_CIDR}\"
+      ovs-node:
+        enabled: false
+    nutanix-core-flow-container-security:
+      image:
+        repository: ${REGISTRY_MIRROR_URL}/flow-cns-cilium
+        tag: \"${FLOW_CNS_CILIUM_TAG}\"
+    image:
+        repository: ${REGISTRY_MIRROR_URL}/flow-k8s-cni
+        tag: \"${FLOW_K8S_CNI_TAG}\"
+    global:
+      runOvsOnNode: true
+      enableEgressIp: true
+      enableEgressService: true
+      image:
+        repository: ${REGISTRY_MIRROR_URL}/flow-ovn-kubernetes
+        tag: \"${FLOW_OVN_KUBERNETES_TAG}\"
+"
 
-END=$( date +%s )
-TIME=$( expr ${END} - ${START} )
-TIME=$(date -d@$TIME -u +%Hh%Mm%Ss)
-echo
-echo "==========================="
-echo "=== NKP cluster created ==="
-echo "=== In ${TIME} ==="
-echo "==========================="
+echo "$FLOWYAML" > $NKPCLUSTER-flow-hcp.yaml
+
+echo "Cluster yaml created. to deploy cluster run : KUBECONFIG=$KUBECONFIGYAML kubectl apply -f $NKPCLUSTER-flow-cni.yaml --server-side=true"
