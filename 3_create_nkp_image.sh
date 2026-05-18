@@ -155,7 +155,7 @@ if [ "${TESTCLI}" == "" ]; then
     cd $CURRENTDIR
 else
     echo "nkp cli includes vsphere image builder. Building image with nkp cli"
-    $bundlepath/cli/nkp create image vsphere ubuntu-22.04 \
+    VSPHERE_PASSWORD=$GOVC_PASSWORD $bundlepath/cli/nkp create image vsphere ubuntu-22.04 \
         --cluster $CLUSTER \
         --data-center $DATACENTER \
         --data-store $DATASTORE \
