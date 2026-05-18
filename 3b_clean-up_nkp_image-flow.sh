@@ -134,7 +134,7 @@ if [ ! -f "$CLEANUPSCRIPT" ]; then
 fi
 
 scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $CLEANUPSCRIPT ubuntu@$IP:/home/ubuntu/$CLEANUPSCRIPT
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "./home/ubuntu/$CLEANUPSCRIPT"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "/home/ubuntu/$CLEANUPSCRIPT"
 
 echo "waiting for VM to shutdown"
 while true; do
