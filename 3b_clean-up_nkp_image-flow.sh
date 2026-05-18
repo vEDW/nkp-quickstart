@@ -151,9 +151,9 @@ IFS=$SAVEIFS
 
 echo "waiting for VM to shutdown"
 while true; do
-    STATUS=$(govc vm.info -json $VMNAME | jq -r '.virtualMachines[].runtime.powerState')
+    STATUS=$(govc vm.info -json $template | jq -r '.virtualMachines[].runtime.powerState')
     if [ "$STATUS" == "poweredOff" ]; then
-        echo "VM $VMNAME is powered off"
+        echo "VM $template is powered off"
         break
     fi
     sleep 5
