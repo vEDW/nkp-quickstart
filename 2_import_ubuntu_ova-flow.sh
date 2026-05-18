@@ -122,6 +122,18 @@ scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/tools.conf /etc/vmware-tools/tools.conf"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "rm /home/ubuntu/tools.conf"
 
+# netplan
+NETPLANFILE="./20-mac.yaml"
+#check if file exists
+if [ ! -f "$NETPLANFILE" ]; then
+    echo "netplan file not found. Exiting."
+    exit 1
+fi
+scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $NETPLANFILE ubuntu@$IP:/home/ubuntu/20-mac.yaml
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/20-mac.yaml /etc/netplan/20-mac.yaml"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo chmod 600 /etc/netplan/20-mac.yaml"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "rm /home/ubuntu/20-mac.yaml"
+
 echo "checking disk space"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP df -h
 echo 
