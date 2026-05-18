@@ -1,9 +1,0 @@
-network:
-    ethernets:
-        id0:
-            dhcp4: true
-            dhcp6: false
-            dhcp-identifier: mac
-            match:
-                name: "id0"
-    version: 2

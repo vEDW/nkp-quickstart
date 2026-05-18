@@ -123,16 +123,17 @@ ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "rm /home/ubuntu/tools.conf"
 
 # netplan
-NETPLANFILE="./20-mac.yaml"
-#check if file exists
-if [ ! -f "$NETPLANFILE" ]; then
-    echo "netplan file not found. Exiting."
-    exit 1
-fi
-scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $NETPLANFILE ubuntu@$IP:/home/ubuntu/20-mac.yaml
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/20-mac.yaml /etc/netplan/20-mac.yaml"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo chmod 600 /etc/netplan/20-mac.yaml"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "rm /home/ubuntu/20-mac.yaml"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-br-ex.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ens192.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-eth0.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-id0.network.d"
+
+NETWORKFILE="dhcp-mac.conf"
+scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $NETWORKFILE ubuntu@$IP:/home/ubuntu/$NETWORKFILE
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-br-ex.network.d/dhcp-mac.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-ens192.network.d/dhcp-mac.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-eth0.network.d/dhcp-mac.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-id0.network.d/dhcp-mac.conf"
 
 echo "checking disk space"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP df -h

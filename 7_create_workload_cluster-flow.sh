@@ -168,6 +168,12 @@ yq e 'del(select(.metadata.name | test("calico|tigera")))' $NKPCLUSTER.yaml > $N
 
 yq e '(select(.kind == "Cluster") | del(.metadata.labels."konvoy.d2iq.io/cni")) // select(.kind != "Cluster")' $NKPCLUSTER-no-calico-labels.yaml > $NKPCLUSTER-flow-cni.yaml
 
+#wait for namespace deletion
+echo "Waiting for  namespace to be deleted..."
+while kubectl --kubeconfig=$KUBECONFIGYAML get ns $WORKSPACE_NAMESPACE &> /dev/null; do
+    sleep 5
+done
+
 AIRGAPHARBOR="harbor.dmz.geo6.net/nkpairgap"
 WORKSPACE_NAMESPACE=$(yq e 'select(.kind == "Namespace")|.metadata.name' $NKPCLUSTER-flow-cni.yaml)
 POD_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.pods.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
