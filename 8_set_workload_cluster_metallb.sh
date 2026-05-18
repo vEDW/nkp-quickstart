@@ -2,17 +2,42 @@
 
 echo "Select Management cluster kubeconfig file:"
 
-KUBECONFIGS=$(ls *.conf)
-select KUBECONFIGYAML in $KUBECONFIGS; do
-    test=$(KUBECONFIG=$KUBECONFIGYAML kubectl get nodes)
-    if [ $? -ne 0 ]; then
-        echo "KUBECONFIG $KUBECONFIGYAML is not valid. Exiting."
-        exit 1
-    fi
-    echo "you selected kubeconfig : ${KUBECONFIGYAML}"
-    echo
+CONTEXTS=$(kubectl config get-contexts --output=name)
+echo
+echo "Select management cluster or CTRL-C to quit"
+select CONTEXT in $CONTEXTS; do 
+    echo "you selected cluster context : ${CONTEXT}"
+    echo 
+    CLUSTERCTX="${CONTEXT}"
     break
 done
+
+kubectl config use-context $CLUSTERCTX
+
+#check if this is a NKP Management cluster
+KOMANDERCRD=$(kubectl  api-resources |grep cluster.x-k8s.io)
+if [[ -z "$KOMANDERCRD" ]]; then
+    echo "This is not a NKP Management Cluster. Please select a valid management cluster."
+    exit 1
+fi
+
+CLUSTERS=$(kubectl get cluster --no-headers -A |awk '{print $2}')
+echo
+echo "Select workload cluster to get kubeconfig or CTRL-C to quit"
+select CLUSTER in $CLUSTERS; do 
+    CLUSTERNS=$(kubectl get cluster --no-headers -A |grep ${CLUSTER} | awk '{print $1}')
+    echo "you selected cluster  : ${CLUSTER} in namespace : ${CLUSTERNS}"
+    echo 
+    break
+done
+
+CLUSTERKUBEYAML="${CLUSTER}.conf"
+nkp get kubeconfig -c ${CLUSTER} -n ${CLUSTERNS} > $CLUSTERKUBEYAML
+if [ $? -ne 0 ]; then
+    echo "get kubeconfig failed. Exiting."
+    exit 1
+fi
+
 
 echo "Enter ip range for metallb"
 read METALLB_IP_RANGE
@@ -36,7 +61,7 @@ spec:
   - default
 "
 echo "$METALYAML" > temp-metallb.yaml
-KUBECONFIG=$KUBECONFIGYAML kubectl apply -f temp-metallb.yaml
+KUBECONFIG=$CLUSTERKUBEYAML kubectl apply -f temp-metallb.yaml
 
 if [ $? -ne 0 ]; then
     echo "problem applying MetalLB settings. Exiting."
@@ -45,5 +70,5 @@ fi
 echo "MetalLB configured"
 echo 
 echo "Checking MetalLB status"
-KUBECONFIG=$KUBECONFIGYAML kubectl get IPAddressPool -A
-KUBECONFIG=$KUBECONFIGYAML kubectl get L2Advertisement -A
+KUBECONFIG=$CLUSTERKUBEYAML kubectl get IPAddressPool -A
+KUBECONFIG=$CLUSTERKUBEYAML kubectl get L2Advertisement -A

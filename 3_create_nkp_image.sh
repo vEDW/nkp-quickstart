@@ -112,9 +112,7 @@ select LOCALKEY in $LOCALKEYS; do
     break
 done
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
-export VSPHERE_USERNAME=$GOVC_USERNAME
-export VSPHERE_PASSWORD=$GOVC_PASSWORD
-export vsphere_password=$VSPHERE_PASSWORD
+export VSPHERE_PASSWORD=$(govc env |grep PASSWORD | cut -d "=" -f 2)
 
 CURRENTDIR=$(pwd)
 #check nkp cli includes "nkp create image vsphere"
@@ -155,7 +153,7 @@ if [ "${TESTCLI}" == "" ]; then
     cd $CURRENTDIR
 else
     echo "nkp cli includes vsphere image builder. Building image with nkp cli"
-    VSPHERE_PASSWORD=$GOVC_PASSWORD $bundlepath/cli/nkp create image vsphere ubuntu-22.04 \
+    $bundlepath/cli/nkp create image vsphere ubuntu-22.04 \
         --cluster $CLUSTER \
         --data-center $DATACENTER \
         --data-store $DATASTORE \
