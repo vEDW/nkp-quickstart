@@ -167,11 +167,8 @@ yq e '(select(.kind == "Cluster") | del(.metadata.labels."konvoy.d2iq.io/cni")) 
 
 #wait for namespace deletion
 echo "Waiting for  namespace to be deleted..."
-while kubectl --kubeconfig=$KUBECONFIGYAML get ns $WORKSPACE_NAMESPACE &> /dev/null; do
-    sleep 5
-done
+kubectl --kubeconfig=$KUBECONFIGYAML  delete ns $WORKSPACE_NAMESPACE --wait=true
 
-AIRGAPHARBOR="harbor.dmz.geo6.net/nkpairgap"
 WORKSPACE_NAMESPACE=$(yq e 'select(.kind == "Namespace")|.metadata.name' $NKPCLUSTER-flow-cni.yaml)
 POD_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.pods.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
 SERVICE_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.services.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
@@ -204,17 +201,17 @@ spec:
         enabled: false
     nutanix-core-flow-container-security:
       image:
-        repository: ${REGISTRY_MIRROR_URL}/flow-cns-cilium
+        repository: ${FLOWREGISTRY}/flow-cns-cilium
         tag: \"${FLOW_CNS_CILIUM_TAG}\"
     image:
-        repository: ${REGISTRY_MIRROR_URL}/flow-k8s-cni
+        repository: ${FLOWREGISTRY}/flow-k8s-cni
         tag: \"${FLOW_K8S_CNI_TAG}\"
     global:
       runOvsOnNode: true
       enableEgressIp: true
       enableEgressService: true
       image:
-        repository: ${REGISTRY_MIRROR_URL}/flow-ovn-kubernetes
+        repository: ${FLOWREGISTRY}/flow-ovn-kubernetes
         tag: \"${FLOW_OVN_KUBERNETES_TAG}\"
 "
 
