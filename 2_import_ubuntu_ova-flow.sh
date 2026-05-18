@@ -112,7 +112,7 @@ ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  
 echo "fixing open-vmtools config"
 
 # /etc/vmware-tools/tools.conf
-VMTOOLSCONFFILE="./tools.conf"
+VMTOOLSCONFFILE="./vm-tools-conf"
 #check if file exists
 if [ ! -f "$VMTOOLSCONFFILE" ]; then
     echo "tools.conf file not found. Exiting."
