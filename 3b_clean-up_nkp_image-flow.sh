@@ -121,14 +121,15 @@ while true; do
     sleep 5
 done
 echo
-echo "VM $VMNAME is ready"
+echo "VM $template is ready"
 echo
 
 # Proceed with cleanup
-echo "Proceeding with cleanup of VM $VMNAME"
+echo "Proceeding with cleanup of VM $template"
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
 
-COMMANDLIST="# OVS Reset
-sudo systemctl stop openvswitch-switch
+COMMANDLIST="sudo systemctl stop openvswitch-switch
 sudo rm -f /etc/openvswitch/conf.db /etc/openvswitch/system-id.conf
 sudo cloud-init clean --logs
 sudo truncate -s 0 /etc/machine-id
@@ -146,6 +147,7 @@ for cmd in "${COMMANDLIST[@]}"; do
         exit 1
     fi
 done
+IFS=$SAVEIFS
 
 echo "waiting for VM to shutdown"
 while true; do
