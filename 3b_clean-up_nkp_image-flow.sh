@@ -103,11 +103,17 @@ if [ $? -ne 0 ]; then
     echo "issue converting template to VM."
     exit 1
 fi
+#start VM
+govc vm.power -on $template
+if [ $? -ne 0 ]; then
+    echo "issue powering on VM."
+    exit 1
+fi
 
 #wait for ip address
 echo "waiting for ip address"
 while true; do
-    IP=$(govc vm.info -json $VMNAME | jq -r '.virtualMachines[].guest.ipAddress')
+    IP=$(govc vm.info -json $template | jq -r '.virtualMachines[].guest.ipAddress')
     if [ "$IP" != "null" ]; then
         echo "IP address : $IP"
         break
