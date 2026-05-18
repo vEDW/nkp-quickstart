@@ -128,7 +128,7 @@ ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-eth0.network.d"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-id0.network.d"
 
-NETWORKFILE="dhcp-mac.conf"
+NETWORKFILE="dhcp-mac-conf"
 scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $NETWORKFILE ubuntu@$IP:/home/ubuntu/$NETWORKFILE
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-br-ex.network.d/dhcp-mac.conf"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-ens192.network.d/dhcp-mac.conf"
