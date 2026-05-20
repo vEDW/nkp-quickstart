@@ -83,7 +83,7 @@ spec:
   valuesTemplate: |
     nutanix-core-flow-ovn-kubernetes:
       k8sAPIServer: "https://${CONTROL_PLANE_ENDPOINT_IP}:6443" 
-      podNetwork: "${POD_CIDR}" 
+      podNetwork: "${POD_CIDR}/24" 
       serviceNetwork: "${SERVICE_CIDR}"
     global:
       dockerConfigSecret:
