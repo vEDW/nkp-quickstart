@@ -128,6 +128,7 @@ select sshkey in $sshkeys; do
 done
 
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
+export VSPHERE_USERNAME=$(govc env |grep USERNAME | cut -d "=" -f 2)
 export VSPHERE_PASSWORD=$(govc env |grep PASSWORD | cut -d "=" -f 2)
 #get vcenter thumbprint
 VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | cut -d "=" -f2)
