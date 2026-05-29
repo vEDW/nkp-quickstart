@@ -174,7 +174,7 @@ COMMAND="$bundlepath/cli/nkp create cluster vsphere \
   --tls-thumb-print "${VCENTERTP}" \
   ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
   ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
-  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password \"$REGISTRY_MIRROR_PASSWORD\"} \
   ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
   ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
   --self-managed"

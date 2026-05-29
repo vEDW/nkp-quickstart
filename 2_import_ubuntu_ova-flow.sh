@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source nkp-env 
+
 OVAS=$(ls *.ova)
 echo
 echo "Select OVA to import"
@@ -101,34 +103,34 @@ done
 echo
 echo "VM $VMNAME is ready"
 echo
-echo "ssh ubuntu@$IP"
+echo "ssh $BASEOSIMAGEUSER@$IP"
 echo
 
 # install openvswitch
 echo "install open-vswitch"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo apt-get install -y openvswitch-switch"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo apt-get install -y openvswitch-switch"
 
 #fix open-vmtools config
 echo "fixing open-vmtools config"
 
 # netplan
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-br-ex.network.d"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ens192.network.d"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-eth0.network.d"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-id0.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-br-ex.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ens192.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-eth0.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-id0.network.d"
 
 NETWORKFILE="dhcp-mac-conf"
-scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $NETWORKFILE ubuntu@$IP:/home/ubuntu/$NETWORKFILE
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-br-ex.network.d/dhcp-mac.conf"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-ens192.network.d/dhcp-mac.conf"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-eth0.network.d/dhcp-mac.conf"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/$NETWORKFILE /etc/systemd/network/10-netplan-id0.network.d/dhcp-mac.conf"
+scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $NETWORKFILE $BASEOSIMAGEUSER@$IP:/home/$BASEOSIMAGEUSER/$NETWORKFILE
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-br-ex.network.d/dhcp-mac.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-ens192.network.d/dhcp-mac.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-eth0.network.d/dhcp-mac.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-id0.network.d/dhcp-mac.conf"
 
 echo "checking disk space"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP df -h
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP df -h
 echo 
 echo "shutting down VM"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo shutdown -h now"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo shutdown -h now"
 echo "waiting for VM to shutdown"
 while true; do
     STATUS=$(govc vm.info -json $VMNAME | jq -r '.virtualMachines[].runtime.powerState')
