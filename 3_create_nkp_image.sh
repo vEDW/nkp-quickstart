@@ -63,7 +63,7 @@ RESOURCE_POOL="${GOVC_RESOURCE_POOL}"
 echo "Select base VM to build NKP image from"
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-VMSLIST=$(govc find / -type m |grep -v CVM)
+VMSLIST=$(govc find / -type m |grep -v CVM | grep ubuntu)
 select template in $VMSLIST; do
     template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
@@ -92,7 +92,8 @@ SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 echo
 echo "Select Folder in ${GOVC_DATACENTER} to deploy NKP image to"
-FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
+#FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
+FOLDERS=$(govc find "${GOVC_DATACENTER}" -type Folder |grep vm)
 select FOLDER in $FOLDERS; do
     echo "you selected cluster : ${FOLDER}"
     echo
@@ -111,13 +112,24 @@ select LOCALKEY in $LOCALKEYS; do
     echo
     break
 done
+
+#test if $HTTP_PROXY is set.
+if [ -n "$HTTP_PROXY" ]; then
+    echo "HTTP_PROXY is set to $HTTP_PROXY. creating proxy-override.yaml."
+    PROXYYAML=$(echo "" |test="$HTTP_PROXY" yq '.http_proxy +=env(test)')
+    PROXYYAML=$(echo "" |test="$HTTPS_PROXY" yq '.https_proxy +=env(test)')
+    PROXYYAML=$(echo "" |test="$NO_PROXY" yq '.no_proxy +=env(test)')
+    echo "$PROXYYAML" > proxy-override.yaml
+else
+    echo "No HTTP_PROXY variable set. Continuing without proxy."
+fi
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
 export VSPHERE_USERNAME=$(govc env |grep USERNAME | cut -d "=" -f 2)
 export VSPHERE_PASSWORD=$(govc env |grep PASSWORD | cut -d "=" -f 2)
 
 CURRENTDIR=$(pwd)
 #check nkp cli includes "nkp create image vsphere"
-TESTCLI=$(nkp create image -h |grep vsphere )
+TESTCLI=$($bundlepath/cli/nkp create image -h |grep vsphere )
 if [ "${TESTCLI}" == "" ]; then
     echo "nkp cli does not include vsphere image builder. Switching back to kib."   
 
@@ -146,7 +158,7 @@ if [ "${TESTCLI}" == "" ]; then
     cp $template.yaml $bundlepath/kib/
     #build nkp image
     cd $bundlepath/kib
-    ./konvoy-image build $template.yaml
+    ./konvoy-image build $template.yaml  ${HTTP_PROXY:+--overrides proxy-override.yaml} 
     if [ $? -ne 0 ]; then
         echo "Failed to build nkp image. Exiting."
         exit 1
@@ -163,6 +175,7 @@ else
         --server $VSPHERE_SERVER \
         --resource-pool $RESOURCE_POOL \
         --template $template \
+        ${HTTP_PROXY:+--overrides proxy-override.yaml} \
         --insecure
 fi
 

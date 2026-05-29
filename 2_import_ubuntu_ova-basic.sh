@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source nkp-env
+
 OVAS=$(ls *.ova)
 echo
 echo "Select OVA to import"
@@ -101,13 +103,13 @@ done
 echo
 echo "VM $VMNAME is ready"
 echo
-echo "ssh ubuntu@$IP"
+echo "ssh $BASEOSIMAGEUSER@$IP"
 echo
 echo "checking disk space"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP df -h
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP df -h
 echo 
 echo "shutting down VM"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo shutdown -h now"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo shutdown -h now"
 echo "waiting for VM to shutdown"
 while true; do
     STATUS=$(govc vm.info -json $VMNAME | jq -r '.virtualMachines[].runtime.powerState')

@@ -16,3 +16,17 @@ export FLOW_OVN_KUBERNETES_TAG=230
 export AIRGAP_REGISTRY_MIRROR_URL=${REGISTRY_MIRROR_URL}              # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 export AIRGAP_REGISTRY_MIRROR_USERNAME='harbor user'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
 export AIRGAP_REGISTRY_MIRROR_PASSWORD='harbor password'                 # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
+
+export BASEOSIMAGEUSER=ubuntu
+
+# Optional Proxy settings for image buiding
+
+#export HTTP_PROXY=http://proxy:8080
+#export HTTPS_PROXY=http://proxy:8080
+#export NO_PROXY=localhost,127.0.0.1
+
+# Optional Proxy settings for cluster
+
+#export CLUSTER_HTTP_PROXY=http://proxy:8080
+#export CLUSTER_HTTPS_PROXY=http://proxy:8080
+#export CLUSTER_NO_PROXY=localhost,127.0.0.1

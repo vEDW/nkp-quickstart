@@ -14,7 +14,7 @@ select KUBECONFIGYAML in $KUBECONFIGS; do
     break
 done
 
-echo "Enter ip range for metallb"
+echo "Enter ip range for metallb - format <start_ip-end_ip>: - example 172.16.0.100-172.16.0.105"
 read METALLB_IP_RANGE
 
 METALYAML="apiVersion: metallb.io/v1beta1

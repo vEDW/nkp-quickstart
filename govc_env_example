@@ -1,5 +1,5 @@
 #copy this file to govc_env and edit values as needed.
-export GOVC_USERNAME=<username>
+export GOVC_USERNAME=<username>                         # be sure to use an accountname with domain : i.e. svc-nkp@vsphere.local to avoid vsphere csi issues.
 export VCENTERHOST=<vcenter ip or fqdn>
 read -sp "vcenter password: " GOVC_PASSWORD < /dev/tty
 export GOVC_URL=https://${GOVC_USERNAME}:${GOVC_PASSWORD}@${VCENTERHOST}/sdk

@@ -3,6 +3,8 @@
 #start timer
 START=$( date +%s ) 
 
+source nkp-env 
+
 #check if yq is installed
 if ! command -v yq &> /dev/null; then
     echo "yq could not be found, please install it first."
@@ -131,13 +133,13 @@ if [ ! -f "$VMTOOLSCONFFILE" ]; then
     echo "tools.conf file not found. Exiting."
     exit 1
 fi
-scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $VMTOOLSCONFFILE ubuntu@$IP:/home/ubuntu/tools.conf
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cp /home/ubuntu/tools.conf /etc/vmware-tools/tools.conf"
-#ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "rm /home/ubuntu/tools.conf"
+scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $VMTOOLSCONFFILE $BASEOSIMAGEUSER@$IP:/home/$BASEOSIMAGEUSER/tools.conf
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/tools.conf /etc/vmware-tools/tools.conf"
+#ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "rm /home/$BASEOSIMAGEUSER/tools.conf"
 
 echo
 echo "Verify vmtools configuration"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo cat /etc/vmware-tools/tools.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cat /etc/vmware-tools/tools.conf"
 echo
 
 
@@ -151,8 +153,8 @@ if [ ! -f "$CLEANUPSCRIPT" ]; then
     exit 1
 fi
 
-scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $CLEANUPSCRIPT ubuntu@$IP:/home/ubuntu/$CLEANUPSCRIPT
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "/home/ubuntu/$CLEANUPSCRIPT"
+scp -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $CLEANUPSCRIPT $BASEOSIMAGEUSER@$IP:/home/$BASEOSIMAGEUSER/$CLEANUPSCRIPT
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "/home/$BASEOSIMAGEUSER/$CLEANUPSCRIPT"
 
 echo "waiting for VM to shutdown"
 while true; do

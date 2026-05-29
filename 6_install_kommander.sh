@@ -32,9 +32,20 @@ select KUBECONFIGYAML in $KUBECONFIGS; do
     break
 done
 
+KOMMANDERAPPLICATIONBUNDLE=$(ls $bundlepath/application-repositories/kommander-applications-*.tar.gz)
+#check if file exists
+if [ ! -f "$KOMMANDERAPPLICATIONBUNDLE" ]; then
+    echo "kommander application bundle not found in $bundlepath/application-repositories/. Exiting."
+    exit 1
+else
+    echo
+    echo "using kommander application bundle : $KOMMANDERAPPLICATIONBUNDLE"
+fi
+
 echo "press enter to continue"
 read
-KUBECONFIG=$KUBECONFIGYAML $bundlepath/cli/nkp install kommander --airgapped
+
+KUBECONFIG=$KUBECONFIGYAML $bundlepath/cli/nkp install kommander --airgapped   --kommander-applications-repository $KOMMANDERAPPLICATIONBUNDLE
 if [ $? -ne 0 ]; then
     echo "problem installing kommander using $KUBECONFIGYAML . Exiting."
     exit 1
