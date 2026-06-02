@@ -112,9 +112,8 @@ select LOCALKEY in $LOCALKEYS; do
     break
 done
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
-export VSPHERE_USERNAME=$GOVC_USERNAME
-export VSPHERE_PASSWORD=$GOVC_PASSWORD
-export vsphere_password=$VSPHERE_PASSWORD
+export VSPHERE_USERNAME=$(govc env |grep USERNAME | cut -d "=" -f 2)
+export VSPHERE_PASSWORD=$(govc env |grep PASSWORD | cut -d "=" -f 2)
 
 CURRENTDIR=$(pwd)
 #check nkp cli includes "nkp create image vsphere"

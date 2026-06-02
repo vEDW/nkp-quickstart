@@ -103,7 +103,6 @@ select FOLDER in $FOLDERS; do
     export GOVC_FOLDER="${FOLDER}"
     break
 done
-FOLDER=$(echo "${GOVC_FOLDER}" | rev | cut -d'/' -f1 | rev)
 
 RESOURCEPOOLS=$(govc find / -type ResourcePool)
 echo
@@ -114,7 +113,7 @@ select RESOURCEPOOL in $RESOURCEPOOLS; do
     export GOVC_RESOURCE_POOL="${RESOURCEPOOL}"
     break
 done
-RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" | rev | cut -d'/' -f1 | rev)
+RESOURCE_POOL=$(echo "${GOVC_RESOURCE_POOL}" )
 IFS=$SAVEIFS
 
 echo "select public ssh key: "
@@ -128,23 +127,22 @@ select sshkey in $sshkeys; do
 done
 
 export VSPHERE_SERVER=$(govc env |grep -i url | cut -d "=" -f2)
-export VSPHERE_USERNAME=$GOVC_USERNAME
-export VSPHERE_PASSWORD=$GOVC_PASSWORD
-export vsphere_password=$VSPHERE_PASSWORD
+export VSPHERE_USERNAME=$(govc env |grep USERNAME | cut -d "=" -f 2)
+export VSPHERE_PASSWORD=$(govc env |grep PASSWORD | cut -d "=" -f 2)
 
 #get vcenter thumbprint
 VCENTERTP=$(echo | openssl s_client -connect $VSPHERE_SERVER:443 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | cut -d "=" -f2)
 
 KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
+  --network ${GOVC_NETWORK} \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
-  --data-center ${DATACENTER} \
-  --data-store ${DATASTORE} \
-  --folder ${FOLDER} \
+  --data-center ${GOVC_DATACENTER} \
+  --data-store ${GOVC_DATASTORE} \
+  --folder ${GOVC_FOLDER} \
   --server ${VSPHERE_SERVER} \
   --ssh-public-key-file ${LOCALKEY} \
-  --resource-pool ${RESOURCE_POOL} \
+  --resource-pool ${GOVC_RESOURCE_POOL} \
   --vm-template ${template} \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
