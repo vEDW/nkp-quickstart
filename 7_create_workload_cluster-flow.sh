@@ -183,6 +183,8 @@ spec:
   chartName: nutanix-flow-cni
   version: ${FLOW_CHART_VERSION}
   namespace: flow-cni-system
+  tlsConfig:
+    insecureSkipTLSVerify: true
   options:
     waitForJobs: true
     wait: true
