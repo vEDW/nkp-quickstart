@@ -117,7 +117,7 @@ export VSPHERE_PASSWORD=$(govc env |grep PASSWORD | cut -d "=" -f 2)
 
 CURRENTDIR=$(pwd)
 #check nkp cli includes "nkp create image vsphere"
-TESTCLI=$(nkp create image -h |grep vsphere )
+TESTCLI=$($bundlepath/cli/nkp create image -h |grep vsphere )
 if [ "${TESTCLI}" == "" ]; then
     echo "nkp cli does not include vsphere image builder. Switching back to kib."   
 
