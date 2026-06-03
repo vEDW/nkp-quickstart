@@ -159,7 +159,7 @@ else
         --data-center $DATACENTER \
         --data-store $DATASTORE \
         --folder $FOLDER \
-        --network $NETWORK \
+        --network \"$NETWORK\" \
         --server $VSPHERE_SERVER \
         --resource-pool $RESOURCE_POOL \
         --template $template \
