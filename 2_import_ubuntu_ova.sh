@@ -103,6 +103,11 @@ echo "VM $VMNAME is ready"
 echo
 echo "ssh ubuntu@$IP"
 echo
+
+echo "get updates"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo apt-get updates"
+echo
+
 echo "checking disk space"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP df -h
 echo 
