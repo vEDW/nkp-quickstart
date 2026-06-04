@@ -42,7 +42,8 @@ echo
 echo "Select VM template to build NKP cluster with:"
 #SAVEIFS=$IFS
 #IFS=$(echo -en "\n\b")
-VMSLIST=$(govc find $GOVC_DATACENTER -type m |xargs govc vm.info -json  |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
+#VMSLIST=$(govc find $GOVC_DATACENTER -type m |xargs govc vm.info -json  |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
+VMSLIST=$(govc find $GOVC_DATACENTER -type m |grep ubuntu)
 select template in $VMSLIST; do
 #    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
@@ -179,7 +180,7 @@ spec:
   clusterSelector:
     matchLabels:
       konvoy.d2iq.io/cluster-name: ${NKPCLUSTER}
-  repoURL: oci://${REGISTRY_MIRROR_URL}
+  repoURL: oci://${OCICHARTREPO}
   chartName: nutanix-flow-cni
   version: ${FLOW_CHART_VERSION}
   namespace: flow-cni-system
