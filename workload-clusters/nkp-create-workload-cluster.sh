@@ -12,6 +12,11 @@ if [ -z "$DOCKER_FLOW_TOKEN" ]; then
     echo "DOCKER_FLOW_TOKEN is not set. Please set it in cluster-env to pull Flow-CNI images from Docker Hub."
     exit 1
 fi 
+# check if FLOW_CHART_VERSION is set
+if [ -z "$FLOW_CHART_VERSION" ]; then
+    echo "FLOW_CHART_VERSION is not set. Please set it in cluster-env to specify the version of Flow-CNI to install."
+    exit 1
+fi
 
 nkp create cluster nutanix -c $CLUSTER_NAME \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
@@ -54,8 +59,18 @@ else
     echo
 fi
 
+#get cluster uuid
+CLUSTERUUID=$(yq eval '(select(.kind == "Cluster") | .metadata.annotations."caren.nutanix.com/cluster-uuid")' $CLUSTER_NAME.yaml)
+if [ -z "$CLUSTERUUID" ]; then
+    echo "Failed to extract cluster UUID from the generated YAML."
+    exit 1
+else
+    echo "Cluster UUID: $CLUSTERUUID"
+fi
+
 # Remove CNI addon from the generated YAML
 yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-flow-cni.yaml
+rm $CLUSTER_NAME.yaml
 
 # create Flow-CNI hcp
 DOCKER_FLOW_TOKEN_BASE64=$(echo -n "svcpubflowcni:$DOCKER_FLOW_TOKEN" | base64 )
@@ -64,7 +79,7 @@ FLOWYAML="---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy
 metadata:
-  name: flow-cni
+  name: flow-cni-${CLUSTERUUID}
   namespace: ${WORKSPACE_NAMESPACE}
 spec:
   clusterSelector:
@@ -72,7 +87,7 @@ spec:
       cluster.x-k8s.io/cluster-name: ${CLUSTER_NAME}
   repoURL: https://nutanix.github.io/helm-releases/
   chartName: nutanix-flow-cni
-  version: 1.0.0
+  version: ${FLOW_CHART_VERSION}
   namespace: flow-cni-system
   options:
     waitForJobs: true

@@ -1,4 +1,5 @@
 export CLUSTER_NAME=nkp-cni-01                                  # NKP cluster name. When using NKP Pro/Ultimate, this name is used to generate the license key
+export WORKSPACE_NAMESPACE=                                     # Optional for NKP starter/pro, mandatory for NKP Ultimate
 #export CLUSTER_HOSTNAME=wkl-cl-01.localhost                    # Hostname for the cluster - this needs to be configured in your DNS server based on first ip in LB_IP_RANGE
 export NUTANIX_USER=nkp-admin                                   # Prism Central username for nkp clusterapi integration - avoid admin if possible
 export NUTANIX_PASSWORD='supersecretpassword'                   # Keep the password enclosed between single quotes - Ex: 'password'
@@ -14,12 +15,12 @@ export CSI_HYPERVISOR_ATTACHED=true                             # Optional, used
 export SSH_PUBLIC_KEY_FILE=~/.ssh/id_rsa.pub                   # Optional, used to add your public key to the cluster VMs for SSH access
 export CP_CATEGORIES=                # Optional, used to add categories to the control plane resources in Prism Central "key1=value1,key2=value2"
 export WORKER_CATEGORIES=             # Optional, used to add categories to the worker resources in Prism Central "key1=value1,key2=value2"
-export WORKSPACE_NAMESPACE=                                     # Optional for NKP starter/pro, mandatory for NKP Ultimate
 export NTPSERVERS=""                                            # A comma-separated list of NTP servers to configure on all nodes. Each entry must be a fully qualified domain name (FQDN) or an IP address (IPv4 or IPv6). This list overrides any default NTP settings preconfigured in the machine image. (default [])
 export POD_CIDR=192.168.0.0/16
 export SERVICE_CIDR=10.96.0.0/12
 
 export DOCKER_FLOW_TOKEN=""                                     # mandatory docker hub token from Nutanix flow download portal
+export FLOW_CHART_VERSION="1.0.0"
 
 # uncomment the below parameters whif you want to use a registry mirror
 # if you're using 2.16 or later, leave these lines commented to use the built-in private registry
