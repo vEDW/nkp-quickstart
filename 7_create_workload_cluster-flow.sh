@@ -43,7 +43,7 @@ echo "Select VM template to build NKP cluster with:"
 #SAVEIFS=$IFS
 #IFS=$(echo -en "\n\b")
 #VMSLIST=$(govc find $GOVC_DATACENTER -type m |xargs govc vm.info -json  |jq -r '.virtualMachines[]|select (.config.template == true ) |.name')
-VMSLIST=$(govc find $GOVC_DATACENTER -type m |grep "nkp-")
+VMSLIST=$(govc find $GOVC_DATACENTER -type m |grep "nkp-ubuntu-")
 select template in $VMSLIST; do
 #    template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
@@ -100,11 +100,10 @@ DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
 
 FOLDERS=$(govc find / -type Folder)
 echo
-echo "Select Folder :"
+echo "Select VM Folder :"
 select FOLDER in $FOLDERS; do 
-    echo "you selected Resource Pool : ${FOLDER}"
+    echo "you selected VM Folder : ${FOLDER}"
     echo 
-    export GOVC_FOLDER="${FOLDER}"
     break
 done
 
@@ -142,7 +141,7 @@ KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
   --data-center ${GOVC_DATACENTER} \
   --data-store ${GOVC_DATASTORE} \
-  --folder ${GOVC_FOLDER} \
+  --folder ${FOLDER} \
   --server ${VSPHERE_SERVER} \
   --ssh-public-key-file ${LOCALKEY} \
   --resource-pool ${GOVC_RESOURCE_POOL} \
@@ -180,7 +179,7 @@ spec:
   clusterSelector:
     matchLabels:
       konvoy.d2iq.io/cluster-name: ${NKPCLUSTER}
-  repoURL: oci://${OCICHARTREPO}
+  repoURL: oci://${FLOWREGISTRY}
   chartName: nutanix-flow-cni
   version: ${FLOW_CHART_VERSION}
   namespace: flow-cni-system
