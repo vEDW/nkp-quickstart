@@ -163,12 +163,14 @@ KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
 
 yq e 'del(select(.metadata.name | test("calico|tigera")))' $NKPCLUSTER.yaml > $NKPCLUSTER-no-calico-labels.yaml
 #yq -i 'select((.metadata.name // "") | test("tigera|calico-cni-installation") | not)' "{{ env.cluster_name }}-config/deploy-{{ env.cluster_name }}.yaml"
+rm $NKPCLUSTER.yaml
+NOCNIFILENAME="${NKPCLUSTER}-no-cni.yaml"
+yq e '(select(.kind == "Cluster") | del(.metadata.labels."konvoy.d2iq.io/cni")) // select(.kind != "Cluster")' $NKPCLUSTER-no-calico-labels.yaml > $NOCNIFILENAME
+rm $NKPCLUSTER-no-calico-labels.yaml
 
-yq e '(select(.kind == "Cluster") | del(.metadata.labels."konvoy.d2iq.io/cni")) // select(.kind != "Cluster")' $NKPCLUSTER-no-calico-labels.yaml > $NKPCLUSTER-flow-cni.yaml
-
-WORKSPACE_NAMESPACE=$(yq e 'select(.kind == "Namespace")|.metadata.name' $NKPCLUSTER-flow-cni.yaml)
-POD_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.pods.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
-SERVICE_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.services.cidrBlocks[0]' $NKPCLUSTER-flow-cni.yaml)
+WORKSPACE_NAMESPACE=$(yq e 'select(.kind == "Namespace")|.metadata.name' $NOCNIFILENAME)
+POD_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.pods.cidrBlocks[0]' $NOCNIFILENAME)
+SERVICE_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.services.cidrBlocks[0]' $NOCNIFILENAME)
 FLOWYAML="---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy
@@ -220,4 +222,4 @@ echo "Waiting for  namespace to be deleted..."
 kubectl --kubeconfig=$KUBECONFIGYAML  delete ns $WORKSPACE_NAMESPACE --wait=true
 
 
-echo "Cluster yaml created. to deploy cluster run : KUBECONFIG=$KUBECONFIGYAML kubectl apply -f $NKPCLUSTER-flow-cni.yaml --server-side=true"
+echo "Cluster yaml created. to deploy cluster run : KUBECONFIG=$KUBECONFIGYAML kubectl apply -f $NOCNIFILENAME --server-side=true"
