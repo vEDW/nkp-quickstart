@@ -87,7 +87,7 @@ fi
 
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-DATASTORES=$(govc find / -type Datastore |grep -i -v "local")
+DATASTORES=$(govc find / -type Datastore )
 echo
 echo "Select datastore :"
 select DATASTORE in $DATASTORES; do 
@@ -141,7 +141,7 @@ KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
   --data-center ${GOVC_DATACENTER} \
   --data-store ${GOVC_DATASTORE} \
-  --folder ${FOLDER} \
+  --folder "${FOLDER}" \
   --server ${VSPHERE_SERVER} \
   --ssh-public-key-file ${LOCALKEY} \
   --resource-pool ${GOVC_RESOURCE_POOL} \
