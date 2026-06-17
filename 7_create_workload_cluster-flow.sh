@@ -164,7 +164,7 @@ KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
 yq e 'del(select(.metadata.name | test("calico|tigera")))' $NKPCLUSTER.yaml > $NKPCLUSTER-no-calico-labels.yaml
 #yq -i 'select((.metadata.name // "") | test("tigera|calico-cni-installation") | not)' "{{ env.cluster_name }}-config/deploy-{{ env.cluster_name }}.yaml"
 rm $NKPCLUSTER.yaml
-NOCNIFILENAME="${NKPCLUSTER}-no-cni.yaml"
+NOCNIFILENAME="${NKPCLUSTER}.yaml"
 yq e '(select(.kind == "Cluster") | del(.metadata.labels."konvoy.d2iq.io/cni")) // select(.kind != "Cluster")' $NKPCLUSTER-no-calico-labels.yaml > $NOCNIFILENAME
 rm $NKPCLUSTER-no-calico-labels.yaml
 
@@ -216,7 +216,7 @@ spec:
         tag: \"${FLOW_OVN_KUBERNETES_TAG}\"
 "
 
-echo "$FLOWYAML" > $NKPCLUSTER-flow-hcp.yaml
+echo "$FLOWYAML" >> $NOCNIFILENAME
 #wait for namespace deletion
 echo "Waiting for  namespace to be deleted..."
 kubectl --kubeconfig=$KUBECONFIGYAML  delete ns $WORKSPACE_NAMESPACE --wait=true
