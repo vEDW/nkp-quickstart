@@ -202,17 +202,17 @@ spec:
         enabled: false
     nutanix-core-flow-container-security:
       image:
-        repository: ${FLOWREGISTRY}/flow-cns-cilium
+        repository: nkpairgap/flow-cns-cilium
         tag: \"${FLOW_CNS_CILIUM_TAG}\"
     image:
-        repository: ${FLOWREGISTRY}/flow-k8s-cni
+        repository: nkpairgap/flow-k8s-cni
         tag: \"${FLOW_K8S_CNI_TAG}\"
     global:
       runOvsOnNode: true
       enableEgressIp: true
       enableEgressService: true
       image:
-        repository: ${FLOWREGISTRY}/flow-ovn-kubernetes
+        repository: nkpairgap/flow-ovn-kubernetes
         tag: \"${FLOW_OVN_KUBERNETES_TAG}\"
 "
 

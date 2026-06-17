@@ -1,3 +1,4 @@
+#!/bin/bash
 export POD_CIDR="10.95.0.0/16"
 
 export REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap              # Required on Nutanix HPOC or internet connected deployments to avoid docker rate limiting
@@ -7,7 +8,7 @@ export REGISTRY_MIRROR_URL=registry.nutanixdemo.com/nkpairgap              # Req
 
 
 #Flow-CNI parameters
-FLOWREGISTRY="harbor-fqdn"
+export FLOWREGISTRY="harbor-fqdn"
 export FLOW_CHART_VERSION="1.1.0-940"
 export FLOW_CNS_CILIUM_TAG=169
 export FLOW_K8S_CNI_TAG=940
