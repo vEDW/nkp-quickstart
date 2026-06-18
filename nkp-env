@@ -5,7 +5,6 @@ export NUTANIX_ENDPOINT=10.38.207.7                             # Prism Central 
 export NUTANIX_PORT=9440                                        # Prism Central port (default: 9440)
 export LB_IP_RANGE=10.38.207.159-10.38.207.160                    # Load balancer IP pool - Ex: 10.42.236.204-10.42.236.204
 export CONTROL_PLANE_ENDPOINT_IP=10.38.207.158                   # Kubernetes VIP. Must be in the same subnet as the VMs - Ex: 10.42.236.203
-export NUTANIX_MACHINE_TEMPLATE_IMAGE_NAME=nkp-rocky-9.6-release-cis-1.34.1-20251206060914.qcow2 # Update with the NKP Rocky image name
 export NUTANIX_PRISM_ELEMENT_CLUSTER_NAME=PHX-POC207            # Prism Element cluster name - Ex: PHX-POC207
 export NUTANIX_SUBNET_NAME=primary                            # Prism Element Subnet on which to deploy the kubernetes cluster
 export NUTANIX_STORAGE_CONTAINER_NAME=SelfServiceContainer      # Change to your preferred Prism storage container
@@ -17,8 +16,29 @@ export CONTROL_PLANE_REPLICAS=3                                  # Number of con
 export WORKER_NODES_REPLICAS=4                                   # Number of worker VMs - Ex: 4
 export NTPSERVERS=""      # A comma-separated list of NTP servers to configure on all nodes. Each entry must be a fully qualified domain name (FQDN) or an IP address (IPv4 or IPv6). This list overrides any default NTP settings preconfigured in the machine image. (default [])
 
-export POD_CIDR=192.168.0.0/16
+export POD_CIDR=10.95.0.0/16
 export SERVICE_CIDR=10.96.0.0/12
+
+# Network interface name (find using 'ip address' on control plane nodes)
+export CLUSTER_VIP_ETH_INTERFACE="ens3"
+#The network interface name (ens3 in this example) can vary depending on the OS and platform; use the 'ip address' command on your nodes to find the correct name
+
+# Control plane node IP addresses (minimum 3 for production)
+export CONTROL_PLANE_1_ADDRESS="xxx.yyy.zzz.51"
+export CONTROL_PLANE_2_ADDRESS="xxx.yyy.zzz.52"
+export CONTROL_PLANE_3_ADDRESS="xxx.yyy.zzz.53"
+
+# Initial worker node IP addresses
+export WORKER_1_ADDRESS="xxx.yyy.zzz.54"
+export WORKER_2_ADDRESS="xxx.yyy.zzz.55"
+export WORKER_3_ADDRESS="xxx.yyy.zzz.56"
+export WORKER_4_ADDRESS="xxx.yyy.zzz.57"
+
+# SSH configuration for node access
+export SSH_USER="konvoy"
+export SSH_PRIVATE_KEY_FILE="/home/nutanix/.ssh/id_rsa"
+export SSH_PRIVATE_KEY_SECRET_NAME=${CLUSTER_NAME}-ssh-key
+
 
 # uncomment the below parameters whif you want to use a registry mirror
 # if you're using 2.16 or later, leave these lines commented to use the built-in private reagistry
