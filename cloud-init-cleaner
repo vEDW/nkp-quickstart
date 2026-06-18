@@ -1,0 +1,19 @@
+#cloud-config
+fqdn: edw-preprov-01
+ssh_pwauth: true
+users:
+- name: nutanix
+  primary_group: nutanix
+  groups: nutanix, docker, wheel
+  sudo: ['ALL=(ALL) NOPASSWD:ALL']
+  lock_passwd: false
+  plain_text_passwd: nutanix/4u
+  ssh_authorized_keys:
+    - ssh-rsa AAAAxxxxxxxxxx user@host
+runcmd:
+- rm /etc/ssh/ssh_host_*
+- ssh-keygen -A
+- rm /etc/machine-id
+- systemd-machine-id-setup
+- reboot
+final_message: "The machine is ready after $UPTIME seconds."
