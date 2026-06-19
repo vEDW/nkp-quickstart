@@ -36,7 +36,6 @@ $bundlepath/cli/nkp create cluster preprovisioned \
   ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
   ${REGISTRY_MIRROR_CA:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA"} \
   ${WORKER_NODES_REPLICAS:+--worker-replicas "$WORKER_NODES_REPLICAS"} \
-  ${SKIP_PREFLIGHT_CHECKS:+--skip-preflight-checks "$SKIP_PREFLIGHT_CHECKS"} \
   --dry-run --output=yaml > ${CLUSTER_NAME}.yaml
 
   echo "Cluster manifest for ${CLUSTER_NAME} created at ${CLUSTER_NAME}.yaml"
