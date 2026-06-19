@@ -29,10 +29,10 @@ $bundlepath/cli/nkp create cluster preprovisioned \
   --virtual-ip-interface ${CLUSTER_VIP_ETH_INTERFACE} \
   --pre-provisioned-inventory-file=preprovisioned_inventory.yaml \
   --ssh-private-key-file=${SSH_PRIVATE_KEY_FILE} \
-  --registry-mirror-url=${REGISTRY_URL} \
-  --registry-mirror-username=${REGISTRY_USERNAME} \
-  --registry-mirror-password=${REGISTRY_PASSWORD} \
-  --registry-mirror-cacert=${REGISTRY_CA} \
+  --registry-mirror-url=${REGISTRY_MIRROR_URL} \
+  --registry-mirror-username=${REGISTRY_MIRROR_USERNAME} \
+  --registry-mirror-password=${REGISTRY_MIRROR_PASSWORD} \
+  --registry-mirror-cacert=${REGISTRY_MIRROR_CA} \
   --worker-replicas=4 \
   --dry-run --output=yaml > ${CLUSTER_NAME}.yaml
 
