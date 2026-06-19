@@ -175,7 +175,7 @@ FLOWYAML="---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy
 metadata:
-  name: flow-cni
+  name: flow-cni-${NKPCLUSTER}
   namespace: ${WORKSPACE_NAMESPACE}
 spec:
   clusterSelector:
@@ -216,7 +216,7 @@ spec:
         tag: \"${FLOW_OVN_KUBERNETES_TAG}\"
 "
 
-echo "$FLOWYAML" >> $NOCNIFILENAME
+echo "$FLOWYAML" >> $$NKPCLUSTER-hcp.yaml
 #wait for namespace deletion
 echo "Waiting for  namespace to be deleted..."
 kubectl --kubeconfig=$KUBECONFIGYAML  delete ns $WORKSPACE_NAMESPACE --wait=true
