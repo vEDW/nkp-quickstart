@@ -29,12 +29,12 @@ $bundlepath/cli/nkp create cluster preprovisioned \
   --virtual-ip-interface ${CLUSTER_VIP_ETH_INTERFACE} \
   --pre-provisioned-inventory-file=preprovisioned_inventory.yaml \
   --ssh-private-key-file=${SSH_PRIVATE_KEY_FILE} \
-  --registry-mirror-url=https://${REGISTRY_MIRROR_URL} \
-  --registry-mirror-username=${REGISTRY_MIRROR_USERNAME} \
-  --registry-mirror-password=${REGISTRY_MIRROR_PASSWORD} \
-  --registry-mirror-cacert=${REGISTRY_MIRROR_CA} \
   --kubernetes-pod-network-cidr ${POD_CIDR} \
   --kubernetes-service-cidr ${SERVICE_CIDR} \
+  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
+  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_CA:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA"} \
   ${WORKER_NODES_REPLICAS:+--worker-replicas "$WORKER_NODES_REPLICAS"} \
   ${SKIP_PREFLIGHT_CHECKS:+--skip-preflight-checks "$SKIP_PREFLIGHT_CHECKS"} \
   --dry-run --output=yaml > ${CLUSTER_NAME}.yaml
