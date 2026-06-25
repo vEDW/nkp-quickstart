@@ -118,7 +118,7 @@ ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ens192.network.d"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ens3.network.d"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ens33.network.d"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-ensp2s1.network.d"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-enp2s1.network.d"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-eth0.network.d"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo mkdir -p /etc/systemd/network/10-netplan-id0.network.d"
 
@@ -128,7 +128,7 @@ ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-ens192.network.d/dhcp-mac.conf"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-ens3.network.d/dhcp-mac.conf"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-ens33.network.d/dhcp-mac.conf"
-ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-ensp2s1.network.d/dhcp-mac.conf"
+ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-enp2s1.network.d/dhcp-mac.conf"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-eth0.network.d/dhcp-mac.conf"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  $BASEOSIMAGEUSER@$IP "sudo cp /home/$BASEOSIMAGEUSER/$NETWORKFILE /etc/systemd/network/10-netplan-id0.network.d/dhcp-mac.conf"
 
