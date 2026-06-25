@@ -36,7 +36,4 @@ $bundlepath/cli/nkp create cluster preprovisioned \
   ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
   ${REGISTRY_MIRROR_CA:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA"} \
   ${WORKER_NODES_REPLICAS:+--worker-replicas "$WORKER_NODES_REPLICAS"} \
-  --dry-run --output=yaml > ${CLUSTER_NAME}.yaml
-
-  echo "Cluster manifest for ${CLUSTER_NAME} created at ${CLUSTER_NAME}.yaml"
-  echo "You can apply this manifest to your management cluster with: kubectl apply -f ${CLUSTER_NAME}.yaml --server-side=true"
+  --self-managed

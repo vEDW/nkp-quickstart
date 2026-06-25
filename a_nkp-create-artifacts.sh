@@ -24,4 +24,4 @@ fi
 
 OS_TYPE="rhel-9.6"
 ARTIFACTS_DIRECTORY="$bundlepath/image-artifacts"
-nkp create package-bundle ${OS_TYPE} --artifacts-directory ${ARTIFACTS_DIRECTORY}
+nkp create package-bundle ${OS_TYPE} --artifacts-directory ${ARTIFACTS_DIRECTORY} 
