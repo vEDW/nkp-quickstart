@@ -31,3 +31,5 @@ export BASEOSIMAGEUSER=ubuntu
 #export CLUSTER_HTTP_PROXY=http://proxy:8080
 #export CLUSTER_HTTPS_PROXY=http://proxy:8080
 #export CLUSTER_NO_PROXY=localhost,127.0.0.1
+
+# export NIB_HTTP_PROXY=true

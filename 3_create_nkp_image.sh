@@ -175,7 +175,7 @@ else
         --server $VSPHERE_SERVER \
         --resource-pool $RESOURCE_POOL \
         --template $template \
-        ${HTTP_PROXY:+--overrides proxy-override.yaml} \
+        ${NIB_HTTP_PROXY:+--overrides proxy-override.yaml} \
         --insecure
 fi
 
