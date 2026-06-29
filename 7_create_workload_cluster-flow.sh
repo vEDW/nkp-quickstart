@@ -98,7 +98,8 @@ select DATASTORE in $DATASTORES; do
 done
 DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
 
-FOLDERS=$(govc find / -type Folder |grep "/vm" | grep ${DATACENTER}  | sed 's\'${DATACENTER}'/vm\\g')
+FOLDERS=$(govc find / -type Folder |grep "/vm" | grep ${DATACENTER} )
+
 echo
 echo "Select VM Folder :"
 select FOLDER in $FOLDERS; do 
