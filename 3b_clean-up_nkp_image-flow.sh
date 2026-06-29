@@ -65,7 +65,7 @@ RESOURCE_POOL="${GOVC_RESOURCE_POOL}"
 echo "Select NKP template to cleanup"
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
-VMSLIST=$(govc find / -type m -config.template true)
+VMSLIST=$(govc find / -type m -config.template true |grep "nkp-ubuntu")
 select template in $VMSLIST; do
     template=$(echo $template | sed "s#$GOVC_DATACENTER/vm/##")
     echo "you selected template : ${template}"
