@@ -71,22 +71,16 @@ rm $CLUSTER_NAME.yaml
 # create Flow-CNI hcp
 DOCKER_FLOW_TOKEN_BASE64=$(echo -n "svcpubflowcni:$DOCKER_FLOW_TOKEN" | base64 )
 
-
-WORKSPACE_NAMESPACE=$(yq e 'select(.kind == "Namespace")|.metadata.name' $CLUSTERYAMLFILENAME)
-POD_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.pods.cidrBlocks[0]' $CLUSTERYAMLFILENAME)
-SERVICE_CIDR=$(yq e 'select(.kind == "Cluster")|.spec.clusterNetwork.services.cidrBlocks[0]' $CLUSTERYAMLFILENAME)
-
-
 FLOWYAML="---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy
 metadata:
-  name: flow-cni-${NKPCLUSTER}
+  name: flow-cni-${CLUSTER_NAME}
   namespace: ${WORKSPACE_NAMESPACE}
 spec:
   clusterSelector:
     matchLabels:
-      konvoy.d2iq.io/cluster-name: ${NKPCLUSTER}
+      konvoy.d2iq.io/cluster-name: ${CLUSTER_NAME}
   repoURL: oci://${FLOWREGISTRY}
   chartName: nutanix-flow-cni
   version: ${FLOW_CHART_VERSION}
