@@ -7,11 +7,6 @@ if [ ! -f ./cluster-env ]; then
 fi
 source ./cluster-env
 
-# check if DOCKER_FLOW_TOKEN is set
-if [ -z "$DOCKER_FLOW_TOKEN" ]; then
-    echo "DOCKER_FLOW_TOKEN is not set. Please set it in cluster-env to pull Flow-CNI images from Docker Hub."
-    exit 1
-fi 
 # check if FLOW_CHART_VERSION is set
 if [ -z "$FLOW_CHART_VERSION" ]; then
     echo "FLOW_CHART_VERSION is not set. Please set it in cluster-env to specify the version of Flow-CNI to install."
