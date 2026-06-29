@@ -93,13 +93,30 @@ IFS=$(echo -en "\n\b")
 echo
 echo "Select Folder in ${GOVC_DATACENTER} to deploy NKP image to"
 #FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
-FOLDERS=$(govc find "${GOVC_DATACENTER}" -type Folder |grep vm)
+FOLDERS=$(govc find / -type Folder |grep "/vm" | grep ${DATACENTER}  | sed 's\'${DATACENTER}'/vm\\g')
 select FOLDER in $FOLDERS; do
     echo "you selected cluster : ${FOLDER}"
     echo
     break
 done
 IFS=$SAVEIFS
+
+echo "Select Network to deploy NKP"
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+
+NETWORKS=$(govc find / -type Network)
+echo
+echo "Select network to set as default"
+select NETWORK in $NETWORKS; do 
+    echo "you selected network : ${NETWORK}"
+    echo 
+    export GOVC_NETWORK="${NETWORK}"
+    break
+done
+IFS=$SAVEIFS
+
 echo
 echo "select public ssh key: "
 LOCALKEYS=$(ls *_localkey)
