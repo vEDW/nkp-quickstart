@@ -21,6 +21,14 @@ export WORKER_2_ADDRESS="xxx.yyy.zzz.55"
 export WORKER_3_ADDRESS="xxx.yyy.zzz.56"
 export WORKER_4_ADDRESS="xxx.yyy.zzz.57"
 
+# Nodepool worker node IP addresses
+export GPU_WORKER_COUNT=4
+export GPU_WORKER_1_ADDRESS="xxx.yyy.zzz.58"
+export GPU_WORKER_2_ADDRESS="xxx.yyy.zzz.59"
+export GPU_WORKER_3_ADDRESS="xxx.yyy.zzz.60"
+export GPU_WORKER_4_ADDRESS="xxx.yyy.zzz.61"
+
+
 # SSH configuration for node access
 export SSH_USER="konvoy"
 export SSH_PRIVATE_KEY_FILE="/home/nutanix/.ssh/id_rsa"
