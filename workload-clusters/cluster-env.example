@@ -20,7 +20,14 @@ export POD_CIDR=192.168.0.0/16
 export SERVICE_CIDR=10.96.0.0/12
 
 export DOCKER_FLOW_TOKEN=""                                     # mandatory docker hub token from Nutanix flow download portal
+
+#Flow-CNI parameters
+export FLOWREGISTRY="harbor-fqdn"
 export FLOW_CHART_VERSION="1.0.0"
+export FLOW_CNS_CILIUM_TAG="1.0.0"
+export FLOW_K8S_CNI_TAG="1.0.0"
+#export FLOW_OVN_KUBERNETES_TAG=
+
 
 # uncomment the below parameters whif you want to use a registry mirror
 # if you're using 2.16 or later, leave these lines commented to use the built-in private registry
