@@ -32,7 +32,7 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
     ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
     ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
-    ${REGISTRY_URL:+--registry-url https://"$REGISTRY_URL"} \
+    ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
     ${REGISTRY_USERNAME:+--registry-username "$REGISTRY_USERNAME"} \
     ${REGISTRY_PASSWORD:+--registry-password "$REGISTRY_PASSWORD"} \
     ${CP_CATEGORIES:+--control-plane-pc-categories "$CP_CATEGORIES"} \
