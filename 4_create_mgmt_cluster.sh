@@ -99,7 +99,7 @@ done
 #DATASTORE=$(echo "${GOVC_DATASTORE}" | rev | cut -d'/' -f1 | rev)
 DATASTORE="${GOVC_DATASTORE}"
 
-FOLDERS=$(govc find "${GOVC_DATACENTER}" -type Folder |grep vm)
+FOLDERS=$(govc find / -type Folder |grep "/vm" | grep ${DATACENTER}  | sed 's\'${DATACENTER}'/vm\\g')
 echo
 echo "Select Folder :"
 select FOLDER in $FOLDERS; do 
