@@ -1,0 +1,32 @@
+apiVersion: k8s.ovn.org/v1
+kind: EgressIP
+metadata:
+  name: egressip-netshoot
+spec:
+  egressIPs:
+    - 10.38.143.30
+  namespaceSelector:
+    matchLabels: 
+      kubernetes.io/metadata.name: testegress
+  podSelector:
+    matchLabels:
+      app: netshoot-egress-ip
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netshoot-egress-ip
+spec:
+  selector:
+    matchLabels:
+      app: netshoot-egress-ip
+  template:
+    metadata:
+      labels:
+        app: netshoot-egress-ip
+    spec:
+      containers:
+      - name: netshoot
+        image: nicolaka/netshoot
+        command: ["/bin/bash"]
+        args: ["-c", "while true; do sleep 3600; done"]
