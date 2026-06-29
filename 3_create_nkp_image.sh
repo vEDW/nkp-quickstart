@@ -134,8 +134,8 @@ done
 if [ -n "$HTTP_PROXY" ]; then
     echo "HTTP_PROXY is set to ${HTTP_PROXY}. creating proxy-override.yaml."
     PROXYYAML=$(echo "" |test="${HTTP_PROXY}" yq '.http_proxy +=env(test)')
-    PROXYYAML=$(echo "" |test="${HTTPS_PROXY}" yq '.https_proxy +=env(test)')
-    PROXYYAML=$(echo "" |test="${NO_PROXY}" yq '.no_proxy +=env(test)')
+    PROXYYAML=$(echo "${PROXYYAML}" |test="${HTTPS_PROXY}" yq '.https_proxy +=env(test)')
+    PROXYYAML=$(echo "${PROXYYAML}" |test="${NO_PROXY}" yq '.no_proxy +=env(test)')
     echo "${PROXYYAML}" > proxy-override.yaml
 else
     echo "No HTTP_PROXY variable set. Continuing without proxy."
