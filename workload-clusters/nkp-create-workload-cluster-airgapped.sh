@@ -106,7 +106,7 @@ spec:
         repository: nutanix/flow-cns-cilium
         tag: \"${FLOW_CNS_CILIUM_TAG}\"
     image:
-        repository: nutanix/flow-k8s-cni
+        repository: nutanix/flow-cni
         tag: \"${FLOW_K8S_CNI_TAG}\"
     global:
       runOvsOnNode: true
