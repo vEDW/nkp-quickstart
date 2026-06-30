@@ -29,7 +29,7 @@ gpu:
 build_name_extra: "-nvidia"
 EOF
 
-kubectl create secret generic ${CLUSTER_NAME}-gpu-overrides --from-file=overrides.yaml=overrides/nvidia.yaml
+kubectl create secret generic ${CLUSTER_NAME}-gpu-overrides --from-file=overrides.yaml=nvidia.yaml
 
 
 cat <<EOF > preprovisioned_GPU_inventory.yaml
@@ -54,4 +54,4 @@ EOF
 
 kubectl apply -f preprovisioned_GPU_inventory.yaml
 
-nkp create nodepool preprovisioned -c ${MY_CLUSTER_NAME} ${CLUSTER_NAME}-nodepool-gpu --override-secret-name ${MY_OVERRIDE_SECRET}
+nkp create nodepool preprovisioned -c ${MY_CLUSTER_NAME} ${CLUSTER_NAME}-nodepool-gpu --override-secret-name ${CLUSTER_NAME}-gpu-overrides 

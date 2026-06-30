@@ -27,7 +27,7 @@ OS_TYPE="rhel-9.6"
 ARTIFACTS_DIRECTORY="$bundlepath/image-artifacts"
 
 # Create the NKP cluster manifest
-echo "$bundlepath/cli/nkp upload image-artifacts \
+$bundlepath/cli/nkp upload image-artifacts \
   --ssh-host "${GPU_WORKER_1_ADDRESS}" \
   --ssh-username "${SSH_USER}" \
   ${SSH_PRIVATE_KEY_FILE:+--ssh-private-key-file="$SSH_PRIVATE_KEY_FILE"} \
@@ -36,4 +36,4 @@ echo "$bundlepath/cli/nkp upload image-artifacts \
   --artifacts-directory "${ARTIFACTS_DIRECTORY}" \
   ${NVIDIA_RUNFILE:+--nvidia-runfile="$NVIDIA_RUNFILE"} \
   ${PROVIDER:+--provider="$PROVIDER"} \
-  ${FIPS_ENABLED:+--fips}"
+  ${FIPS_ENABLED:+--fips}
