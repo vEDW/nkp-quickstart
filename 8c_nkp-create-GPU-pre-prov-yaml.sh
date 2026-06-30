@@ -27,6 +27,7 @@ gpu:
   types:
     - nvidia
 build_name_extra: "-nvidia"
+nvidia_driver_version: "580.95.05"
 EOF
 
 kubectl create secret generic ${CLUSTER_NAME}-gpu-overrides --from-file=overrides.yaml=nvidia.yaml

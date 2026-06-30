@@ -32,9 +32,10 @@ export GPU_WORKER_6_ADDRESS="xxx.yyy.zzz.63"
 
 # Set Nvidia GPU driver version
 # version 580
-# export NVIDIA_URL="https://download.nvidia.com/XFree86/Linux-x86_64/580.126.18/NVIDIA-Linux-x86_64-580.126.18.run"
+#export NVIDIA_URL="https://download.nvidia.com/XFree86/Linux-x86_64/580.126.18/NVIDIA-Linux-x86_64-580.126.18.run"
+export NVIDIA_URL="https://download.nvidia.com/XFree86/Linux-x86_64/580.95.05/NVIDIA-Linux-x86_64-580.95.05.run"
 # version 535
-export NVIDIA_URL="https://download.nvidia.com/XFree86/Linux-x86_64/535.261.03/NVIDIA-Linux-x86_64-535.261.03.run"
+# export NVIDIA_URL="https://download.nvidia.com/XFree86/Linux-x86_64/535.261.03/NVIDIA-Linux-x86_64-535.261.03.run"
 
 
 # SSH configuration for node access
