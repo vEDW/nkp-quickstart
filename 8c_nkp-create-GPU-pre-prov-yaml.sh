@@ -21,7 +21,18 @@ if [ $? -ne 0 ]; then
     echo "nkp cli not found in $bundlepath/cli/nkp"
     exit 1
 fi
-cat <<EOF > preprovisioned_inventory.yaml
+
+cat <<EOF > nvidia.yaml
+gpu:
+  types:
+    - nvidia
+build_name_extra: "-nvidia"
+EOF
+
+kubectl create secret generic ${CLUSTER_NAME}-gpu-overrides --from-file=overrides.yaml=overrides/nvidia.yaml
+
+
+cat <<EOF > preprovisioned_GPU_inventory.yaml
 ---
 apiVersion: infrastructure.cluster.konvoy.d2iq.io/v1alpha1
 kind: PreprovisionedInventory
@@ -30,13 +41,9 @@ metadata:
   namespace: default
   labels:
     cluster.x-k8s.io/cluster-name: ${CLUSTER_NAME}
-    clusterctl.cluster.x-k8s.io/move: ""
 spec:
   hosts:
   - address: ${GPU_WORKER_1_ADDRESS}
-  - address: ${GPU_WORKER_2_ADDRESS}
-  - address: ${GPU_WORKER_3_ADDRESS}
-  - address: ${GPU_WORKER_4_ADDRESS}  
   sshConfig:
     port: 22
     user: ${SSH_USER}
@@ -45,4 +52,6 @@ spec:
       namespace: default
 EOF
 
-nkp create nodepool preprovisioned -c ${MY_CLUSTER_NAME} ${MY_NODEPOOL_NAME} --override-secret-name ${MY_OVERRIDE_SECRET}
+kubectl apply -f preprovisioned_GPU_inventory.yaml
+
+nkp create nodepool preprovisioned -c ${MY_CLUSTER_NAME} ${CLUSTER_NAME}-nodepool-gpu --override-secret-name ${MY_OVERRIDE_SECRET}
