@@ -23,16 +23,17 @@ if [ $? -ne 0 ]; then
 fi
 ARTIFACTS_DIRECTORY="$bundlepath/image-artifacts"
 
+FILENAME=$(basename "$NVIDIA_URL")
 
-curl -O https://download.nvidia.com/XFree86/Linux-x86_64/580.126.18/NVIDIA-Linux-x86_64-580.126.18.run
+curl -O ${NVIDIA_URL}
 if [ $? -ne 0 ]; then
     echo "Failed to download NVIDIA driver."
     exit 1
 fi
 
-mv NVIDIA-Linux-x86_64-580.126.18.run ${ARTIFACTS_DIRECTORY}/
+mv ${FILENAME} ${ARTIFACTS_DIRECTORY}/
 
 
-export NVIDIA_RUNFILE="${ARTIFACTS_DIRECTORY}/NVIDIA-Linux-x86_64-580.126.18.run"
+export NVIDIA_RUNFILE="${ARTIFACTS_DIRECTORY}/${FILENAME}"
 
 echo "NVIDIA_RUNFILE set to: ${NVIDIA_RUNFILE}"
