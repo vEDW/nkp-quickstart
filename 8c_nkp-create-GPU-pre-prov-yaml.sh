@@ -54,4 +54,4 @@ EOF
 
 kubectl apply -f preprovisioned_GPU_inventory.yaml
 
-nkp create nodepool preprovisioned -c ${MY_CLUSTER_NAME} ${CLUSTER_NAME}-nodepool-gpu --override-secret-name ${CLUSTER_NAME}-gpu-overrides 
+nkp create nodepool preprovisioned -c ${CLUSTER_NAME} ${CLUSTER_NAME}-nodepool-gpu --override-secret-name ${CLUSTER_NAME}-gpu-overrides 
