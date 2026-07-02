@@ -102,6 +102,8 @@ spec:
       ovs-node:
         enabled: false
     global:
+      prepull:
+        enabled: false
       runOvsOnNode: true
       enableEgressIp: true
       enableEgressService: true
