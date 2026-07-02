@@ -101,13 +101,6 @@ spec:
       serviceNetwork: \"${SERVICE_CIDR}\"
       ovs-node:
         enabled: false
-    nutanix-core-flow-container-security:
-      image:
-        repository: nutanix/flow-cns-cilium
-        tag: \"${FLOW_CNS_CILIUM_TAG}\"
-    image:
-        repository: nutanix/flow-cni
-        tag: \"${FLOW_K8S_CNI_TAG}\"
     global:
       runOvsOnNode: true
       enableEgressIp: true
