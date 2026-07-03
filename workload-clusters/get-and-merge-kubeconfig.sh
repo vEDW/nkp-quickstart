@@ -93,7 +93,7 @@ KUBECONF=$(echo "$KUBECONF" |test="$CONTEXTNAME" yq e 'del(.contexts[]|select (.
 #Add context
 KUBECONF=$(echo "$KUBECONF" |test="$CONTEXTS" yq '.contexts +=[env(test)]')
 
-echo "$KUBECONF" | yq e
+echo "$KUBECONF" | yq e 2>&1 /dev/null
 if [ $? -ne 0 ]; then
     echo "generating kubeconfig file failed. Exiting."
     exit 1
