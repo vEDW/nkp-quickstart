@@ -34,6 +34,5 @@ $bundlepath/cli/nkp upload image-artifacts \
   ${SSH_PASSWORD:+--ssh-password="$SSH_PASSWORD"} \
   ${SSH_PORT:+--ssh-port="$SSH_PORT"} \
   --artifacts-directory "${ARTIFACTS_DIRECTORY}" \
-  ${NVIDIA_RUNFILE:+--nvidia-runfile="$NVIDIA_RUNFILE"} \
   ${PROVIDER:+--provider="$PROVIDER"} \
   ${FIPS_ENABLED:+--fips}
