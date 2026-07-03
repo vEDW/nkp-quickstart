@@ -55,4 +55,11 @@ EOF
 
 kubectl apply -f preprovisioned_GPU_inventory.yaml
 
-nkp create nodepool preprovisioned -c ${CLUSTER_NAME} ${CLUSTER_NAME}-nodepool-gpu --override-secret-name ${CLUSTER_NAME}-gpu-overrides 
+nkp create nodepool preprovisioned -c ${CLUSTER_NAME} ${CLUSTER_NAME}-nodepool-gpu \
+  ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \
+  ${REGISTRY_MIRROR_USERNAME:+--registry-mirror-username "$REGISTRY_MIRROR_USERNAME"} \
+  ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
+  ${REGISTRY_MIRROR_CA:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA"} \
+  ${WORKER_NODES_REPLICAS:+--worker-replicas "$WORKER_NODES_REPLICAS"} \
+  --override-secret-name ${CLUSTER_NAME}-gpu-overrides
+
