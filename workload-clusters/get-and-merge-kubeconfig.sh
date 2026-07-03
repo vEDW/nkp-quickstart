@@ -101,3 +101,4 @@ fi
 
 echo "$KUBECONF" | yq e > ~/.kube/config
 
+echo "kubeconfig file updated with cluster : ${CLUSTERNAME} and context : ${CONTEXTNAME}"
