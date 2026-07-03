@@ -76,7 +76,7 @@ FLOWYAML="---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy
 metadata:
-  name: flow-cni-${CLUSTER_NAME}
+  name: flow-cni-${CLUSTERUUID}
   namespace: ${WORKSPACE_NAMESPACE}
 spec:
   clusterSelector:
