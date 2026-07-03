@@ -19,6 +19,9 @@ export NTPSERVERS=""                                            # A comma-separa
 export POD_CIDR=192.168.0.0/16
 export SERVICE_CIDR=10.96.0.0/12
 
+export CONTROL_PLANE_REPLICAS=3
+export WORKER_NODES_REPLICAS=4
+
 export DOCKER_FLOW_TOKEN=""                                     # mandatory docker hub token from Nutanix flow download portal
 
 #Flow-CNI parameters
