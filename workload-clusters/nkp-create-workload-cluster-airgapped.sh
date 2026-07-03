@@ -36,6 +36,7 @@ nkp create cluster nutanix -c $CLUSTER_NAME \
     ${REGISTRY_URL:+--registry-url https://"$REGISTRY_URL"} \
     ${REGISTRY_USERNAME:+--registry-username "$REGISTRY_USERNAME"} \
     ${REGISTRY_PASSWORD:+--registry-password "$REGISTRY_PASSWORD"} \
+    ${REGISTRY_CA_CERT_FILE:+--registry-cacert "$REGISTRY_CA_CERT_FILE"} \
     ${CP_CATEGORIES:+--control-plane-pc-categories "$CP_CATEGORIES"} \
     ${WORKER_CATEGORIES:+--worker-pc-categories "$WORKER_CATEGORIES"} \
     ${NUTANIX_PC_PROJECT_NAME:+--control-plane-pc-project "$NUTANIX_PC_PROJECT_NAME"} \
