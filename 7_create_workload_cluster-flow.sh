@@ -211,6 +211,8 @@ spec:
         tag: \"${FLOW_K8S_CNI_TAG}\"
     global:
       runOvsOnNode: true
+      prepull:
+        enabled: false
       enableEgressIp: true
       enableEgressService: true
       image:
