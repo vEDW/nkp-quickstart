@@ -48,7 +48,7 @@ spec:
   selector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: ${CLUSTER}
-      cluster.x-k8s.io/control-plane: ""
+      cluster.x-k8s.io/control-plane: \"\"
   unhealthyConditions:
   - status: \"False\"
     timeout: 5m0s
@@ -103,7 +103,7 @@ spec:
   selector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: ${CLUSTER}
-      cluster.x-k8s.io/control-plane: ""     
+      cluster.x-k8s.io/deployment-name: ${MD}        
   unhealthyConditions:
   - status: \"False\"
     timeout: 5m0s
