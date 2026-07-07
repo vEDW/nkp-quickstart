@@ -50,22 +50,22 @@ spec:
       cluster.x-k8s.io/cluster-name: ${CLUSTER}
       cluster.x-k8s.io/control-plane: ""
   unhealthyConditions:
-  - status: "False"
+  - status: \"False\"
     timeout: 5m0s
     type: Ready
   - status: Unknown
     timeout: 5m0s
     type: Ready
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: MemoryPressure
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: DiskPressure
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: PIDPressure
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: NetworkUnavailable
 "
@@ -104,22 +104,22 @@ spec:
     matchLabels:
       cluster.x-k8s.io/cluster-name: ${CLUSTER}
   unhealthyConditions:
-  - status: "False"
+  - status: \"False\"
     timeout: 5m0s
     type: Ready
   - status: Unknown
     timeout: 5m0s
     type: Ready
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: MemoryPressure
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: DiskPressure
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: PIDPressure
-  - status: "True"
+  - status: \"True\"
     timeout: 5m0s
     type: NetworkUnavailable
 "
