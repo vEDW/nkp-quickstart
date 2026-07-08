@@ -159,6 +159,9 @@ KUBECONFIG=$KUBECONFIGYAML nkp create cluster vsphere \
   ${REGISTRY_MIRROR_PASSWORD:+--registry-mirror-password "$REGISTRY_MIRROR_PASSWORD"} \
   ${REGISTRY_MIRROR_CA_CERT_FILE:+--registry-mirror-cacert "$REGISTRY_MIRROR_CA_CERT_FILE"} \
   ${SSH_KEYFILE_PATH:+--ssh-public-key-file "$SSH_KEYFILE_PATH"} \
+  ${HTTP_PROXY:+--http-proxy "$HTTP_PROXY"} \
+  ${HTTPS_PROXY:+--https-proxy "$HTTPS_PROXY"} \
+  ${NO_PROXY:+--no-proxy "$NO_PROXY"} \
   --dry-run -o yaml > $NKPCLUSTER.yaml
 
 # Remove calico entries
