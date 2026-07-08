@@ -23,7 +23,7 @@ fi
 
 CLUSTERS=$(kubectl get cluster --no-headers -A |awk '{print $2}')
 echo
-echo "Select workload cluster to get kubeconfig or CTRL-C to quit"
+echo "Select workload cluster or CTRL-C to quit"
 select CLUSTER in $CLUSTERS; do 
     CLUSTERNS=$(kubectl get cluster --no-headers -A |grep ${CLUSTER} | awk '{print $1}')
     echo "you selected cluster  : ${CLUSTER} in namespace : ${CLUSTERNS}"
