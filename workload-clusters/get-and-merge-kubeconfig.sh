@@ -110,6 +110,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+#create backup of kubeconfig file with date and time
+cp ${KUBECONFIG} ${KUBECONFIG}-$(date +%Y%m%d%H%M%S).bak
+if [ $? -ne 0 ]; then
+    echo "creating backup of kubeconfig file ${KUBECONFIG} failed. Exiting."
+    exit 1
+fi
+
 echo "$KUBECONF" | yq e > ${KUBECONFIG}
 if [ $? -ne 0 ]; then
     echo "writing kubeconfig file ${KUBECONFIG} failed. Exiting."
