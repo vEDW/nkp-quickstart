@@ -91,14 +91,16 @@ done
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 echo
-echo "Select Folder to deploy NKP image to"
-FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
+echo "Select Folder in ${GOVC_DATACENTER} to deploy NKP image to"
+#FOLDERS=$(govc find  ${GOVC_DATACENTER} -type Folder |grep vm | rev | cut -d'/' -f1 | rev)
+FOLDERS=$(govc find / -type Folder |grep "/vm" | grep ${DATACENTER}  | sed 's\'${DATACENTER}'/vm\\g')
 select FOLDER in $FOLDERS; do
     echo "you selected cluster : ${FOLDER}"
     echo
     break
 done
 IFS=$SAVEIFS
+
 echo
 echo "select public ssh key: "
 LOCALKEYS=$(ls *_localkey)
