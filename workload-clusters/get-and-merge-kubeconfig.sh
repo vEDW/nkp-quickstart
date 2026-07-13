@@ -1,5 +1,17 @@
 #!/bin/bash
 
+#check if $KUBECONFIG empty
+if [ -z "$KUBECONFIG" ]; then
+    echo "KUBECONFIG environment variable is not set."
+    echo "checking if ~/.kube/config exists"
+    if [ ! -f ~/.kube/config ]; then
+        echo "kubeconfig file ~/.kube/config does not exist. Exiting."
+        exit 1
+    fi
+    KUBECONFIG=~/.kube/config
+fi
+
+
 if [ "$1" == "" ] ; then
 
     CONTEXTS=$(kubectl config get-contexts --output=name)
@@ -99,6 +111,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "$KUBECONF" | yq e > ~/.kube/config
+echo "$KUBECONF" | yq e > ${KUBECONFIG}
+if [ $? -ne 0 ]; then
+    echo "writing kubeconfig file ${KUBECONFIG} failed. Exiting."
+    exit 1
+fi
 
-echo "kubeconfig file updated with cluster : ${CLUSTERNAME} and context : ${CONTEXTNAME}"
+echo "kubeconfig file ${KUBECONFIG} updated with cluster : ${CLUSTERNAME} and context : ${CONTEXTNAME}"
