@@ -18,7 +18,22 @@ if [ -z "$FLOW_CHART_VERSION" ]; then
     exit 1
 fi
 
-nkp create cluster nutanix -c $CLUSTER_NAME \
+#check if bundle-path file exists
+if [[ ! -f "./nkpcli-path" ]]; then
+    echo "nkpcli-path file not found. Proceeding with default nkp path."
+    CLIPATH=$(which nkp | xargs dirname)
+    #check if nkp cli is installed
+    if [ $? -ne 0 ]; then
+        echo "nkp command not found. Please install nkp first."
+        exit 1
+    fi
+else
+    CLIPATH=$(cat ./nkpcli-path)
+    echo "Using nkp cli path: $CLIPATH"
+fi    
+
+
+$CLIPATH/nkp create cluster nutanix -c $CLUSTER_NAME \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
     --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \
