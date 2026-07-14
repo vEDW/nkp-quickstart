@@ -59,59 +59,95 @@ else
     echo
 fi
 
-#get cluster uuid
-CLUSTERUUID=$(yq eval '(select(.kind == "Cluster") | .metadata.annotations."caren.nutanix.com/cluster-uuid")' $CLUSTER_NAME.yaml)
-if [ -z "$CLUSTERUUID" ]; then
-    echo "Failed to extract cluster UUID from the generated YAML."
-    exit 1
+#switch based on NKPCluster CRD presence.
+NKPLCUTERTEST=$(kubectl api-resources | grep NKPCluster)
+if [[ -z "$NKPLCUTERTEST" ]]; then
+    echo "NKPCluster CRD not found. Proceeding with standard cluster creation."
+
+    #get cluster uuid
+    CLUSTERUUID=$(yq eval '(select(.kind == "Cluster") | .metadata.annotations."caren.nutanix.com/cluster-uuid")' $CLUSTER_NAME.yaml)
+    if [ -z "$CLUSTERUUID" ]; then
+        echo "Failed to extract cluster UUID from the generated YAML."
+        exit 1
+    else
+        echo "Cluster UUID: $CLUSTERUUID"
+    fi
+
+    # Remove CNI addon from the generated YAML
+    yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-flow-cni.yaml
+    rm $CLUSTER_NAME.yaml
+    #get cluster namespace
+    CLUSTERNS=$(yq eval '(select(.kind == "Cluster") | .metadata.namespace)' $CLUSTER_NAME-with-flow-cni.yaml)
+    if [ -z "$CLUSTERNS" ]; then
+        echo "Failed to extract cluster namespace from the generated YAML."
+        exit 1
+    else
+        echo "Cluster Namespace: $CLUSTERNS"
+    fi
+
+    # create Flow-CNI hcp
+    DOCKER_FLOW_TOKEN_BASE64=$(echo -n "svcpubflowcni:$DOCKER_FLOW_TOKEN" | base64 )
+
+    FLOWYAML="---
+    apiVersion: addons.cluster.x-k8s.io/v1alpha1
+    kind: HelmChartProxy
+    metadata:
+      name: flow-cni-${CLUSTERUUID}
+      namespace: ${CLUSTERNS}
+    spec:
+      clusterSelector:
+        matchLabels:
+          cluster.x-k8s.io/cluster-name: ${CLUSTER_NAME}
+      repoURL: https://nutanix.github.io/helm-releases/
+      chartName: nutanix-flow-cni
+      version: ${FLOW_CHART_VERSION}
+      namespace: flow-cni-system
+      options:
+        waitForJobs: true
+        wait: true
+        timeout: 30m
+        install:
+          createNamespace: true
+      valuesTemplate: |
+        nutanix-core-flow-ovn-kubernetes:
+          k8sAPIServer: "https://${CONTROL_PLANE_ENDPOINT_IP}:6443" 
+          podNetwork: "${POD_CIDR}/24" 
+          serviceNetwork: "${SERVICE_CIDR}"
+        global:
+          dockerConfigSecret:
+            registry: docker.io
+            auth: ${DOCKER_FLOW_TOKEN_BASE64}
+            create: true
+          imagePullSecretName: "flow-cni-secret"
+        imagePullSecrets:
+          - name: flow-cni-secret
+    "
+
+    # Append the Flow-CNI HelmChartProxy definition to the cluster YAML
+    echo "$FLOWYAML" |yq e >> $CLUSTER_NAME-with-flow-cni.yaml
+
 else
-    echo "Cluster UUID: $CLUSTERUUID"
+    echo "NKPCluster CRD found. Proceeding with NKPCluster creation."
+
+    #get cluster namespace
+    CLUSTERNS=$(yq eval '(select(.kind == "NKPCluster") | .metadata.namespace)' $CLUSTER_NAME.yaml)
+    if [ -z "$CLUSTERNS" ]; then
+        echo "Failed to extract cluster namespace from the generated YAML."
+        exit 1
+    else
+        echo "Cluster Namespace: $CLUSTERNS"
+    fi
+
+    kubectl create secret docker-registry nutanix-docker-hub-credentials \
+      --docker-username=svcpubflowcni \
+      --docker-password=${DOCKER_FLOW_TOKEN} \
+      --namespace=$CLUSTERNS --dry-run=client -o yaml > $CLUSTER_NAME-with-flow-cni.yaml
+    echo "---" >> $CLUSTER_NAME-with-flow-cni.yaml
+
+    yq eval '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.variables[0].value.addons.cni = {"provider": "Flow", "imagePullCredentials": {"secretRef": {"name": "nutanix-docker-hub-credentials"}}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME.yaml >> $CLUSTER_NAME-with-flow-cni.yaml
+    rm $CLUSTER_NAME.yaml
+
 fi
-
-# Remove CNI addon from the generated YAML
-yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-flow-cni.yaml
-rm $CLUSTER_NAME.yaml
-
-# create Flow-CNI hcp
-DOCKER_FLOW_TOKEN_BASE64=$(echo -n "svcpubflowcni:$DOCKER_FLOW_TOKEN" | base64 )
-
-FLOWYAML="---
-apiVersion: addons.cluster.x-k8s.io/v1alpha1
-kind: HelmChartProxy
-metadata:
-  name: flow-cni-${CLUSTERUUID}
-  namespace: ${WORKSPACE_NAMESPACE}
-spec:
-  clusterSelector:
-    matchLabels:
-      cluster.x-k8s.io/cluster-name: ${CLUSTER_NAME}
-  repoURL: https://nutanix.github.io/helm-releases/
-  chartName: nutanix-flow-cni
-  version: ${FLOW_CHART_VERSION}
-  namespace: flow-cni-system
-  options:
-    waitForJobs: true
-    wait: true
-    timeout: 30m
-    install:
-      createNamespace: true
-  valuesTemplate: |
-    nutanix-core-flow-ovn-kubernetes:
-      k8sAPIServer: "https://${CONTROL_PLANE_ENDPOINT_IP}:6443" 
-      podNetwork: "${POD_CIDR}/24" 
-      serviceNetwork: "${SERVICE_CIDR}"
-    global:
-      dockerConfigSecret:
-        registry: docker.io
-        auth: ${DOCKER_FLOW_TOKEN_BASE64}
-        create: true
-      imagePullSecretName: "flow-cni-secret"
-    imagePullSecrets:
-      - name: flow-cni-secret
-"
-
-# Append the Flow-CNI HelmChartProxy definition to the cluster YAML
-echo "$FLOWYAML" |yq e >> $CLUSTER_NAME-with-flow-cni.yaml
 
 echo "to execute, run : kubectl apply -f $CLUSTER_NAME-with-flow-cni.yaml --server-side=true"
     
