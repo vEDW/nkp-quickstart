@@ -31,6 +31,7 @@ export FLOW_CNS_CILIUM_TAG="1.0.0"
 export FLOW_K8S_CNI_TAG="1.0.0"
 #export FLOW_OVN_KUBERNETES_TAG=
 
+export MAKE_MD_EGRESS_ASSIGNABLE=true                  # label first worker nodepool with egress-assignable for flow-cni
 
 # uncomment the below parameters whif you want to use a registry mirror
 # if you're using 2.16 or later, leave these lines commented to use the built-in private registry

@@ -160,6 +160,14 @@ else
     echo "---" >> $CLUSTER_NAME-with-flow-cni.yaml
 
     yq eval '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.variables[0].value.addons.cni = {"provider": "Flow", "imagePullCredentials": {"secretRef": {"name": "nutanix-docker-hub-credentials"}}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME.yaml >> $CLUSTER_NAME-with-flow-cni.yaml
+    
+    #check if MAKE_MD_EGRESS_ASSIGNABLE is set to true
+    if [ "$MAKE_MD_EGRESS_ASSIGNABLE" = true ]; then
+        echo
+        echo "Adding egress-assignable label to the first machine deployment."
+        yq eval -i '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.workers.machineDeployments[0].metadata += {"labels": {"node.cluster.x-k8s.io/egress-assignable": ""}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME-with-flow-cni.yaml
+
+    fi
     rm $CLUSTER_NAME.yaml
 
 fi
