@@ -102,7 +102,7 @@ else
     for TARIMAGE in $TARIMAGES; do
         echo
         echo "pushing $TARIMAGE to $AIRGAP_REGISTRY_MIRROR_URL"
-        $bundlepath/cli/nkp push image --bundle $TARIMAGE --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} \
+        $bundlepath/cli/nkp push bundle --bundle $TARIMAGE --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} \
         --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
         --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
 
