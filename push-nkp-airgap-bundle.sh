@@ -18,16 +18,6 @@
 
 #------------------------------------------------------------------------------
 
-# Maintainer:   Jose Gomez (jose.gomez@nutanix.com)
-# Contributors: 
-
-#------------------------------------------------------------------------------
-
-# To run:
-# curl -sL https://raw.githubusercontent.com/nutanixdev/nkp-quickstart/main/scripts/get-nkp-cli | bash
-
-#------------------------------------------------------------------------------
-
 source ./nkp-env
 
 bundlepath=$(cat bundle-path)
@@ -43,42 +33,39 @@ if [ -z "$bundlepath" ]; then
 fi
 
 echo $bundlepath
+echo
+echo "checking container images in bundle"
+# list tar files in container-images dir with comma separated values and remove trailing comma
+TARIMAGES=$(ls $bundlepath/container-images/*.tar)
+# Check if list is empty
+if [ -z "$TARIMAGES" ]; then
+    echo "no container images found in $bundlepath/container-images/. can't load images without container images."
+    exit 1
+fi
 
 # check if AIRGAP_REGISTRY_MIRROR_URL is empty 
 if [[ "$AIRGAP_REGISTRY_MIRROR_URL" == "" ]]; then
     echo "AIRGAP_REGISTRY_MIRROR_URL = empty. Loading images to internal registry if present."
-
     BUNDLECHECK=$($bundlepath/cli/nkp create image nutanix -h | grep "\--bundle")
     if [ -n "$BUNDLECHECK" ]; then
-    
-        echo "checking container images in bundle"
-        KONVOYIMAGES=$(ls $bundlepath/container-images/konvoy-image-bundle*)
-        KOMMANDERIMAGES=$(ls $bundlepath/container-images/kommander-image-bundle*) 
-        #check if both bundles are present
-        if [ -z "$KONVOYIMAGES" ] || [ -z "$KOMMANDERIMAGES" ]; then
-            echo "konvoy or kommander image bundle not found in $bundlepath/container-images/. can't load images without both bundles."
+        CONTEXTS=$(kubectl config get-contexts --output=name)
+        echo
+        echo "Select management cluster or CTRL-C to quit"
+        select CONTEXT in $CONTEXTS; do 
+            echo "you selected cluster context : ${CONTEXT}"
+            echo 
+            CLUSTERCTX="${CONTEXT}"
+            break
+        done
+
+        kubectl config use-context $CLUSTERCTX
+
+        TARIMAGESCSV=$(echo "$TARIMAGES" | tr '\n' ',')
+        TARIMAGESCSV=${TARIMAGESCSV%,}
+        $bundlepath/cli/nkp push bundle --bundle $TARIMAGESCSV --to-internal-registry-mirror 
+        if [ $? -ne 0 ]; then
+            echo "issue pushing $TARIMAGESCSV to internal registry."
             exit 1
-        else
-            echo "konvoy and kommander image bundles found. loading images to internal registry."
-            echo
-
-            CONTEXTS=$(kubectl config get-contexts --output=name)
-            echo
-            echo "Select management cluster or CTRL-C to quit"
-            select CONTEXT in $CONTEXTS; do 
-                echo "you selected cluster context : ${CONTEXT}"
-                echo 
-                CLUSTERCTX="${CONTEXT}"
-                break
-            done
-
-            kubectl config use-context $CLUSTERCTX
-
-            $bundlepath/cli/nkp push bundle --bundle $KONVOYIMAGES,$KOMMANDERIMAGES --to-internal-registry-mirror 
-            if [ $? -ne 0 ]; then
-                echo "issue pushing $KONVOYIMAGES or $KOMMANDERIMAGES to internal registry."
-                exit 1
-            fi
         fi
     else
         echo 
@@ -112,44 +99,19 @@ else
         exit 1
     fi
 
-    APPBUNDLE=$(ls $bundlepath/container-images/konvoy-image-bundle*)
-
-    $bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
-    --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
-    --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
-
-    if [ $? -ne 0 ]; then
-        echo "issue pushing $APPBUNDLE."
-        exit 1
-    fi
-
-    APPBUNDLE=$(ls $bundlepath/container-images/kommander-image-bundle*)
-
-    $bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
-    --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
-    --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
-
-    if [ $? -ne 0 ]; then
-        echo "issue pushing $APPBUNDLE."
-        exit 1
-    fi
-
-    #check if nkp-catalog-applications bundle is present
-    if [ ! -f $bundlepath/container-images/nkp-catalog-applications* ]; then
-        echo 
-        echo "nkp-catalog-applications bundle not found. - skipping push of catalog applications bundle"
-        echo 
-    else
-        APPBUNDLE=$(ls $bundlepath/container-images/nkp-catalog-applications*)
-
-        $bundlepath/cli/nkp push bundle --bundle $APPBUNDLE \
-        --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
+    for TARIMAGE in $TARIMAGES; do
+        echo
+        echo "pushing $TARIMAGE to $AIRGAP_REGISTRY_MIRROR_URL"
+        $bundlepath/cli/nkp push image --image $TARIMAGE --to-registry=${AIRGAP_REGISTRY_MIRROR_URL} \
+        --to-registry-username="${AIRGAP_REGISTRY_MIRROR_USERNAME}"  \
         --to-registry-password="${AIRGAP_REGISTRY_MIRROR_PASSWORD}" --to-registry-ca-cert-file=registry-ca_cert.pem
 
         if [ $? -ne 0 ]; then
-            echo "issue pushing $APPBUNDLE."
+            echo "issue pushing $TARIMAGE."
             exit 1
+        else
+            echo
+            echo "successfully pushed $TARIMAGE to $AIRGAP_REGISTRY_MIRROR_URL"
         fi
-    fi
-
+    done
 fi
