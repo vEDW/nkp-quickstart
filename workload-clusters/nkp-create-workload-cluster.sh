@@ -1,5 +1,18 @@
 #!/bin/bash
 
+bundlepath=$(cat ../bundle-path)
+if [ $? -ne 0 ]; then
+    echo "no bundle-path file present."
+    exit 1
+fi
+
+# Check if directory is empty
+if [ -z "$bundlepath" ]; then
+    echo "No content in dir $bundlepath. Exiting."
+    exit 1
+fi
+
+
 #check if cluster-env file exists
 if [ ! -f ./cluster-env ]; then
     echo "cluster-env file not found. Please create it with the required variables by cloning cluster-env.example."
@@ -7,7 +20,7 @@ if [ ! -f ./cluster-env ]; then
 fi
 source ./cluster-env
 
-nkp create cluster nutanix -c $CLUSTER_NAME \
+$bundlepath/cli/nkp create cluster nutanix -c $CLUSTER_NAME \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
     --kubernetes-service-load-balancer-ip-range $LB_IP_RANGE \
