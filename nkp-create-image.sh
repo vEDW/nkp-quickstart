@@ -59,4 +59,4 @@ $bundlepath/cli/nkp create image nutanix $OSCHOSEN \
     --insecure \
     --subnet $NUTANIX_SUBNET_NAME \
     --cluster $NUTANIX_PRISM_ELEMENT_CLUSTER_NAME \
-    ${KONVOYIMAGES:+--bundle "$KONVOYIMAGES"} \
+    ${KONVOYIMAGES:+--bundle "$KONVOYIMAGES"}
