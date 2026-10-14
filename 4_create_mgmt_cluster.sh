@@ -163,7 +163,7 @@ echo
 echo "command to run to deploy NKP:"
 echo "$bundlepath/cli/nkp create cluster vsphere \
   --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
+  --network \"${NETWORK}\" \
   --control-plane-endpoint-host ${NKPCLUSTERVIP} \
   --data-center ${DATACENTER} \
   --data-store ${DATASTORE} \
@@ -185,16 +185,16 @@ echo "press enter to continue or ctrl+c to exit"
 read
 
 $bundlepath/cli/nkp create cluster vsphere \
-  --cluster-name ${NKPCLUSTER} \
-  --network ${NETWORK} \
-  --control-plane-endpoint-host ${NKPCLUSTERVIP} \
-  --data-center ${DATACENTER} \
-  --data-store ${DATASTORE} \
-  --folder ${FOLDER} \
-  --server ${VSPHERE_SERVER} \
-  --ssh-public-key-file ${LOCALKEY} \
-  --resource-pool ${RESOURCE_POOL} \
-  --vm-template ${template} \
+  --cluster-name "${NKPCLUSTER}" \
+  --network "${NETWORK}" \
+  --control-plane-endpoint-host "${NKPCLUSTERVIP}" \
+  --data-center "${DATACENTER}" \
+  --data-store "${DATASTORE}" \
+  --folder "${FOLDER}" \
+  --server "${VSPHERE_SERVER}" \
+  --ssh-public-key-file "${LOCALKEY}" \
+  --resource-pool "${RESOURCE_POOL}" \
+  --vm-template "${template}" \
   --virtual-ip-interface "eth0" \
   --tls-thumb-print "${VCENTERTP}" \
   ${REGISTRY_MIRROR_URL:+--registry-mirror-url https://"$REGISTRY_MIRROR_URL"} \

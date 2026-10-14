@@ -106,13 +106,31 @@ echo
 
 echo "get updates"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo apt-get updates"
+#check if updates were successful
+if [ $? -ne 0 ]; then
+    echo "Failed to get updates. Exiting."
+    exit 1
+fi
+
 echo
 
 echo "checking disk space"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP df -h
+#check for errors
+if [ $? -ne 0 ]; then
+    echo "Failed to check disk space. Exiting."
+    exit 1
+fi
+
 echo 
 echo "shutting down VM"
 ssh -i $privatekey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null  ubuntu@$IP "sudo shutdown -h now"
+#check for errors
+if [ $? -ne 0 ]; then
+    echo "Failed to shutdown VM. Exiting."
+    exit 1
+fi
+
 echo "waiting for VM to shutdown"
 while true; do
     STATUS=$(govc vm.info -json $VMNAME | jq -r '.virtualMachines[].runtime.powerState')
@@ -124,4 +142,9 @@ while true; do
 done
 echo "Creating kib snapshot"
 govc snapshot.create -vm $VMNAME -d "konvoy image builder snapshot" kib
+#check for errors
+if [ $? -ne 0 ]; then
+    echo "Failed to create snapshot. Exiting."
+    exit 1
+fi
 echo "snapshot created"
