@@ -7,17 +7,6 @@ if [ ! -f ./cluster-env ]; then
 fi
 source ./cluster-env
 
-# check if DOCKER_FLOW_TOKEN is set
-if [ -z "$DOCKER_FLOW_TOKEN" ]; then
-    echo "DOCKER_FLOW_TOKEN is not set. Please set it in cluster-env to pull Flow-CNI images from Docker Hub."
-    exit 1
-fi 
-# check if FLOW_CHART_VERSION is set
-if [ -z "$FLOW_CHART_VERSION" ]; then
-    echo "FLOW_CHART_VERSION is not set. Please set it in cluster-env to specify the version of Flow-CNI to install."
-    exit 1
-fi
-
 #check if bundle-path file exists
 if [[ ! -f "./nkpcli-path" ]]; then
     echo "nkpcli-path file not found. Proceeding with default nkp path."
@@ -89,10 +78,10 @@ if [[ -z "$NKPLCUTERTEST" ]]; then
     fi
 
     # Remove CNI addon from the generated YAML
-    yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-flow-cni.yaml
+    yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-CILIUM-cni.yaml
     rm $CLUSTER_NAME.yaml
     #get cluster namespace
-    CLUSTERNS=$(yq eval '(select(.kind == "Cluster") | .metadata.namespace)' $CLUSTER_NAME-with-flow-cni.yaml)
+    CLUSTERNS=$(yq eval '(select(.kind == "Cluster") | .metadata.namespace)' $CLUSTER_NAME-with-CILIUM-cni.yaml)
     if [ -z "$CLUSTERNS" ]; then
         echo "Failed to extract cluster namespace from the generated YAML."
         exit 1
@@ -100,23 +89,23 @@ if [[ -z "$NKPLCUTERTEST" ]]; then
         echo "Cluster Namespace: $CLUSTERNS"
     fi
 
-    # create Flow-CNI hcp
-    DOCKER_FLOW_TOKEN_BASE64=$(echo -n "svcpubflowcni:$DOCKER_FLOW_TOKEN" | base64 )
+    # create CILIUM-CNI hcp
+    DOCKER_CILIUM_TOKEN_BASE64=$(echo -n "svcpubCILIUMcni:$DOCKER_CILIUM_TOKEN" | base64 )
 
-    FLOWYAML="---
+    CILIUMYAML="---
     apiVersion: addons.cluster.x-k8s.io/v1alpha1
     kind: HelmChartProxy
     metadata:
-      name: flow-cni-${CLUSTERUUID}
+      name: cilium-enterprise-${CLUSTERUUID}
       namespace: ${CLUSTERNS}
     spec:
       clusterSelector:
         matchLabels:
           cluster.x-k8s.io/cluster-name: ${CLUSTER_NAME}
       repoURL: https://nutanix.github.io/helm-releases/
-      chartName: nutanix-flow-cni
-      version: ${FLOW_CHART_VERSION}
-      namespace: flow-cni-system
+      chartName: isovalent-cni
+      version: ${CILIUM_CHART_VERSION}
+      namespace: kube-system
       options:
         waitForJobs: true
         wait: true
@@ -124,22 +113,22 @@ if [[ -z "$NKPLCUTERTEST" ]]; then
         install:
           createNamespace: true
       valuesTemplate: |
-        nutanix-core-flow-ovn-kubernetes:
+        nutanix-core-CILIUM-ovn-kubernetes:
           k8sAPIServer: "https://${CONTROL_PLANE_ENDPOINT_IP}:6443" 
           podNetwork: "${POD_CIDR}/24" 
           serviceNetwork: "${SERVICE_CIDR}"
         global:
           dockerConfigSecret:
             registry: docker.io
-            auth: ${DOCKER_FLOW_TOKEN_BASE64}
+            auth: ${DOCKER_CILIUM_TOKEN_BASE64}
             create: true
-          imagePullSecretName: "flow-cni-secret"
+          imagePullSecretName: "CILIUM-cni-secret"
         imagePullSecrets:
-          - name: flow-cni-secret
+          - name: CILIUM-cni-secret
     "
 
-    # Append the Flow-CNI HelmChartProxy definition to the cluster YAML
-    echo "$FLOWYAML" |yq e >> $CLUSTER_NAME-with-flow-cni.yaml
+    # Append the CILIUM-CNI HelmChartProxy definition to the cluster YAML
+    echo "$CILIUMYAML" |yq e >> $CLUSTER_NAME-with-CILIUM-cni.yaml
 
 else
     echo "NKPCluster CRD found. Proceeding with NKPCluster creation."
@@ -154,23 +143,23 @@ else
     fi
 
     kubectl create secret docker-registry nutanix-docker-hub-credentials \
-      --docker-username=svcpubflowcni \
-      --docker-password=${DOCKER_FLOW_TOKEN} \
-      --namespace=$CLUSTERNS --dry-run=client -o yaml > $CLUSTER_NAME-with-flow-cni.yaml
-    echo "---" >> $CLUSTER_NAME-with-flow-cni.yaml
+      --docker-username=svcpubCILIUMcni \
+      --docker-password=${DOCKER_CILIUM_TOKEN} \
+      --namespace=$CLUSTERNS --dry-run=client -o yaml > $CLUSTER_NAME-with-CILIUM-cni.yaml
+    echo "---" >> $CLUSTER_NAME-with-CILIUM-cni.yaml
 
-    yq eval '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.variables[0].value.addons.cni = {"provider": "Flow", "imagePullCredentials": {"secretRef": {"name": "nutanix-docker-hub-credentials"}}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME.yaml >> $CLUSTER_NAME-with-flow-cni.yaml
+    yq eval '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.variables[0].value.addons.cni = {"provider": "CILIUM", "imagePullCredentials": {"secretRef": {"name": "nutanix-docker-hub-credentials"}}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME.yaml >> $CLUSTER_NAME-with-CILIUM-cni.yaml
     
     #check if MAKE_MD_EGRESS_ASSIGNABLE is set to true
     if [ "$MAKE_MD_EGRESS_ASSIGNABLE" = true ]; then
         echo
         echo "Adding egress-assignable label to the first machine deployment."
-        yq eval -i '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.workers.machineDeployments[0].metadata += {"labels": {"node.cluster.x-k8s.io/egress-assignable": ""}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME-with-flow-cni.yaml
+        yq eval -i '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.workers.machineDeployments[0].metadata += {"labels": {"node.cluster.x-k8s.io/egress-assignable": ""}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME-with-CILIUM-cni.yaml
 
     fi
     rm $CLUSTER_NAME.yaml
 
 fi
 
-echo "to execute, run : kubectl apply -f $CLUSTER_NAME-with-flow-cni.yaml --server-side=true"
+echo "to execute, run : kubectl apply -f $CLUSTER_NAME-with-CILIUM-cni.yaml --server-side=true"
     

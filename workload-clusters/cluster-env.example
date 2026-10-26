@@ -22,16 +22,12 @@ export SERVICE_CIDR=10.96.0.0/12
 export CONTROL_PLANE_REPLICAS=3
 export WORKER_NODES_REPLICAS=4
 
-export DOCKER_FLOW_TOKEN=""                                     # mandatory docker hub token from Nutanix flow download portal
+#cilium-enterprise-cni parameters
+export CILIUMREGISTRY="harbor-fqdn"
+export CILIUM_CHART_VERSION="1.0.0"
+export CILIUM_CNS_CILIUM_TAG="1.0.0"
+export CILIUM_K8S_CNI_TAG="1.0.0"
 
-#Flow-CNI parameters
-export FLOWREGISTRY="harbor-fqdn"
-export FLOW_CHART_VERSION="1.0.0"
-export FLOW_CNS_CILIUM_TAG="1.0.0"
-export FLOW_K8S_CNI_TAG="1.0.0"
-#export FLOW_OVN_KUBERNETES_TAG=
-
-export MAKE_MD_EGRESS_ASSIGNABLE=true                  # label first worker nodepool with egress-assignable for flow-cni
 
 # uncomment the below parameters whif you want to use a registry mirror
 # if you're using 2.16 or later, leave these lines commented to use the built-in private registry
