@@ -89,46 +89,6 @@ if [[ -z "$NKPLCUTERTEST" ]]; then
         echo "Cluster Namespace: $CLUSTERNS"
     fi
 
-    # create CILIUM-CNI hcp
-    DOCKER_CILIUM_TOKEN_BASE64=$(echo -n "svcpubCILIUMcni:$DOCKER_CILIUM_TOKEN" | base64 )
-
-    CILIUMYAML="---
-    apiVersion: addons.cluster.x-k8s.io/v1alpha1
-    kind: HelmChartProxy
-    metadata:
-      name: cilium-enterprise-${CLUSTERUUID}
-      namespace: ${CLUSTERNS}
-    spec:
-      clusterSelector:
-        matchLabels:
-          cluster.x-k8s.io/cluster-name: ${CLUSTER_NAME}
-      repoURL: https://nutanix.github.io/helm-releases/
-      chartName: isovalent-cni
-      version: ${CILIUM_CHART_VERSION}
-      namespace: kube-system
-      options:
-        waitForJobs: true
-        wait: true
-        timeout: 30m
-        install:
-          createNamespace: true
-      valuesTemplate: |
-        nutanix-core-CILIUM-ovn-kubernetes:
-          k8sAPIServer: "https://${CONTROL_PLANE_ENDPOINT_IP}:6443" 
-          podNetwork: "${POD_CIDR}/24" 
-          serviceNetwork: "${SERVICE_CIDR}"
-        global:
-          dockerConfigSecret:
-            registry: docker.io
-            auth: ${DOCKER_CILIUM_TOKEN_BASE64}
-            create: true
-          imagePullSecretName: "CILIUM-cni-secret"
-        imagePullSecrets:
-          - name: CILIUM-cni-secret
-    "
-
-    # Append the CILIUM-CNI HelmChartProxy definition to the cluster YAML
-    echo "$CILIUMYAML" |yq e >> $CLUSTER_NAME-with-CILIUM-cni.yaml
 
 else
     echo "NKPCluster CRD found. Proceeding with NKPCluster creation."
@@ -142,21 +102,11 @@ else
         echo "Cluster Namespace: $CLUSTERNS"
     fi
 
-    kubectl create secret docker-registry nutanix-docker-hub-credentials \
-      --docker-username=svcpubCILIUMcni \
-      --docker-password=${DOCKER_CILIUM_TOKEN} \
-      --namespace=$CLUSTERNS --dry-run=client -o yaml > $CLUSTER_NAME-with-CILIUM-cni.yaml
-    echo "---" >> $CLUSTER_NAME-with-CILIUM-cni.yaml
 
     yq eval '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.variables[0].value.addons.cni = {"provider": "CILIUM", "imagePullCredentials": {"secretRef": {"name": "nutanix-docker-hub-credentials"}}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME.yaml >> $CLUSTER_NAME-with-CILIUM-cni.yaml
-    
-    #check if MAKE_MD_EGRESS_ASSIGNABLE is set to true
-    if [ "$MAKE_MD_EGRESS_ASSIGNABLE" = true ]; then
-        echo
-        echo "Adding egress-assignable label to the first machine deployment."
-        yq eval -i '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.workers.machineDeployments[0].metadata += {"labels": {"node.cluster.x-k8s.io/egress-assignable": ""}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME-with-CILIUM-cni.yaml
 
-    fi
+    # Remove CNI addon from the generated YAML
+    yq eval '(select(.kind == "NKPCluster") | del(.spec.capiCluster.topology.variables[0].value.addons.cni)) // select(.kind != "NKPCluster")' $CLUSTER_NAME.yaml > $CLUSTER_NAME-with-CILIUM-cni.yaml
     rm $CLUSTER_NAME.yaml
 
 fi
