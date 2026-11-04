@@ -13,6 +13,20 @@ if [ -z "$FLOW_CHART_VERSION" ]; then
     exit 1
 fi
 
+#check if nkpcli-path file exists
+if [[ ! -f "./nkpcli-path" ]]; then
+    echo "nkpcli-path file not found. Proceeding with default nkp path."
+    CLIPATH=$(which nkp | xargs dirname)
+    #check if nkp cli is installed
+    if [ $? -ne 0 ]; then
+        echo "nkp command not found. Please install nkp first."
+        exit 1
+    fi
+else
+    CLIPATH=$(cat ./nkpcli-path)
+    echo "Using nkp cli path: $CLIPATH"
+fi    
+
 nkp create cluster nutanix -c $CLUSTER_NAME \
     --endpoint https://$NUTANIX_ENDPOINT:$NUTANIX_PORT \
     --insecure \
@@ -65,14 +79,35 @@ else
     echo "Cluster UUID: $CLUSTERUUID"
 fi
 
-# Remove CNI addon from the generated YAML
+#switch based on NKPCluster CRD presence.
 CLUSTERYAMLFILENAME=$CLUSTER_NAME-with-flow-cni.yaml
-yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTERYAMLFILENAME
-rm $CLUSTER_NAME.yaml
+
+NKPLCUTERTEST=$(kubectl api-resources | grep NKPCluster)
+if [[ -z "$NKPLCUTERTEST" ]]; then
+    echo "NKPCluster CRD not found. Proceeding with standard cluster creation."
+
+  # Remove CNI addon from the generated YAML
+  yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTERYAMLFILENAME
+  rm $CLUSTER_NAME.yaml
+
+else
+    echo "NKPCluster CRD found. Proceeding with NKPCluster creation."
+
+    yq eval '(select(.kind == "NKPCluster") | del(.spec.capiCluster.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTERYAMLFILENAME
+
+    #check if MAKE_MD_EGRESS_ASSIGNABLE is set to true
+    if [ "$MAKE_MD_EGRESS_ASSIGNABLE" = true ]; then
+        echo
+        echo "Adding egress-assignable label to the first machine deployment."
+        yq eval -i '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.workers.machineDeployments[0].metadata += {"labels": {"node.cluster.x-k8s.io/egress-assignable": ""}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME-with-flow-cni.yaml
+
+    fi
+    rm $CLUSTER_NAME.yaml
+
+
+fi
 
 # create Flow-CNI hcp
-DOCKER_FLOW_TOKEN_BASE64=$(echo -n "svcpubflowcni:$DOCKER_FLOW_TOKEN" | base64 )
-
 FLOWYAML="---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy

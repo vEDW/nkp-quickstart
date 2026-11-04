@@ -18,7 +18,7 @@ if [ -z "$FLOW_CHART_VERSION" ]; then
     exit 1
 fi
 
-#check if bundle-path file exists
+#check if nkpcli-path file exists
 if [[ ! -f "./nkpcli-path" ]]; then
     echo "nkpcli-path file not found. Proceeding with default nkp path."
     CLIPATH=$(which nkp | xargs dirname)
@@ -152,14 +152,24 @@ else
     else
         echo "Cluster Namespace: $CLUSTERNS"
     fi
+    
+    NAMESPACE_YAML=$(yq e '(select(.kind == "Namespace"))|.' $CLUSTER_NAME.yaml)
+    SECRETS_YAML=$(yq e '(select(.kind == "Secret"))|.' $CLUSTER_NAME.yaml)
+    OTHER_YAML=$(yq e '(select(.kind != "Namespace" and .kind != "Secret"))|.' $CLUSTER_NAME.yaml)
 
+    echo "$NAMESPACE_YAML" > $CLUSTER_NAME-with-flow-cni.yaml
+    echo "---" >> $CLUSTER_NAME-with-flow-cni.yaml
+    echo "$SECRETS_YAML" >> $CLUSTER_NAME-with-flow-cni.yaml
+    echo "---" >> $CLUSTER_NAME-with-flow-cni.yaml
     kubectl create secret docker-registry nutanix-docker-hub-credentials \
       --docker-username=svcpubflowcni \
       --docker-password=${DOCKER_FLOW_TOKEN} \
       --namespace=$CLUSTERNS --dry-run=client -o yaml > $CLUSTER_NAME-with-flow-cni.yaml
     echo "---" >> $CLUSTER_NAME-with-flow-cni.yaml
 
-    yq eval '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.variables[0].value.addons.cni = {"provider": "Flow", "imagePullCredentials": {"secretRef": {"name": "nutanix-docker-hub-credentials"}}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME.yaml >> $CLUSTER_NAME-with-flow-cni.yaml
+    echo "$OTHER_YAML" >> $CLUSTER_NAME-with-flow-cni.yaml
+
+    yq eval -i '(select(.kind == "NKPCluster") | .spec.capiCluster.topology.variables[0].value.addons.cni = {"provider": "Flow", "imagePullCredentials": {"secretRef": {"name": "nutanix-docker-hub-credentials"}}} ) // select(.kind != "NKPCluster")' $CLUSTER_NAME-with-flow-cni.yaml
     
     #check if MAKE_MD_EGRESS_ASSIGNABLE is set to true
     if [ "$MAKE_MD_EGRESS_ASSIGNABLE" = true ]; then
