@@ -70,14 +70,6 @@ else
     echo
 fi
 
-#get cluster uuid
-CLUSTERUUID=$(yq eval '(select(.kind == "Cluster") | .metadata.annotations."caren.nutanix.com/cluster-uuid")' $CLUSTER_NAME.yaml)
-if [ -z "$CLUSTERUUID" ]; then
-    echo "Failed to extract cluster UUID from the generated YAML."
-    exit 1
-else
-    echo "Cluster UUID: $CLUSTERUUID"
-fi
 
 #switch based on NKPCluster CRD presence.
 CLUSTERYAMLFILENAME=$CLUSTER_NAME-with-flow-cni.yaml
@@ -86,12 +78,30 @@ NKPLCUTERTEST=$(kubectl api-resources | grep NKPCluster)
 if [[ -z "$NKPLCUTERTEST" ]]; then
     echo "NKPCluster CRD not found. Proceeding with standard cluster creation."
 
+    #get cluster uuid
+    CLUSTERUUID=$(yq eval '(select(.kind == "Cluster") | .metadata.annotations."caren.nutanix.com/cluster-uuid")' $CLUSTER_NAME.yaml)
+    if [ -z "$CLUSTERUUID" ]; then
+        echo "Failed to extract cluster UUID from the generated YAML."
+        exit 1
+    else
+        echo "Cluster UUID: $CLUSTERUUID"
+    fi
+
   # Remove CNI addon from the generated YAML
   yq eval '(select(.kind == "Cluster") | del(.spec.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTERYAMLFILENAME
   rm $CLUSTER_NAME.yaml
 
 else
     echo "NKPCluster CRD found. Proceeding with NKPCluster creation."
+
+    #get nkpcluster uid
+    CLUSTERUUID=$(yq eval '(select(.kind == "NKPCluster") | .metadata.annotations.uid)' $CLUSTER_NAME.yaml)
+    if [ -z "$CLUSTERUUID" ]; then
+        echo "Failed to extract cluster UUID from the generated YAML."
+        exit 1
+    else
+        echo "Cluster UUID: $CLUSTERUUID"
+    fi
 
     yq eval '(select(.kind == "NKPCluster") | del(.spec.capiCluster.topology.variables[0].value.addons.cni)) // select(.kind != "Cluster")' $CLUSTER_NAME.yaml > $CLUSTERYAMLFILENAME
 
@@ -147,6 +157,7 @@ spec:
 
 # Append the Flow-CNI HelmChartProxy definition to the cluster YAML
 echo "$FLOWYAML" |yq e >> $CLUSTER_NAME-with-flow-cni.yaml
+
 
 echo "to execute, run : kubectl apply -f $CLUSTER_NAME-with-flow-cni.yaml --server-side=true"
     
