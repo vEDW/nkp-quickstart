@@ -157,14 +157,14 @@ if [ "${TESTCLI}" == "" ]; then
 else
     echo "nkp cli includes vsphere image builder. Building image with nkp cli"
     $bundlepath/cli/nkp create image vsphere ubuntu-22.04 \
-        --cluster $CLUSTER \
-        --data-center $DATACENTER \
-        --data-store $DATASTORE \
-        --folder $FOLDER \
+        --cluster \"$CLUSTER\" \
+        --data-center \"$DATACENTER\" \
+        --data-store \"$DATASTORE\" \
+        --folder \"$FOLDER\" \
         --network \"$NETWORK\" \
-        --server $VSPHERE_SERVER \
-        --resource-pool $RESOURCE_POOL \
-        --template $template \
+        --server \"$VSPHERE_SERVER\" \
+        --resource-pool \"$RESOURCE_POOL\" \
+        --template \"$template\" \
         --insecure
 fi
 
