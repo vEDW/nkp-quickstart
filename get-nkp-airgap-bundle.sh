@@ -74,6 +74,7 @@ fi
 
 docker images
 
+rm nkp-airgap.tar.gz
 # Success message
 echo
 echo
